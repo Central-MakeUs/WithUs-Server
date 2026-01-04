@@ -1,0 +1,31 @@
+# 도커 컴포즈 파일에 변경 생기면 바로 인스턴스에 반영하기
+version: '3.8'
+
+services:
+  app:
+    image: jdagon2000/withus-cmc
+    container_name: withus-app
+    env_file:
+      - ./.env
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./logs:/logs
+    networks:
+      - withus-network
+    restart: unless-stopped
+  nginx:
+    image: nginx:1.27
+    container_name: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - app
+    networks:
+      - withus-network
+    restart: unless-stopped
+
+networks:
+  withus-network:
