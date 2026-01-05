@@ -5,6 +5,8 @@ import com.herethere.withus.couple.domain.Couple;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -37,11 +39,12 @@ public class User extends BaseEntity {
 	@Column(name = "nickname", length = 50, nullable = false)
 	private String nickname;
 
-	@Column(name = "provider", length = 20, nullable = false)
-	private String provider;
+	@Enumerated(EnumType.STRING)
+	@Column(name = "provider", length = 10, nullable = false)
+	private Provider provider;
 
 	@Column(name = "provider_id", length = 100, nullable = false)
-	private String providerId;
+	private Long providerId;
 
 	@Column(name = "profile_image_url", length = 2048)
 	private String profileImageUrl;
