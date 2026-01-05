@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.herethere.withus.auth.api.AuthApi;
-import com.herethere.withus.auth.domain.OauthProviderType;
+import com.herethere.withus.auth.domain.OAuthProviderType;
 import com.herethere.withus.auth.dto.request.LoginRequest;
 import com.herethere.withus.auth.dto.response.LoginResponse;
 import com.herethere.withus.auth.service.AuthService;
@@ -20,7 +20,7 @@ public class AuthController implements AuthApi {
 	private final AuthService authService;
 
 	@Override
-	public ResponseEntity<ApiResponse<LoginResponse>> login(@PathVariable OauthProviderType provider,
+	public ResponseEntity<ApiResponse<LoginResponse>> login(@PathVariable OAuthProviderType provider,
 		LoginRequest request) {
 		return null;
 	}
