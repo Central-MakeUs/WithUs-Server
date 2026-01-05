@@ -39,6 +39,6 @@ public class InviteCode extends BaseEntity {
 	private String code;
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "id", length = 10, nullable = false)
+	@Column(name = "status", length = 10, nullable = false)
 	private CodeStatus status;
 }
