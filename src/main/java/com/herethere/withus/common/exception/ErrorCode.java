@@ -39,7 +39,11 @@ public enum ErrorCode {
 	CONVERSATION_NOT_FOUND(404, "존재하지 않는 대화입니다."),
 	CONVERSATION_CARD_NOT_FOUND(404, "존재하지 않는 대화 카드입니다."),
 	CONVERSATION_KEYWORD_NOT_FOUND(404, "존재하지 않는 대화 키워드입니다."),
-	CONVERSATION_REPORT_NOT_FOUND(404, "존재하지 않는 대화 리포트입니다.");
+	CONVERSATION_REPORT_NOT_FOUND(404, "존재하지 않는 대화 리포트입니다."),
+
+	// OAUTH
+	PROVIDER_NOT_FOUND(404, "존재하지 않는 OAuth Provider 입니다."),
+	;
 
 	private final int status;
 	private final String message;

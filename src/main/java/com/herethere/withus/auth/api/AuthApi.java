@@ -6,12 +6,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.herethere.withus.auth.domain.OAuthProviderType;
 import com.herethere.withus.auth.dto.request.LoginRequest;
 import com.herethere.withus.auth.dto.response.LoginResponse;
 import com.herethere.withus.common.apiresponse.ApiResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
@@ -21,6 +22,10 @@ public interface AuthApi {
 
 	@Operation(summary = "Oauth 로그인")
 	@PostMapping("/login/{provider}")
-	ResponseEntity<ApiResponse<LoginResponse>> login(@PathVariable OAuthProviderType provider,
+	ResponseEntity<ApiResponse<LoginResponse>> login(
+		@Parameter(
+			schema = @Schema(allowableValues = {"kakao", "google", "apple"})
+		)
+		@PathVariable String provider,
 		@Valid @RequestBody LoginRequest request);
 }

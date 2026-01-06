@@ -20,9 +20,10 @@ public class AuthController implements AuthApi {
 	private final AuthService authService;
 
 	@Override
-	public ResponseEntity<ApiResponse<LoginResponse>> login(@PathVariable OAuthProviderType provider,
+	public ResponseEntity<ApiResponse<LoginResponse>> login(@PathVariable String provider,
 		LoginRequest request) {
-		LoginResponse loginResponse = authService.login(request, provider);
+		OAuthProviderType providerType = OAuthProviderType.from(provider);
+		LoginResponse loginResponse = authService.login(request, providerType);
 		return ResponseEntity.ok(ApiResponse.success(loginResponse));
 	}
 }
