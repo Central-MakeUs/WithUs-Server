@@ -15,7 +15,7 @@ public enum ErrorCode {
 	// 외부 API 관련
 	EMPTY_API_RESPONSE(502, "외부 API로부터 응답이 없습니다."),
 	API_REQUEST_FAILED(502, "외부 API 요청에 실패했습니다."),
-	KAKAO_AUTH_ERROR(401, "카카오 인증에 실패했습니다."),
+	OAUTH_TOKEN_ERROR(401, "OAuth 토큰 인증에 실패했습니다."),
 
 	// ObjectMapper 관련
 	INVALID_FORMAT(400, "잘못된 형식의 데이터입니다. 파싱에 실패했습니다."),
