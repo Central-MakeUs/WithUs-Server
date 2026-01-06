@@ -15,7 +15,7 @@ public enum ErrorCode {
 	// 외부 API 관련
 	EMPTY_API_RESPONSE(502, "외부 API로부터 응답이 없습니다."),
 	API_REQUEST_FAILED(502, "외부 API 요청에 실패했습니다."),
-	KAKAO_AUTH_ERROR(401, "카카오 인증에 실패했습니다."),
+	OAUTH_TOKEN_ERROR(401, "OAuth 토큰 인증에 실패했습니다."),
 
 	// ObjectMapper 관련
 	INVALID_FORMAT(400, "잘못된 형식의 데이터입니다. 파싱에 실패했습니다."),
@@ -39,7 +39,10 @@ public enum ErrorCode {
 	CONVERSATION_NOT_FOUND(404, "존재하지 않는 대화입니다."),
 	CONVERSATION_CARD_NOT_FOUND(404, "존재하지 않는 대화 카드입니다."),
 	CONVERSATION_KEYWORD_NOT_FOUND(404, "존재하지 않는 대화 키워드입니다."),
-	CONVERSATION_REPORT_NOT_FOUND(404, "존재하지 않는 대화 리포트입니다.");
+	CONVERSATION_REPORT_NOT_FOUND(404, "존재하지 않는 대화 리포트입니다."),
+
+	// OAUTH
+	PROVIDER_NOT_FOUND(404, "존재하지 않는 OAuth Provider 입니다."),;
 
 	private final int status;
 	private final String message;

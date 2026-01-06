@@ -30,7 +30,7 @@ public class JwtUtil {
 		key = Keys.hmacShaKeyFor(secretKey.getBytes());
 	}
 
-	private String createToken(JwtPayload payload) {
+	public String createToken(JwtPayload payload) {
 		Claims claims = Jwts.claims().setSubject(String.valueOf(payload.userId()));
 		claims.put(CLAIM_NICKNAME, payload.nickname());
 
