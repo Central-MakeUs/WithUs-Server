@@ -1,5 +1,7 @@
 package com.herethere.withus.common.dto;
 
+import com.herethere.withus.common.exception.ErrorCode;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -18,7 +20,7 @@ public class ApiResponse<T> {
 		return new ApiResponse<>(true, null, null);
 	}
 
-	public static <T> ApiResponse<T> failure(String message, String code) {
-		return new ApiResponse<>(false, null, new ApiError(message, code));
+	public static <T> ApiResponse<T> failure(ErrorCode errorCode) {
+		return new ApiResponse<>(false, null, new ApiError(errorCode.getMessage(), errorCode.name()));
 	}
 }
