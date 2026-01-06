@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class AuthService {
+	private static final String PREFIX_GUEST = "GUEST_";
 	private final OAuthClientFactory oauthClientFactory;
 	private final UserRepository userRepository;
 	private final JwtUtil jwtUtil;
@@ -33,7 +34,7 @@ public class AuthService {
 				User.builder()
 					.provider(provider)
 					.providerId(userInfo.oauthUserId())
-					.nickname("GUEST_" + userInfo.oauthUserId())
+					.nickname(PREFIX_GUEST + userInfo.oauthUserId())
 					.isInitialized(false)
 					.build()));
 
