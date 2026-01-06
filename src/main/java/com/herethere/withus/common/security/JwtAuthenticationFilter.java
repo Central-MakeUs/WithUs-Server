@@ -9,7 +9,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.herethere.withus.common.dto.ApiResponse;
+import com.herethere.withus.common.apiresponse.ApiResponse;
 import com.herethere.withus.common.exception.JwtValidationException;
 import com.herethere.withus.common.jwt.JwtUtil;
 import com.herethere.withus.common.jwt.dto.JwtPayload;

@@ -7,7 +7,7 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.herethere.withus.common.dto.ApiResponse;
+import com.herethere.withus.common.apiresponse.ApiResponse;
 import com.herethere.withus.common.exception.ErrorCode;
 
 import jakarta.servlet.http.HttpServletRequest;

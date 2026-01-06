@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.herethere.withus.auth.dto.request.KaKaoLoginRequest;
 import com.herethere.withus.auth.dto.response.LoginResponse;
-import com.herethere.withus.common.dto.ApiResponse;
+import com.herethere.withus.common.apiresponse.ApiResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

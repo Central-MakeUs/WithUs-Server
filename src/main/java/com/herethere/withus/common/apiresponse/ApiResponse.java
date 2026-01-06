@@ -1,4 +1,4 @@
-package com.herethere.withus.common.dto;
+package com.herethere.withus.common.apiresponse;
 
 import com.herethere.withus.common.exception.ErrorCode;
 
