@@ -42,7 +42,10 @@ public enum ErrorCode {
 	CONVERSATION_REPORT_NOT_FOUND(404, "존재하지 않는 대화 리포트입니다."),
 
 	// OAUTH
-	PROVIDER_NOT_FOUND(404, "존재하지 않는 OAuth Provider 입니다."),;
+	PROVIDER_NOT_FOUND(404, "존재하지 않는 OAuth Provider 입니다."),
+
+	// INVALID_INPUT
+	INVALID_INPUT(400, "잘못된 입력입니다.");
 
 	private final int status;
 	private final String message;
