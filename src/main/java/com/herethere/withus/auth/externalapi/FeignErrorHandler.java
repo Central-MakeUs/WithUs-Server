@@ -4,6 +4,7 @@ import static com.herethere.withus.common.exception.ErrorCode.*;
 
 import org.springframework.stereotype.Component;
 
+import com.herethere.withus.common.exception.ExternalApiException;
 import com.herethere.withus.common.exception.InvalidOAuthTokenException;
 
 import feign.Response;
@@ -19,6 +20,6 @@ public class FeignErrorHandler implements ErrorDecoder {
 			return new InvalidOAuthTokenException(OAUTH_TOKEN_ERROR);
 		}
 
-		return new RuntimeException("Feign Error : " + response.status());
+		return new ExternalApiException(EXTERNAL_API_EXCEPTION);
 	}
 }
