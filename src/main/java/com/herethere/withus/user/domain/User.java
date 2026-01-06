@@ -1,5 +1,6 @@
 package com.herethere.withus.user.domain;
 
+import com.herethere.withus.auth.domain.OAuthProviderType;
 import com.herethere.withus.common.baseentity.BaseEntity;
 import com.herethere.withus.couple.domain.Couple;
 
@@ -41,7 +42,7 @@ public class User extends BaseEntity {
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "provider", length = 10, nullable = false)
-	private Provider provider;
+	private OAuthProviderType provider;
 
 	@Column(name = "provider_id", nullable = false)
 	private Long providerId;
