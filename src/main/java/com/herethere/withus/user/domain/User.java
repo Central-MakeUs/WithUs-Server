@@ -43,8 +43,11 @@ public class User extends BaseEntity {
 	@Column(name = "provider", length = 10, nullable = false)
 	private Provider provider;
 
-	@Column(name = "provider_id", length = 100, nullable = false)
+	@Column(name = "provider_id", nullable = false)
 	private Long providerId;
+
+	@Column(name = "is_initialized", nullable = false)
+	private boolean isInitialized;
 
 	@Column(name = "profile_image_url", length = 2048)
 	private String profileImageUrl;
