@@ -4,5 +4,5 @@ import jakarta.validation.constraints.NotBlank;
 
 public record LoginRequest(
 	@NotBlank String oauthToken,
-	@NotBlank String fcmToken) {
+	String fcmToken) { //TODO : valid 관련 어노테이션 추가하기
 }
