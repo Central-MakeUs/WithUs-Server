@@ -28,4 +28,10 @@ public interface AuthApi {
 		)
 		@PathVariable String provider,
 		@Valid @RequestBody LoginRequest request);
+
+	@Operation(summary = "임시 토큰 발급", description = """
+		temp 유저에 대한 임시 토큰을 발급합니다.
+		""")
+	@PostMapping("/temp/token")
+	ResponseEntity<ApiResponse<LoginResponse>> generateTempToken();
 }

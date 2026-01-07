@@ -42,4 +42,19 @@ public class AuthService {
 		String jwt = jwtUtil.createToken(jwtPayload);
 		return new LoginResponse(jwt, user.isInitialized());
 	}
+
+	@Transactional
+	public LoginResponse generateTempToken() {
+		User user = userRepository.findByProviderAndProviderId(OAuthProviderType.KAKAO, 1234L)
+			.orElseGet(() -> userRepository.save(
+				User.builder()
+					.provider(OAuthProviderType.KAKAO)
+					.providerId(1234L)
+					.nickname("tempUser")
+					.isInitialized(false)
+					.build()));
+		JwtPayload jwtPayload = new JwtPayload(user.getId(), user.getNickname());
+		String jwt = jwtUtil.createToken(jwtPayload);
+		return new LoginResponse(jwt, user.isInitialized());
+	}
 }

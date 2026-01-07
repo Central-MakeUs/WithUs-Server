@@ -26,4 +26,10 @@ public class AuthController implements AuthApi {
 		LoginResponse loginResponse = authService.login(request, providerType);
 		return ResponseEntity.ok(ApiResponse.success(loginResponse));
 	}
+
+	@Override
+	public ResponseEntity<ApiResponse<LoginResponse>> generateTempToken() {
+		LoginResponse loginResponse = authService.generateTempToken();
+		return ResponseEntity.ok(ApiResponse.success(loginResponse));
+	}
 }
