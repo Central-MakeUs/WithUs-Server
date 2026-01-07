@@ -53,8 +53,9 @@ public class User extends BaseEntity {
 	@Column(name = "profile_image_url", length = 2048)
 	private String profileImageUrl;
 
-	public void updateProfile(String nickname, String profileImageUrl) {
+	public void initializeProfile(String nickname, String profileImageUrl) {
 		this.nickname = nickname;
 		this.profileImageUrl = profileImageUrl;
+		isInitialized = true;
 	}
 }
