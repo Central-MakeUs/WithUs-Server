@@ -1,11 +1,24 @@
 package com.herethere.withus.user.api;
 
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.herethere.withus.common.apiresponse.ApiResponse;
+import com.herethere.withus.user.dto.request.UserUpdateRequest;
+import com.herethere.withus.user.dto.response.UserUpdateResponse;
+
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 
 @RequestMapping("/users")
 @Tag(name = "회원 API")
 public interface UserApi {
-
+	@Operation(summary = "유저 정보 수정 API", description = "유저 정보 수정 및 회원가입 이후 이 API로 초기 설정을 합니다.")
+	@PatchMapping("/me")
+	ResponseEntity<ApiResponse<UserUpdateResponse>> updateUserProfile(
+		@Valid @RequestBody UserUpdateRequest userUpdateRequest
+	);
 }
