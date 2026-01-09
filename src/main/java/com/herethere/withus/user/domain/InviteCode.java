@@ -35,7 +35,7 @@ public class InviteCode extends BaseEntity {
 	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
 
-	@Column(name = "code", length = 20, nullable = false)
+	@Column(name = "code", length = 20, nullable = false, unique = true)
 	private String code;
 
 	@Enumerated(EnumType.STRING)
