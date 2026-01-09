@@ -23,7 +23,8 @@ public class CoupleController implements CoupleApi {
 	@Override
 	public ResponseEntity<ApiResponse<CoupleJoinPreviewResponse>> checkCoupleJoinPreview(
 		CoupleJoinPreviewRequest coupleJoinRequest) {
-		return null;
+		CoupleJoinPreviewResponse response = coupleService.checkCoupleJoinPreview(coupleJoinRequest);
+		return ResponseEntity.ok(ApiResponse.success(response));
 	}
 
 	@Override

@@ -25,11 +25,11 @@ public enum ErrorCode {
 	USER_NOT_FOUND(404, "존재하지 않는 사용자입니다."),
 
 	// COUPLE
-	COUPLE_ALREADY_EXISTS(401, "이미 커플이 존재합니다."),
+	COUPLE_ALREADY_EXISTS(401, "사용자가 이미 커플이 존재합니다."),
 
 	// INVITATION_CODE
 	CODE_GENERATE_FAILED(503, "중복으로 인해 초대 코드 생성을 실패했습니다."),
-	CODE_NOT_FOUND(404, "기존 초대 코드를 찾을 수 없습니다."),
+	CODE_NOT_FOUND(404, "초대 코드를 찾을 수 없습니다."),
 
 	// OAUTH
 	PROVIDER_NOT_FOUND(404, "존재하지 않는 OAuth Provider 입니다."),
