@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.herethere.withus.common.exception.ConflictException;
 import com.herethere.withus.common.exception.NotFoundException;
-import com.herethere.withus.common.security.SecurityUtil;
 import com.herethere.withus.user.domain.CodeStatus;
 import com.herethere.withus.user.domain.InviteCode;
 import com.herethere.withus.user.domain.User;
@@ -25,19 +24,20 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserService {
 	private static final SecureRandom secureRandom = new SecureRandom();
+	private final UserContextService userContextService;
 	private final UserRepository userRepository;
 	private final InviteCodeRepository inviteCodeRepository;
 
 	@Transactional
 	public UserUpdateResponse updateUserProfile(UserUpdateRequest userUpdateRequest) {
-		User user = getCurrentUser();
+		User user = userContextService.getCurrentUser();
 		user.initializeProfile(userUpdateRequest.nickname(), userUpdateRequest.imageObjectKey());
 		return new UserUpdateResponse(user.getId(), user.getNickname(), user.getProfileImageUrl());
 	}
 
 	@Transactional
 	public InvitationCodeResponse generateInvitationCode() {
-		User user = getCurrentUser();
+		User user = userContextService.getCurrentUser();
 		if (user.getCouple() != null) {
 			throw new ConflictException(COUPLE_ALREADY_EXISTS);
 		}
@@ -57,11 +57,6 @@ public class UserService {
 				}
 			);
 		return new InvitationCodeResponse(inviteCode.getCode());
-	}
-
-	private User getCurrentUser() {
-		Long userId = SecurityUtil.getCurrentUserId();
-		return userRepository.findById(userId).orElseThrow(() -> new NotFoundException(USER_NOT_FOUND));
 	}
 
 	private String generate8DigitCode() {
