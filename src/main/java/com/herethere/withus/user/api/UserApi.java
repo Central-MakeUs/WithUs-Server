@@ -2,11 +2,13 @@ package com.herethere.withus.user.api;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.herethere.withus.common.apiresponse.ApiResponse;
 import com.herethere.withus.user.dto.request.UserUpdateRequest;
+import com.herethere.withus.user.dto.response.InvitationCodeResponse;
 import com.herethere.withus.user.dto.response.UserUpdateResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -21,4 +23,8 @@ public interface UserApi {
 	ResponseEntity<ApiResponse<UserUpdateResponse>> updateUserProfile(
 		@Valid @RequestBody UserUpdateRequest userUpdateRequest
 	);
+
+	@Operation(summary = "초대 코드 생성")
+	@PostMapping("/me/invitation-codes")
+	ResponseEntity<ApiResponse<InvitationCodeResponse>> generateInvitationCode();
 }
