@@ -30,7 +30,7 @@ public class Couple extends BaseEntity {
 	@Column(name = "id", nullable = false)
 	private Long id;
 
-	@Column(name = "anniversary_date", length = 20, nullable = false)
+	@Column(name = "anniversary_date", length = 20)
 	private LocalDate anniversaryDate;
 
 	@Enumerated(EnumType.STRING)

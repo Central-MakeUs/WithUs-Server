@@ -41,4 +41,8 @@ public class InviteCode extends BaseEntity {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "status", length = 10, nullable = false)
 	private CodeStatus status;
+
+	public void useCode() {
+		this.status = CodeStatus.APPROVED;
+	}
 }

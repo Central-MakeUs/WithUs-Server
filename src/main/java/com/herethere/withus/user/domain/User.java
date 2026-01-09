@@ -1,7 +1,10 @@
 package com.herethere.withus.user.domain;
 
+import static com.herethere.withus.common.exception.ErrorCode.*;
+
 import com.herethere.withus.auth.domain.OAuthProviderType;
 import com.herethere.withus.common.baseentity.BaseEntity;
+import com.herethere.withus.common.exception.ConflictException;
 import com.herethere.withus.couple.domain.Couple;
 
 import jakarta.persistence.Column;
@@ -58,4 +61,12 @@ public class User extends BaseEntity {
 		this.profileImageUrl = profileImageUrl;
 		isInitialized = true;
 	}
+
+	public void assignCouple(Couple couple) {
+		if (this.couple != null) {
+			throw new ConflictException(COUPLE_ALREADY_EXISTS);
+		}
+		this.couple = couple;
+	}
+
 }
