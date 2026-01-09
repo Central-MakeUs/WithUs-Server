@@ -46,17 +46,21 @@ public class UserService {
 		InviteCode inviteCode = inviteCodeRepository.findByUserAndStatus(user, CodeStatus.ACTIVE)
 			.orElseGet(
 				() -> {
-					for (int i = 0; i < 20; i++) {
-						String code = generate8DigitCode();
-						if (!inviteCodeRepository.existsByCodeAndStatus(code, CodeStatus.ACTIVE)) {
-							return inviteCodeRepository.save(
-								InviteCode.builder().user(user).code(code).status(CodeStatus.ACTIVE).build());
-						}
-					}
-					throw new NotFoundException(CODE_NOT_FOUND);
+					return createNewInviteCode(user);
 				}
 			);
 		return new InvitationCodeResponse(inviteCode.getCode());
+	}
+
+	private InviteCode createNewInviteCode(User user) {
+		for (int i = 0; i < 20; i++) {
+			String code = generate8DigitCode();
+			if (!inviteCodeRepository.existsByCodeAndStatus(code, CodeStatus.ACTIVE)) {
+				return inviteCodeRepository.save(
+					InviteCode.builder().user(user).code(code).status(CodeStatus.ACTIVE).build());
+			}
+		}
+		throw new NotFoundException(CODE_NOT_FOUND);
 	}
 
 	private String generate8DigitCode() {
