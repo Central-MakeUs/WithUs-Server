@@ -36,6 +36,10 @@ public class CoupleService {
 		User sender = inviteCode.getUser();
 		User receiver = userContextService.getCurrentUser();
 
+		if (sender.getId().equals(receiver.getId())) {
+			throw new ConflictException(INVITED_SAME_USER);
+		}
+
 		if (sender.getCouple() != null || receiver.getCouple() != null) {
 			throw new ConflictException(COUPLE_ALREADY_EXISTS);
 		}
