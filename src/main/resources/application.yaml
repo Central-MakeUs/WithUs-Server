@@ -19,3 +19,14 @@ spring:
 
 jwt:
   secret: ${JWT_SECRET}
+
+logging:
+  level:
+    com.herethere.withus.auth.externalapi: DEBUG
+    feign.Logger: DEBUG
+
+feign:
+  client:
+    config:
+      default:
+        loggerLevel: FULL

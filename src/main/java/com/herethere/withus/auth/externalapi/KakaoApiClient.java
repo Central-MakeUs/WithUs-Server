@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 
 import com.herethere.withus.auth.dto.internal.KakaoUserInfo;
 
-@FeignClient(name = "kakaoApi", url = "https://kapi.kakao.com")
+@FeignClient(name = "kakaoApi", url = "https://kapi.kakao.com", configuration = FeignConfig.class)
 public interface KakaoApiClient {
 	@GetMapping("/v2/user/me")
 	KakaoUserInfo getUser(
