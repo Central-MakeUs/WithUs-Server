@@ -61,4 +61,8 @@ public class Couple extends BaseEntity {
 
 		return couple;
 	}
+
+	public User getPartner(Long userId) {
+		return userA.getId().equals(userId) ? userB : userA;
+	}
 }

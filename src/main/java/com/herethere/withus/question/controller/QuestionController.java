@@ -18,7 +18,8 @@ public class QuestionController implements QuestionApi {
 
 	@Override
 	public ResponseEntity<ApiResponse<TodayQuestionResponse>> getTodayQuestion() {
-		return null;
+		TodayQuestionResponse response = questionService.getTodayQuestion();
+		return ResponseEntity.ok(ApiResponse.success(response));
 	}
 
 	@Override

@@ -34,7 +34,7 @@ public class S3Service {
 		return new PresignedUrlResponse(uploadUrl, accessUrl, imageKey);
 	}
 
-	private String createGetPresignedUrl(String imageKey) {
+	public String createGetPresignedUrl(String imageKey) {
 		GetObjectRequest getObjectRequest = GetObjectRequest.builder()
 			.bucket(bucketName)
 			.key(imageKey)
