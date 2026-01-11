@@ -15,7 +15,6 @@ import com.herethere.withus.user.dto.request.UserUpdateRequest;
 import com.herethere.withus.user.dto.response.InvitationCodeResponse;
 import com.herethere.withus.user.dto.response.UserUpdateResponse;
 import com.herethere.withus.user.repository.InviteCodeRepository;
-import com.herethere.withus.user.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -24,7 +23,6 @@ import lombok.RequiredArgsConstructor;
 public class UserService {
 	private static final SecureRandom secureRandom = new SecureRandom();
 	private final UserContextService userContextService;
-	private final UserRepository userRepository;
 	private final InviteCodeRepository inviteCodeRepository;
 
 	@Transactional
