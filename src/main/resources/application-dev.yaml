@@ -1,0 +1,19 @@
+spring:
+  jpa:
+    show-sql: false
+
+logging:
+  level:
+    root: INFO
+    com.herethere.withus: DEBUG
+    org.springframework: WARN
+    org.hibernate.SQL: INFO
+    com.herethere.withus.auth.externalapi: DEBUG
+    feign.Logger: DEBUG
+  file:
+    name: logs/withus.log
+  logback:
+    rollingpolicy:
+      max-history: 7
+      max-file-size: 10MB
+      total-size-cap: 1GB
