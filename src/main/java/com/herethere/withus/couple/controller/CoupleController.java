@@ -2,7 +2,6 @@ package com.herethere.withus.couple.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.herethere.withus.common.apiresponse.ApiResponse;
@@ -17,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/couples")
 public class CoupleController implements CoupleApi {
 	private final CoupleService coupleService;
 
