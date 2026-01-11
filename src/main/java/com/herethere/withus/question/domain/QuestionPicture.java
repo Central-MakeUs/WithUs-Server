@@ -1,5 +1,6 @@
 package com.herethere.withus.question.domain;
 
+import com.herethere.withus.common.baseentity.BaseEntity;
 import com.herethere.withus.user.domain.User;
 
 import jakarta.persistence.Column;
@@ -23,7 +24,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 @Table(name = "question_picture")
-public class QuestionPicture {
+public class QuestionPicture extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id", nullable = false)

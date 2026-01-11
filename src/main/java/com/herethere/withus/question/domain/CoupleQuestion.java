@@ -2,6 +2,7 @@ package com.herethere.withus.question.domain;
 
 import java.time.LocalDate;
 
+import com.herethere.withus.common.baseentity.BaseEntity;
 import com.herethere.withus.couple.domain.Couple;
 
 import jakarta.persistence.Column;
@@ -25,7 +26,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 @Table(name = "couple_question")
-public class CoupleQuestion {
+public class CoupleQuestion extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
