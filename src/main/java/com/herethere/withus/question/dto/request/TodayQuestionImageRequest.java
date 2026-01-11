@@ -1,4 +1,6 @@
 package com.herethere.withus.question.dto.request;
 
-public record TodayQuestionImageRequest(String imageKey) {
+import jakarta.validation.constraints.NotBlank;
+
+public record TodayQuestionImageRequest(@NotBlank String imageKey) {
 }
