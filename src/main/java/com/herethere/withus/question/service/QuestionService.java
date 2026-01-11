@@ -11,6 +11,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.herethere.withus.common.annotation.RequiresActiveCouple;
 import com.herethere.withus.common.exception.ConflictException;
 import com.herethere.withus.common.exception.NotFoundException;
 import com.herethere.withus.couple.domain.Couple;
@@ -37,6 +38,7 @@ public class QuestionService {
 	private final UserContextService userContextService;
 
 	@Transactional
+	@RequiresActiveCouple
 	public void uploadTodayQuestionImage(TodayQuestionImageRequest request) {
 		User user = userContextService.getCurrentUser();
 		Couple couple = user.getCouple();
@@ -57,6 +59,7 @@ public class QuestionService {
 	}
 
 	@Transactional(readOnly = true)
+	@RequiresActiveCouple
 	public TodayQuestionResponse getTodayQuestion() {
 		User me = userContextService.getCurrentUser();
 		Couple couple = me.getCouple();
