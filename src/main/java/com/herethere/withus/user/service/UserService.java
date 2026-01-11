@@ -32,7 +32,7 @@ public class UserService {
 	public UserUpdateResponse updateUserProfile(UserUpdateRequest userUpdateRequest) {
 		User user = userContextService.getCurrentUser();
 		user.initializeProfile(userUpdateRequest.nickname(), userUpdateRequest.imageObjectKey());
-		return new UserUpdateResponse(user.getId(), user.getNickname(), user.getProfileImageUrl());
+		return new UserUpdateResponse(user.getId(), user.getNickname(), user.getProfileImageKey());
 	}
 
 	@Transactional

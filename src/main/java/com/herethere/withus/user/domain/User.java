@@ -53,12 +53,12 @@ public class User extends BaseEntity {
 	@Column(name = "is_initialized", nullable = false)
 	private boolean isInitialized;
 
-	@Column(name = "profile_image_url", length = 2048)
-	private String profileImageUrl;
+	@Column(name = "profile_image_key", length = 2048)
+	private String profileImageKey;
 
-	public void initializeProfile(String nickname, String profileImageUrl) {
+	public void initializeProfile(String nickname, String profileImageKey) {
 		this.nickname = nickname;
-		this.profileImageUrl = profileImageUrl;
+		this.profileImageKey = profileImageKey;
 		isInitialized = true;
 	}
 
