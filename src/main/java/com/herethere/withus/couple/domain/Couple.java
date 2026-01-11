@@ -3,14 +3,18 @@ package com.herethere.withus.couple.domain;
 import java.time.LocalDate;
 
 import com.herethere.withus.common.baseentity.BaseEntity;
+import com.herethere.withus.user.domain.User;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -29,6 +33,14 @@ public class Couple extends BaseEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id", nullable = false)
 	private Long id;
+
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "user_a_id", unique = true)
+	private User userA;
+
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "user_b_id", unique = true)
+	private User userB;
 
 	@Column(name = "anniversary_date", length = 20)
 	private LocalDate anniversaryDate;
