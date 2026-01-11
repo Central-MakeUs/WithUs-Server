@@ -17,7 +17,7 @@ import jakarta.validation.Valid;
 @Tag(name = "이미지 업로드 API")
 public interface S3Api {
 
-	@Operation(summary = "Presigned URL 발급 API")
+	@Operation(summary = "Presigned URL 발급 API", description = "이미지는 무조건 .jpg 형식으로 보내야합니다.")
 	@GetMapping("/presigned-url")
 	ResponseEntity<ApiResponse<PresignedUrlResponse>> getPresignedUrl(@Valid @RequestBody PresignedUrlRequest request);
 }
