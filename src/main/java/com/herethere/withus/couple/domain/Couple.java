@@ -1,6 +1,7 @@
 package com.herethere.withus.couple.domain;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 import com.herethere.withus.common.baseentity.BaseEntity;
 import com.herethere.withus.user.domain.User;
@@ -42,8 +43,11 @@ public class Couple extends BaseEntity {
 	@JoinColumn(name = "user_b_id", unique = true, nullable = false)
 	private User userB;
 
-	@Column(name = "anniversary_date", length = 20)
+	@Column(name = "anniversary_date")
 	private LocalDate anniversaryDate;
+
+	@Column(name = "question_time")
+	private LocalTime questionTime;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "status", length = 10, nullable = false)
@@ -53,7 +57,7 @@ public class Couple extends BaseEntity {
 		Couple couple = Couple.builder()
 			.userA(userA)
 			.userB(userB)
-			.status(CoupleStatus.ACTIVE)
+			.status(CoupleStatus.PENDING)
 			.build();
 
 		userA.setCoupleAsA(couple);
