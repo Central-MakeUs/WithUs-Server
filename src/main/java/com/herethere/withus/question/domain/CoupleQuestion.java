@@ -11,6 +11,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -25,7 +26,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
-@Table(name = "couple_question")
+@Table(
+	name = "couple_question",
+	indexes = {
+		@Index(name = "idx_couple_created_desc", columnList = "couple_id, created_at DESC")
+	}
+)
 public class CoupleQuestion extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,6 +45,6 @@ public class CoupleQuestion extends BaseEntity {
 	@JoinColumn(name = "question_id")
 	private Question question;
 
-	@Column(name = "date")
+	@Column(name = "date", nullable = false)
 	private LocalDate date;
 }
