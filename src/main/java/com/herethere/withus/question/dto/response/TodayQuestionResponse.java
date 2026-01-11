@@ -2,8 +2,10 @@ package com.herethere.withus.question.dto.response;
 
 import java.time.LocalDateTime;
 
-public record TodayQuestionResponse(String question, MemberInfo myInfo, MemberInfo partnerInfo) {
+import lombok.Builder;
 
+public record TodayQuestionResponse(String question, MemberInfo myInfo, MemberInfo partnerInfo) {
+	@Builder
 	public record MemberInfo(
 		String name,
 		String profileImageUrl,
