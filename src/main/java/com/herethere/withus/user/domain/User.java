@@ -1,10 +1,7 @@
 package com.herethere.withus.user.domain;
 
-import static com.herethere.withus.common.exception.ErrorCode.*;
-
 import com.herethere.withus.auth.domain.OAuthProviderType;
 import com.herethere.withus.common.baseentity.BaseEntity;
-import com.herethere.withus.common.exception.ConflictException;
 import com.herethere.withus.couple.domain.Couple;
 
 import jakarta.persistence.Column;
@@ -15,14 +12,14 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Getter
@@ -36,9 +33,13 @@ public class User extends BaseEntity {
 	@Column(name = "id", nullable = false)
 	private Long id;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "couple_id")
-	private Couple couple;
+	@Setter
+	@OneToOne(mappedBy = "userA", fetch = FetchType.LAZY)
+	private Couple coupleAsA;
+
+	@Setter
+	@OneToOne(mappedBy = "userB", fetch = FetchType.LAZY)
+	private Couple coupleAsB;
 
 	@Column(name = "nickname", length = 50, nullable = false)
 	private String nickname;
@@ -62,11 +63,7 @@ public class User extends BaseEntity {
 		isInitialized = true;
 	}
 
-	public void assignCouple(Couple couple) {
-		if (this.couple != null) {
-			throw new ConflictException(COUPLE_ALREADY_EXISTS);
-		}
-		this.couple = couple;
+	public Couple getCouple() {
+		return coupleAsA != null ? coupleAsA : coupleAsB;
 	}
-
 }

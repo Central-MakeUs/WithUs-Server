@@ -8,16 +8,15 @@ import org.springframework.transaction.annotation.Transactional;
 import com.herethere.withus.common.exception.ConflictException;
 import com.herethere.withus.common.exception.NotFoundException;
 import com.herethere.withus.couple.domain.Couple;
-import com.herethere.withus.couple.domain.CoupleStatus;
 import com.herethere.withus.couple.dto.request.CoupleJoinPreviewRequest;
 import com.herethere.withus.couple.dto.request.CoupleJoinRequest;
 import com.herethere.withus.couple.dto.response.CoupleJoinPreviewResponse;
 import com.herethere.withus.couple.dto.response.CoupleJoinResponse;
 import com.herethere.withus.couple.repository.CoupleRepository;
-import com.herethere.withus.user.domain.CodeStatus;
 import com.herethere.withus.user.domain.InviteCode;
 import com.herethere.withus.user.domain.User;
 import com.herethere.withus.user.repository.InviteCodeRepository;
+import com.herethere.withus.user.repository.UserRepository;
 import com.herethere.withus.user.service.UserContextService;
 
 import lombok.RequiredArgsConstructor;
@@ -28,10 +27,11 @@ public class CoupleService {
 	private final UserContextService userContextService;
 	private final CoupleRepository coupleRepository;
 	private final InviteCodeRepository inviteCodeRepository;
+	private final UserRepository userRepository;
 
 	@Transactional(readOnly = true)
 	public CoupleJoinPreviewResponse checkCoupleJoinPreview(CoupleJoinPreviewRequest request) {
-		InviteCode inviteCode = getActiveInviteCode(request.inviteCode());
+		InviteCode inviteCode = getInviteCode(request.inviteCode());
 
 		User sender = inviteCode.getUser();
 		User receiver = userContextService.getCurrentUser();
@@ -49,7 +49,7 @@ public class CoupleService {
 
 	@Transactional
 	public CoupleJoinResponse joinCouple(CoupleJoinRequest request) {
-		InviteCode inviteCode = getActiveInviteCode(request.inviteCode());
+		InviteCode inviteCode = getInviteCode(request.inviteCode());
 
 		User sender = inviteCode.getUser();
 		User receiver = userContextService.getCurrentUser();
@@ -58,19 +58,20 @@ public class CoupleService {
 			throw new ConflictException(INVITED_SAME_USER);
 		}
 
-		Couple couple = coupleRepository.save(Couple.builder().status(CoupleStatus.ACTIVE).build());
+		if (sender.getCouple() != null || receiver.getCouple() != null) {
+			throw new ConflictException(COUPLE_ALREADY_EXISTS);
+		}
 
-		sender.assignCouple(couple);
-		receiver.assignCouple(couple);
+		Couple couple = coupleRepository.save(Couple.create(sender, receiver));
 
-		inviteCode.useCode();
-		inviteCodeRepository.findByUserAndStatus(receiver, CodeStatus.ACTIVE).ifPresent(InviteCode::useCode);
+		inviteCodeRepository.delete(inviteCode);
+		inviteCodeRepository.deleteByUser(receiver);
 
 		return new CoupleJoinResponse(couple.getId());
 	}
 
-	private InviteCode getActiveInviteCode(String code) {
-		return inviteCodeRepository.findByCodeAndStatus(code, CodeStatus.ACTIVE)
+	private InviteCode getInviteCode(String code) {
+		return inviteCodeRepository.findByCode(code)
 			.orElseThrow(() -> new NotFoundException(CODE_NOT_FOUND));
 	}
 }
