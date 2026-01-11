@@ -24,6 +24,6 @@ public class QuestionController implements QuestionApi {
 	@Override
 	public ResponseEntity<ApiResponse<Void>> uploadTodayQuestionImage(TodayQuestionImageRequest request) {
 		questionService.uploadTodayQuestionImage(request);
-		return null;
+		return ResponseEntity.ok(ApiResponse.success());
 	}
 }
