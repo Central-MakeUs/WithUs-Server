@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.herethere.withus.common.exception.ConflictException;
 import com.herethere.withus.common.exception.NotFoundException;
-import com.herethere.withus.user.domain.CodeStatus;
 import com.herethere.withus.user.domain.InviteCode;
 import com.herethere.withus.user.domain.User;
 import com.herethere.withus.user.dto.request.UserUpdateRequest;
@@ -43,7 +42,7 @@ public class UserService {
 		}
 
 		// inviteCode가 이미 존재하면 가져오고, 없으면 중복 확인해서 생성
-		InviteCode inviteCode = inviteCodeRepository.findByUserAndStatus(user, CodeStatus.ACTIVE)
+		InviteCode inviteCode = inviteCodeRepository.findByUser(user)
 			.orElseGet(
 				() -> {
 					return createNewInviteCode(user);
@@ -55,9 +54,9 @@ public class UserService {
 	private InviteCode createNewInviteCode(User user) {
 		for (int i = 0; i < 20; i++) {
 			String code = generate8DigitCode();
-			if (!inviteCodeRepository.existsByCodeAndStatus(code, CodeStatus.ACTIVE)) {
+			if (!inviteCodeRepository.existsByCode(code)) {
 				return inviteCodeRepository.save(
-					InviteCode.builder().user(user).code(code).status(CodeStatus.ACTIVE).build());
+					InviteCode.builder().user(user).code(code).build());
 			}
 		}
 		throw new NotFoundException(CODE_NOT_FOUND);
