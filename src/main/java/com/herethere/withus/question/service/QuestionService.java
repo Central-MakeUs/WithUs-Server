@@ -2,7 +2,10 @@ package com.herethere.withus.question.service;
 
 import static com.herethere.withus.common.exception.ErrorCode.*;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -61,9 +64,11 @@ public class QuestionService {
 
 		Optional<CoupleQuestion> optionalCoupleQuestion = coupleQuestionRepository.findTopByCoupleOrderByCreatedAtDesc(
 			couple);
+
+		// 만약 처음이라 CoupleQuestion이 없으면 대기 문구 반환
 		if (optionalCoupleQuestion.isEmpty()) {
-			return new TodayQuestionResponse("오늘의 랜덤 질문이 조금 후에 도착해요!", null, null);
-		} // Todo : question 시간 포함해서 수정하기
+			return new TodayQuestionResponse(generateWaitingResponse(couple), null, null);
+		}
 
 		CoupleQuestion coupleQuestion = optionalCoupleQuestion.get();
 
@@ -96,5 +101,21 @@ public class QuestionService {
 			.questionImageUrl(questionImageUrl)
 			.answeredAt(answeredAt)
 			.build();
+	}
+
+	private String generateWaitingResponse(Couple couple) {
+		LocalTime now = LocalTime.now(ZoneId.of("Asia/Seoul"));
+		LocalTime target = couple.getQuestionTime();
+		Duration duration = Duration.between(target, now);
+
+		long hours = duration.toHours();
+		if (hours < 0) {
+			hours += 24;
+		}
+
+		String positiveHours = String.valueOf(hours) + "시간 ";
+		String minutes = String.valueOf(duration.toMinutes());
+
+		return "오늘의 랜덤 질문이 " + positiveHours + minutes + "분 후에 도착해요!";
 	}
 }
