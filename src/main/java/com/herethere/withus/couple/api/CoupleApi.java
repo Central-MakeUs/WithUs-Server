@@ -15,7 +15,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
-@RequestMapping("/couples")
+@RequestMapping("/api/couples")
 @Tag(name = "커플 API")
 public interface CoupleApi {
 	@Operation(summary = "초대 코드 입력 API-1", description = "초대 코드를 입력하여 초대자의 이름을 확인합니다. "

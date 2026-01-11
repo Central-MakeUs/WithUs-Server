@@ -15,7 +15,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
-@RequestMapping("/users")
+@RequestMapping("/api/users")
 @Tag(name = "회원 API")
 public interface UserApi {
 	@Operation(summary = "유저 정보 수정 API", description = "유저 정보 수정 및 회원가입 이후 이 API로 초기 설정을 합니다.")
