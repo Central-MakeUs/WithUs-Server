@@ -109,16 +109,31 @@ public class QuestionService {
 	private String generateWaitingResponse(Couple couple) {
 		LocalTime now = LocalTime.now(ZoneId.of("Asia/Seoul"));
 		LocalTime target = couple.getQuestionTime();
-		Duration duration = Duration.between(target, now);
+		Duration duration = Duration.between(now, target);
 
-		long hours = duration.toHours();
-		if (hours < 0) {
-			hours += 24;
+		if (duration.isNegative()) {
+			duration = duration.plusDays(1);
 		}
 
-		String positiveHours = String.valueOf(hours) + "시간 ";
-		String minutes = String.valueOf(duration.toMinutes());
+		long hours = duration.toHours();
+		long minutes = duration.toMinutesPart();
 
-		return "오늘의 랜덤 질문이 " + positiveHours + minutes + "분 후에 도착해요!";
+		if (hours == 0 && minutes == 0) {
+			return "오늘의 랜덤 질문이 잠시 후 도착해요!";
+		}
+
+		StringBuilder sb = new StringBuilder("오늘의 랜덤 질문이 ");
+
+		if (hours > 0) {
+			sb.append(hours).append("시간 ");
+		}
+
+		if (minutes > 0) {
+			sb.append(minutes).append("분 ");
+		}
+
+		sb.append("후에 도착해요!");
+
+		return sb.toString();
 	}
 }
