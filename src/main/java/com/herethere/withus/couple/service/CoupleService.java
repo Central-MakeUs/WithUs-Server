@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.herethere.withus.common.exception.ConflictException;
 import com.herethere.withus.common.exception.NotFoundException;
 import com.herethere.withus.couple.domain.Couple;
-import com.herethere.withus.couple.domain.CoupleStatus;
 import com.herethere.withus.couple.dto.request.CoupleJoinPreviewRequest;
 import com.herethere.withus.couple.dto.request.CoupleJoinRequest;
 import com.herethere.withus.couple.dto.response.CoupleJoinPreviewResponse;
@@ -58,10 +57,11 @@ public class CoupleService {
 			throw new ConflictException(INVITED_SAME_USER);
 		}
 
-		Couple couple = coupleRepository.save(Couple.builder().status(CoupleStatus.ACTIVE).build());
+		if (sender.getCouple() != null || receiver.getCouple() != null) {
+			throw new ConflictException(COUPLE_ALREADY_EXISTS);
+		}
 
-		sender.assignCouple(couple);
-		receiver.assignCouple(couple);
+		Couple couple = coupleRepository.save(Couple.create(sender, receiver));
 
 		inviteCode.useCode();
 		inviteCodeRepository.findByUserAndStatus(receiver, CodeStatus.ACTIVE).ifPresent(InviteCode::useCode);

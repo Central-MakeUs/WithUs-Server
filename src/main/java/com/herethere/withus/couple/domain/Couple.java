@@ -35,11 +35,11 @@ public class Couple extends BaseEntity {
 	private Long id;
 
 	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_a_id", unique = true)
+	@JoinColumn(name = "user_a_id", unique = true, nullable = false)
 	private User userA;
 
 	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_b_id", unique = true)
+	@JoinColumn(name = "user_b_id", unique = true, nullable = false)
 	private User userB;
 
 	@Column(name = "anniversary_date", length = 20)
@@ -48,4 +48,17 @@ public class Couple extends BaseEntity {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "status", length = 10, nullable = false)
 	private CoupleStatus status;
+
+	public static Couple create(User userA, User userB) {
+		Couple couple = Couple.builder()
+			.userA(userA)
+			.userB(userB)
+			.status(CoupleStatus.ACTIVE)
+			.build();
+
+		userA.setCoupleAsA(couple);
+		userB.setCoupleAsB(couple);
+
+		return couple;
+	}
 }
