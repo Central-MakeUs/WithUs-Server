@@ -19,7 +19,7 @@ public class S3Controller implements S3Api {
 
 	@Override
 	public ResponseEntity<ApiResponse<PresignedUrlResponse>> getPresignedUrl(PresignedUrlRequest request) {
-		return null;
+		PresignedUrlResponse response = s3Service.createPresignedUrlResponse(request);
+		return ResponseEntity.ok(ApiResponse.success(response));
 	}
-
 }
