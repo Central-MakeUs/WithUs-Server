@@ -2,6 +2,7 @@ package com.herethere.withus.scheduling;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
 
@@ -24,10 +25,11 @@ public class CoupleQuestionScheduler {
 	private final QuestionService questionService;
 	private final CoupleRepository coupleRepository;
 
-	@Scheduled(cron = "5 * * * * *")
+	@Scheduled(cron = "5 * * * * *", zone = "Asia/Seoul")
 	public void processCoupleQuestions() {
-		LocalTime now = LocalTime.now();
-		LocalDate today = LocalDate.now();
+		ZoneId seoulZone = ZoneId.of("Asia/Seoul");
+		LocalTime now = LocalTime.now(seoulZone);
+		LocalDate today = LocalDate.now(seoulZone);
 
 		List<Couple> couples = coupleRepository.findCouplesToProcess(now, today);
 
@@ -36,7 +38,7 @@ public class CoupleQuestionScheduler {
 		for (Couple couple : couples) {
 			try {
 				// 2. 개별 커플 처리를 독립된 트랜잭션으로 실행
-				questionService.processCoupleQuestions(couple,questionMap, today);
+				questionService.processCoupleQuestions(couple, questionMap, today);
 			} catch (Exception e) {
 				log.error("커플 ID {} 처리 중 오류 발생: {}", couple.getId(), e.getMessage());
 			}
