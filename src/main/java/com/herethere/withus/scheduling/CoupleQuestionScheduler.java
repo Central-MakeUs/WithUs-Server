@@ -24,7 +24,7 @@ public class CoupleQuestionScheduler {
 	private final QuestionService questionService;
 	private final CoupleRepository coupleRepository;
 
-	@Scheduled(fixedDelay = 1 * 60 * 1000)
+	@Scheduled(cron = "5 * * * * *")
 	public void processCoupleQuestions() {
 		LocalTime now = LocalTime.now();
 		LocalDate today = LocalDate.now();
