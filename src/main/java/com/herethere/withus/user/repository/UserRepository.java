@@ -8,5 +8,5 @@ import com.herethere.withus.auth.domain.OAuthProviderType;
 import com.herethere.withus.user.domain.User;
 
 public interface UserRepository extends JpaRepository<User, Long> {
-	Optional<User> findByProviderAndProviderId(OAuthProviderType provider, Long providerId);
+	Optional<User> findByProviderAndProviderId(OAuthProviderType provider, String providerId);
 }

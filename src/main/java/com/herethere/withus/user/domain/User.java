@@ -48,8 +48,8 @@ public class User extends BaseEntity {
 	@Column(name = "provider", length = 10, nullable = false)
 	private OAuthProviderType provider;
 
-	@Column(name = "provider_id", nullable = false)
-	private Long providerId;
+	@Column(name = "provider_id", length = 50, nullable = false)
+	private String providerId;
 
 	@Column(name = "is_initialized", nullable = false)
 	private boolean isInitialized;
