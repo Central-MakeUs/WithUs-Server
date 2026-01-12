@@ -44,12 +44,12 @@ public class AuthService {
 	}
 
 	@Transactional
-	public LoginResponse generateTempToken() {
-		User user = userRepository.findByProviderAndProviderId(OAuthProviderType.KAKAO, 1234L)
+	public LoginResponse generateTempToken(String id) {
+		User user = userRepository.findByProviderAndProviderId(OAuthProviderType.KAKAO, id)
 			.orElseGet(() -> userRepository.save(
 				User.builder()
 					.provider(OAuthProviderType.KAKAO)
-					.providerId(1234L)
+					.providerId(id)
 					.nickname("tempUser")
 					.isInitialized(false)
 					.build()));

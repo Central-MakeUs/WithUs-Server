@@ -28,8 +28,8 @@ public class AuthController implements AuthApi {
 	}
 
 	@Override
-	public ResponseEntity<ApiResponse<LoginResponse>> generateTempToken() {
-		LoginResponse loginResponse = authService.generateTempToken();
+	public ResponseEntity<ApiResponse<LoginResponse>> generateTempToken(String id) {
+		LoginResponse loginResponse = authService.generateTempToken(id);
 		return ResponseEntity.ok(ApiResponse.success(loginResponse));
 	}
 }
