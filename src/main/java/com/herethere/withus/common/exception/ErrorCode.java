@@ -27,9 +27,11 @@ public enum ErrorCode {
 	// COUPLE
 	COUPLE_ALREADY_EXISTS(409, "사용자가 이미 커플이 존재합니다."),
 	COUPLE_NOT_INITIALIZED(409, "커플 기본 설정이 완료되지 않았습니다."),
+	COUPLE_NOT_FOUND(404, "해당 커플을 찾을 수 없습니다."),
 
 	// QUESTION
-	COUPLE_QUESTION_NOT_FOUND(404, "질문이 존재하지 않습니다."),
+	QUESTION_NOT_FOUND(404, "해당 질문이 존재하지 않습니다."),
+	COUPLE_QUESTION_NOT_FOUND(404, "해당 커플의 질문이 아직 존재하지 않습니다."),
 	PICTURE_ALREADY_UPLOADED(409, "이미 사진을 업로드 했습니다."),
 
 	// INVITATION_CODE

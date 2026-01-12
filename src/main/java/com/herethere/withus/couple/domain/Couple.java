@@ -57,14 +57,14 @@ public class Couple extends BaseEntity {
 	private LocalDate lastQuestionDate;
 
 	@Column(name = "last_question_index", nullable = false)
-	private int lastQuestionIndex;
+	private long lastQuestionIndex;
 
 	public static Couple create(User userA, User userB) {
 		Couple couple = Couple.builder()
 			.userA(userA)
 			.userB(userB)
 			.status(CoupleStatus.PENDING)
-			.lastQuestionIndex(0)
+			.lastQuestionIndex(0L)
 			.build();
 
 		userA.setCoupleAsA(couple);
@@ -75,5 +75,11 @@ public class Couple extends BaseEntity {
 
 	public User getPartner(Long userId) {
 		return userA.getId().equals(userId) ? userB : userA;
+	}
+
+	public long updateToNextQuestion(LocalDate date) {
+		lastQuestionDate = date;
+		lastQuestionIndex++;
+		return lastQuestionIndex;
 	}
 }

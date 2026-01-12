@@ -3,19 +3,25 @@ package com.herethere.withus.question.service;
 import static com.herethere.withus.common.exception.ErrorCode.*;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.herethere.withus.common.annotation.RequiresActiveCouple;
 import com.herethere.withus.common.exception.ConflictException;
 import com.herethere.withus.common.exception.NotFoundException;
 import com.herethere.withus.couple.domain.Couple;
+import com.herethere.withus.couple.repository.CoupleRepository;
 import com.herethere.withus.question.domain.CoupleQuestion;
+import com.herethere.withus.question.domain.Question;
 import com.herethere.withus.question.domain.QuestionPicture;
 import com.herethere.withus.question.dto.request.TodayQuestionImageRequest;
 import com.herethere.withus.question.dto.response.TodayQuestionResponse;
@@ -26,6 +32,7 @@ import com.herethere.withus.s3.service.S3Service;
 import com.herethere.withus.user.domain.User;
 import com.herethere.withus.user.service.UserContextService;
 
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -34,8 +41,25 @@ public class QuestionService {
 	private final QuestionRepository questionRepository;
 	private final QuestionPictureRepository questionPictureRepository;
 	private final CoupleQuestionRepository coupleQuestionRepository;
+	private final CoupleRepository coupleRepository;
 	private final S3Service s3Service;
 	private final UserContextService userContextService;
+
+	private Map<Long, Question> cachedQuestions;
+
+	@PostConstruct
+	public void init() {
+		cachedQuestions = questionRepository.findAll()
+			.stream()
+			.collect(Collectors.toMap(
+				Question::getId,
+				q -> q
+			));
+	}
+
+	public Map<Long, Question> getAllQuestionMap() {
+		return cachedQuestions;
+	}
 
 	@Transactional
 	@RequiresActiveCouple
@@ -84,6 +108,23 @@ public class QuestionService {
 		TodayQuestionResponse.MemberInfo partnerInfo = getMemberInfo(partner, partnerPicture);
 
 		return new TodayQuestionResponse(coupleQuestion.getQuestion().getContent(), myInfo, partnerInfo);
+	}
+
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	public void processCoupleQuestions(Couple couple, Map<Long, Question> questionMap, LocalDate date) {
+		// couple 영속성 컨텍스트 관리
+		couple = coupleRepository.findByIdWithLock(couple.getId())
+			.orElseThrow(() -> new NotFoundException(COUPLE_NOT_FOUND));
+
+		long questionId = couple.updateToNextQuestion(date);
+		Question question = questionMap.get(questionId);
+		if (question == null) {
+			throw new NotFoundException(QUESTION_NOT_FOUND);
+		}
+
+		CoupleQuestion coupleQuestion = CoupleQuestion.builder().couple(couple).question(question).date(date).build();
+
+		coupleQuestionRepository.save(coupleQuestion);
 	}
 
 	private TodayQuestionResponse.MemberInfo getMemberInfo(User user, QuestionPicture questionPicture) {
