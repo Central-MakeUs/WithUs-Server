@@ -53,11 +53,18 @@ public class Couple extends BaseEntity {
 	@Column(name = "status", length = 10, nullable = false)
 	private CoupleStatus status;
 
+	@Column(name = "last_question_date")
+	private LocalDate lastQuestionDate;
+
+	@Column(name = "last_question_index", nullable = false)
+	private int lastQuestionIndex;
+
 	public static Couple create(User userA, User userB) {
 		Couple couple = Couple.builder()
 			.userA(userA)
 			.userB(userB)
 			.status(CoupleStatus.PENDING)
+			.lastQuestionIndex(0)
 			.build();
 
 		userA.setCoupleAsA(couple);
