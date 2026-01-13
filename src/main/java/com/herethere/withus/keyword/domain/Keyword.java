@@ -26,7 +26,7 @@ public class Keyword extends BaseEntity {
 	@Column(name = "id", nullable = false)
 	private Long id;
 
-	@Column(name = "content", nullable = false, length = 10)
+	@Column(name = "content", nullable = false, unique = true, length = 10)
 	private String content;
 
 	@Column(name = "display_order")
