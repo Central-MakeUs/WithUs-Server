@@ -54,7 +54,7 @@ public class User extends BaseEntity {
 	@Column(name = "is_initialized", nullable = false)
 	private boolean isInitialized;
 
-	@Column(name = "profile_image_key", length = 2048)
+	@Column(name = "profile_image_key", length = 255)
 	private String profileImageKey;
 
 	public void initializeProfile(String nickname, String profileImageKey) {
