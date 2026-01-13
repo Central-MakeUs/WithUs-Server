@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.herethere.withus.common.annotation.RequiresActiveCouple;
 import com.herethere.withus.common.exception.ConflictException;
+import com.herethere.withus.common.exception.ForbiddenException;
 import com.herethere.withus.common.exception.NotFoundException;
 import com.herethere.withus.couple.domain.Couple;
 import com.herethere.withus.couple.repository.CoupleRepository;
@@ -66,8 +67,12 @@ public class QuestionService {
 	public void uploadTodayQuestionImage(TodayQuestionImageRequest request) {
 		User user = userContextService.getCurrentUser();
 		Couple couple = user.getCouple();
-		CoupleQuestion coupleQuestion = coupleQuestionRepository.findTopByCoupleOrderByCreatedAtDesc(couple)
+		CoupleQuestion coupleQuestion = coupleQuestionRepository.findById(request.coupleQuestionId())
 			.orElseThrow(() -> new NotFoundException(COUPLE_QUESTION_NOT_FOUND));
+
+		if (!coupleQuestion.getCouple().getId().equals(couple.getId())) {
+			throw new ForbiddenException(ACCESS_DENIED);
+		}
 
 		if (questionPictureRepository.existsByUserAndCoupleQuestion(user, coupleQuestion)) {
 			throw new ConflictException(PICTURE_ALREADY_UPLOADED);

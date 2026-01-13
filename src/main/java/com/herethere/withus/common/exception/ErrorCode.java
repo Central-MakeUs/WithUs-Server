@@ -45,8 +45,11 @@ public enum ErrorCode {
 	// INVALID_INPUT
 	INVALID_INPUT(400, "잘못된 입력입니다."),
 
+	// ACCESS_DENIED
+	ACCESS_DENIED(403, "잘못된 접근입니다."),
+
 	// AUTH
-	UNAUTHENTICATED_USER(401, "인증되지 않은 사용자입니다.");;
+	UNAUTHENTICATED_USER(401, "인증되지 않은 사용자입니다.");
 
 	private final int status;
 	private final String message;
