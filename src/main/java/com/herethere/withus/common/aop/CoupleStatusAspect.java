@@ -24,7 +24,7 @@ public class CoupleStatusAspect {
 		Couple couple = userContextService.getCurrentUser().getCouple();
 
 		if (couple == null || couple.getStatus() != CoupleStatus.ACTIVE) {
-			throw new ConflictException(ErrorCode.COUPLE_NOT_INITIALIZED);
+			throw new ConflictException(ErrorCode.COUPLE_NOT_ACTIVE);
 		}
 	}
 }
