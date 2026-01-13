@@ -33,7 +33,7 @@ public interface CoupleApi {
 		@Valid @RequestBody CoupleJoinRequest coupleJoinRequest
 	);
 
-	@Operation(summary = "커플 기본 세팅 설정", description = "키워드와 시간을 설정합니다.")
+	@Operation(summary = "커플 기본 세팅 설정", description = "키워드와 시간을 설정합니다. 리스트는 NotNull 입니다.")
 	@PatchMapping("/settings")
 	ResponseEntity<ApiResponse<Void>> initializeCoupleSettings(
 		@Valid @RequestBody CoupleInitializeRequest coupleInitializeRequest
