@@ -94,7 +94,7 @@ public class QuestionService {
 
 		// 만약 처음이라 CoupleQuestion이 없으면 대기 문구 반환
 		if (optionalCoupleQuestion.isEmpty()) {
-			return new TodayQuestionResponse(generateWaitingResponse(couple), null, null);
+			return new TodayQuestionResponse(null, generateWaitingResponse(couple), null, null);
 		}
 
 		CoupleQuestion coupleQuestion = optionalCoupleQuestion.get();
@@ -107,7 +107,8 @@ public class QuestionService {
 		TodayQuestionResponse.MemberInfo myInfo = getMemberInfo(me, myPicture);
 		TodayQuestionResponse.MemberInfo partnerInfo = getMemberInfo(partner, partnerPicture);
 
-		return new TodayQuestionResponse(coupleQuestion.getQuestion().getContent(), myInfo, partnerInfo);
+		return new TodayQuestionResponse(coupleQuestion.getId(), coupleQuestion.getQuestion().getContent(), myInfo,
+			partnerInfo);
 	}
 
 	@Transactional(propagation = Propagation.REQUIRES_NEW)

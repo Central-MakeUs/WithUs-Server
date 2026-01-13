@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 import lombok.Builder;
 
-public record TodayQuestionResponse(String question, MemberInfo myInfo, MemberInfo partnerInfo) {
+public record TodayQuestionResponse(Long questionId, String question, MemberInfo myInfo, MemberInfo partnerInfo) {
 	@Builder
 	public record MemberInfo(
 		String name,
