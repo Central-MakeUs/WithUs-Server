@@ -2,7 +2,7 @@ package com.herethere.withus.couple.service;
 
 import static com.herethere.withus.common.exception.ErrorCode.*;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -97,14 +97,29 @@ public class CoupleService {
 			throw new ConflictException(COUPLE_DELETED);
 		}
 
-		Set<Keyword> finalKeywords = new HashSet<>();
-		finalKeywords.addAll(keywordRepository.findAllById(request.defaultKeywordIds()));
+		Set<Keyword> finalKeywords = getFinalKeywords(request.defaultKeywordIds(), request.customKeywords());
+
+		List<CoupleKeyword> coupleKeywords = finalKeywords.stream()
+			.map(k -> CoupleKeyword.builder()
+				.keyword(k)
+				.couple(couple)
+				.build())
+			.toList();
+
+		coupleKeywordRepository.saveAll(coupleKeywords);
+
+		couple.initialize(request.questionTime());
+	}
+
+	private Set<Keyword> getFinalKeywords(List<Long> defaultKeywordIds, List<String> customKeywords) {
+		Set<Keyword> finalKeywords = new LinkedHashSet<>();
+		finalKeywords.addAll(keywordRepository.findAllById(defaultKeywordIds));
 
 		// 커스텀 키워드 저장
-		List<String> customKeywords = request.customKeywords();
 		for (String keywordContent : customKeywords) {
 			String trimmedKeyword = keywordContent.trim();
-			if (trimmedKeyword.isEmpty()) continue;
+			if (trimmedKeyword.isEmpty())
+				continue;
 			Keyword keyword = keywordRepository.findByContent(trimmedKeyword).orElseGet(
 				() -> {
 					return keywordRepository.save(
@@ -117,17 +132,7 @@ public class CoupleService {
 			);
 			finalKeywords.add(keyword);
 		}
-
-		List<CoupleKeyword> coupleKeywords = finalKeywords.stream()
-			.map(k -> CoupleKeyword.builder()
-				.keyword(k)
-				.couple(couple)
-				.build())
-			.toList();
-
-		coupleKeywordRepository.saveAll(coupleKeywords);
-
-		couple.initialize(request.questionTime());
+		return finalKeywords;
 	}
 
 	private InviteCode getInviteCode(String code) {
