@@ -36,6 +36,7 @@ public class CoupleController implements CoupleApi {
 	@Override
 	public ResponseEntity<ApiResponse<Void>> initializeCoupleSettings(
 		CoupleInitializeRequest coupleInitializeRequest) {
-		return null;
+		coupleService.initializeCoupleSettings(coupleInitializeRequest);
+		return ResponseEntity.ok((ApiResponse.success()));
 	}
 }

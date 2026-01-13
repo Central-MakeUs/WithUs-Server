@@ -82,4 +82,11 @@ public class Couple extends BaseEntity {
 		lastQuestionIndex++;
 		return lastQuestionIndex;
 	}
+
+	public void initialize(LocalTime questionTime) {
+		this.questionTime = questionTime;
+		if (status == CoupleStatus.PENDING) {
+			status = CoupleStatus.ACTIVE;
+		}
+	}
 }
