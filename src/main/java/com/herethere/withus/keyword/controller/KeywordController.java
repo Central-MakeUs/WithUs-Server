@@ -32,7 +32,8 @@ public class KeywordController implements KeywordApi {
 
 	@Override
 	public ResponseEntity<ApiResponse<TodayKeywordResponse>> getTodayCoupleKeyword(Long coupleKeywordId) {
-		return null;
+		TodayKeywordResponse response = keywordService.getTodayCoupleKeyword(coupleKeywordId);
+		return ResponseEntity.ok(ApiResponse.success(response));
 	}
 
 	@Override
