@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.herethere.withus.common.annotation.RequiresActiveCouple;
+import com.herethere.withus.common.exception.ConflictException;
 import com.herethere.withus.common.exception.ErrorCode;
 import com.herethere.withus.common.exception.ForbiddenException;
 import com.herethere.withus.common.exception.NotFoundException;
@@ -17,6 +18,7 @@ import com.herethere.withus.couple.domain.CoupleKeyword;
 import com.herethere.withus.couple.repository.CoupleKeywordRepository;
 import com.herethere.withus.keyword.domain.Keyword;
 import com.herethere.withus.keyword.domain.KeywordRecord;
+import com.herethere.withus.keyword.dto.request.TodayKeywordImageRequest;
 import com.herethere.withus.keyword.dto.response.CoupleKeywordsResponse;
 import com.herethere.withus.keyword.dto.response.DefaultKeywordsResponse;
 import com.herethere.withus.keyword.dto.response.TodayKeywordResponse;
@@ -87,6 +89,33 @@ public class KeywordService {
 		TodayKeywordResponse.MemberInfo partnerInfo = getMemberInfo(partner, partnerRecord);
 
 		return new TodayKeywordResponse(coupleKeyword.getId(), generateKeywordQuestion(keyword), myInfo, partnerInfo);
+	}
+
+	@Transactional
+	@RequiresActiveCouple
+	public void uploadTodayCoupleKeywordPicture(Long coupleKeywordId, TodayKeywordImageRequest request) {
+		User user = userContextService.getCurrentUser();
+		Couple couple = user.getCouple();
+		LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
+
+		CoupleKeyword coupleKeyword = coupleKeywordRepository.findById((coupleKeywordId))
+			.orElseThrow(() -> new NotFoundException(ErrorCode.COUPLE_KEYWORD_NOT_FOUND));
+
+		if (!coupleKeyword.getCouple().getId().equals(couple.getId())) {
+			throw new ForbiddenException(ErrorCode.ACCESS_DENIED);
+		}
+
+		if (keywordRecordRepository.existsByUserAndCoupleKeywordAndDate(user, coupleKeyword, today)) {
+			throw new ConflictException(ErrorCode.PICTURE_ALREADY_UPLOADED);
+		}
+
+		KeywordRecord keywordRecord = KeywordRecord.builder()
+			.coupleKeyword(coupleKeyword)
+			.user(user)
+			.date(today)
+			.imageKey(request.imageKey())
+			.build();
+		keywordRecordRepository.save(keywordRecord);
 	}
 
 	private TodayKeywordResponse.MemberInfo getMemberInfo(User user, KeywordRecord keywordRecord) {

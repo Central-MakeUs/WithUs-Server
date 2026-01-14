@@ -11,4 +11,6 @@ import com.herethere.withus.user.domain.User;
 
 public interface KeywordRecordRepository extends JpaRepository<KeywordRecord, Long> {
 	Optional<KeywordRecord> findByUserAndCoupleKeywordAndDate(User user, CoupleKeyword coupleKeyword, LocalDate date);
+
+	boolean existsByUserAndCoupleKeywordAndDate(User user, CoupleKeyword coupleKeyword, LocalDate date);
 }

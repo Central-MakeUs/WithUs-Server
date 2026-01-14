@@ -39,6 +39,7 @@ public class KeywordController implements KeywordApi {
 	@Override
 	public ResponseEntity<ApiResponse<Void>> uploadTodayCoupleKeywordPicture(Long coupleKeywordId,
 		TodayKeywordImageRequest request) {
-		return null;
+		keywordService.uploadTodayCoupleKeywordPicture(coupleKeywordId, request);
+		return ResponseEntity.ok(ApiResponse.success());
 	}
 }
