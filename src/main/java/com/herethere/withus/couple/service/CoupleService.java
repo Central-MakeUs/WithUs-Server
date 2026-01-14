@@ -118,8 +118,9 @@ public class CoupleService {
 		// 커스텀 키워드 저장
 		for (String keywordContent : customKeywords) {
 			String trimmedKeyword = keywordContent.trim();
-			if (trimmedKeyword.isEmpty())
+			if (trimmedKeyword.isEmpty()) {
 				continue;
+			}
 			Keyword keyword = keywordRepository.findByContent(trimmedKeyword).orElseGet(
 				() -> {
 					return keywordRepository.save(
