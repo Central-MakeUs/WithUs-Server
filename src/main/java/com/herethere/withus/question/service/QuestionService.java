@@ -64,10 +64,10 @@ public class QuestionService {
 
 	@Transactional
 	@RequiresActiveCouple
-	public void uploadTodayQuestionImage(TodayQuestionImageRequest request) {
+	public void uploadTodayQuestionImage(Long coupleQuestionId, TodayQuestionImageRequest request) {
 		User user = userContextService.getCurrentUser();
 		Couple couple = user.getCouple();
-		CoupleQuestion coupleQuestion = coupleQuestionRepository.findById(request.coupleQuestionId())
+		CoupleQuestion coupleQuestion = coupleQuestionRepository.findById(coupleQuestionId)
 			.orElseThrow(() -> new NotFoundException(COUPLE_QUESTION_NOT_FOUND));
 
 		if (!coupleQuestion.getCouple().getId().equals(couple.getId())) {

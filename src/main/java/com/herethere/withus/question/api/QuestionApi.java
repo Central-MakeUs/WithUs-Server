@@ -2,6 +2,7 @@ package com.herethere.withus.question.api;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +23,7 @@ public interface QuestionApi {
 	ResponseEntity<ApiResponse<TodayQuestionResponse>> getTodayQuestion();
 
 	@Operation(summary = "커플의 오늘 질문에 대한 사진 전송")
-	@PostMapping("/couple/question/today/image")
-	ResponseEntity<ApiResponse<Void>> uploadTodayQuestionImage(@Valid @RequestBody TodayQuestionImageRequest request);
+	@PostMapping("/couple/questions/{coupleQuestionId}/image")
+	ResponseEntity<ApiResponse<Void>> uploadTodayQuestionImage(@PathVariable Long coupleQuestionId,
+		@Valid @RequestBody TodayQuestionImageRequest request);
 }
