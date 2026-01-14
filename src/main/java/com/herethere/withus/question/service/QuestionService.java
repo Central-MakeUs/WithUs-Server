@@ -53,7 +53,7 @@ public class QuestionService {
 		cachedQuestions = questionRepository.findAll()
 			.stream()
 			.collect(Collectors.toMap(
-				Question::getId,
+				Question::getQuestionNumber,
 				q -> q
 			));
 	}

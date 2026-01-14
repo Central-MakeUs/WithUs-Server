@@ -29,6 +29,6 @@ public class Question extends BaseEntity {
 	@Column(name = "content", length = 255, nullable = false)
 	private String content;
 
-	@Column(name = "question_order", nullable = false)
-	private int questionOrder;
+	@Column(name = "question_number", nullable = false)
+	private Long questionNumber;
 }
