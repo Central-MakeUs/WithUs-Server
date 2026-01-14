@@ -2,6 +2,7 @@ package com.herethere.withus.keyword.domain;
 
 import java.time.LocalDate;
 
+import com.herethere.withus.common.baseentity.BaseEntity;
 import com.herethere.withus.couple.domain.CoupleKeyword;
 import com.herethere.withus.user.domain.User;
 
@@ -14,6 +15,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,8 +27,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
-@Table(name = "keyword_record")
-public class KeywordRecord {
+@Table(name = "keyword_record",
+	uniqueConstraints = {
+		@UniqueConstraint(
+			name = "uk_keyword_record_user_date",
+			columnNames = {"user_id", "couple_keyword_id", "date"}
+		)
+	}
+)
+public class KeywordRecord extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id", nullable = false)

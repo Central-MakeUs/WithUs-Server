@@ -2,14 +2,20 @@ package com.herethere.withus.keyword.api;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.herethere.withus.common.apiresponse.ApiResponse;
+import com.herethere.withus.keyword.dto.request.TodayKeywordImageRequest;
 import com.herethere.withus.keyword.dto.response.CoupleKeywordsResponse;
 import com.herethere.withus.keyword.dto.response.DefaultKeywordsResponse;
+import com.herethere.withus.keyword.dto.response.TodayKeywordResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 
 @RequestMapping("/api")
 @Tag(name = "키워드 API")
@@ -21,4 +27,13 @@ public interface KeywordApi {
 	@Operation(summary = "커플 키워드 목록 조회", description = "커플이 설정한 키워드 목록을 조회합니다.")
 	@GetMapping("/me/couple/keywords")
 	ResponseEntity<ApiResponse<CoupleKeywordsResponse>> getCoupleKeywords();
+
+	@Operation(summary = "우리 커플의 오늘 키워드 사진 조회", description = "오늘의 커플 키워드 사진을 조회합니다.")
+	@GetMapping("/me/couple/keywords/{coupleKeywordId}/today")
+	ResponseEntity<ApiResponse<TodayKeywordResponse>> getTodayCoupleKeyword(@PathVariable Long coupleKeywordId);
+
+	@Operation(summary = "커플의 오늘 키워드에 대한 사진 전송", description = "오늘의 커플 키워드 사진을 업로드합니다.")
+	@PostMapping("/me/couple/keywords/{coupleKeywordId}/today/image")
+	ResponseEntity<ApiResponse<Void>> uploadTodayCoupleKeywordPicture(@PathVariable Long coupleKeywordId,
+		@Valid @RequestBody TodayKeywordImageRequest request);
 }
