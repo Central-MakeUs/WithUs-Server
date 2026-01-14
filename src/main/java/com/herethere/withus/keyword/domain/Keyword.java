@@ -30,7 +30,7 @@ public class Keyword extends BaseEntity {
 	private String content;
 
 	@Column(name = "display_order")
-	private Integer displayOrder;
+	private Long displayOrder;
 
 	@Column(name = "is_default", nullable = false)
 	private boolean isDefault;
