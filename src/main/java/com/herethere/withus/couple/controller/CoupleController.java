@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.herethere.withus.common.apiresponse.ApiResponse;
 import com.herethere.withus.couple.api.CoupleApi;
+import com.herethere.withus.couple.dto.request.CoupleInitializeRequest;
 import com.herethere.withus.couple.dto.request.CoupleJoinPreviewRequest;
 import com.herethere.withus.couple.dto.request.CoupleJoinRequest;
 import com.herethere.withus.couple.dto.response.CoupleJoinPreviewResponse;
@@ -30,5 +31,12 @@ public class CoupleController implements CoupleApi {
 	public ResponseEntity<ApiResponse<CoupleJoinResponse>> joinCouple(CoupleJoinRequest coupleJoinRequest) {
 		CoupleJoinResponse response = coupleService.joinCouple(coupleJoinRequest);
 		return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(response));
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<Void>> initializeCoupleSettings(
+		CoupleInitializeRequest coupleInitializeRequest) {
+		coupleService.initializeCoupleSettings(coupleInitializeRequest);
+		return ResponseEntity.ok((ApiResponse.success()));
 	}
 }

@@ -1,11 +1,13 @@
 package com.herethere.withus.couple.api;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.herethere.withus.common.apiresponse.ApiResponse;
+import com.herethere.withus.couple.dto.request.CoupleInitializeRequest;
 import com.herethere.withus.couple.dto.request.CoupleJoinPreviewRequest;
 import com.herethere.withus.couple.dto.request.CoupleJoinRequest;
 import com.herethere.withus.couple.dto.response.CoupleJoinPreviewResponse;
@@ -29,5 +31,11 @@ public interface CoupleApi {
 	@PostMapping("/join")
 	ResponseEntity<ApiResponse<CoupleJoinResponse>> joinCouple(
 		@Valid @RequestBody CoupleJoinRequest coupleJoinRequest
+	);
+
+	@Operation(summary = "커플 기본 세팅 설정", description = "키워드와 시간을 설정합니다. 리스트는 NotNull 입니다.")
+	@PatchMapping("/settings")
+	ResponseEntity<ApiResponse<Void>> initializeCoupleSettings(
+		@Valid @RequestBody CoupleInitializeRequest coupleInitializeRequest
 	);
 }
