@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.herethere.withus.common.annotation.RequiresActiveCouple;
 import com.herethere.withus.couple.domain.Couple;
 import com.herethere.withus.couple.domain.CoupleKeyword;
 import com.herethere.withus.couple.repository.CoupleKeywordRepository;
@@ -34,6 +35,7 @@ public class KeywordService {
 	}
 
 	@Transactional(readOnly = true)
+	@RequiresActiveCouple
 	public CoupleKeywordsResponse getCoupleKeywords() {
 		User user = userContextService.getCurrentUser();
 		Couple couple = user.getCouple();
