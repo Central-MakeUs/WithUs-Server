@@ -24,6 +24,7 @@ public class KeywordController implements KeywordApi {
 
 	@Override
 	public ResponseEntity<ApiResponse<CoupleKeywordsResponse>> getCoupleKeywords() {
-		return null;
+		CoupleKeywordsResponse response = keywordService.getCoupleKeywords();
+		return ResponseEntity.ok(ApiResponse.success(response));
 	}
 }
