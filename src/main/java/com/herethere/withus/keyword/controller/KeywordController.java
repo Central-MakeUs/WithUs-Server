@@ -7,16 +7,19 @@ import com.herethere.withus.common.apiresponse.ApiResponse;
 import com.herethere.withus.keyword.api.KeywordApi;
 import com.herethere.withus.keyword.dto.response.CoupleKeywordsResponse;
 import com.herethere.withus.keyword.dto.response.DefaultKeywordsResponse;
+import com.herethere.withus.keyword.service.KeywordService;
 
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
 public class KeywordController implements KeywordApi {
+	private final KeywordService keywordService;
 
 	@Override
 	public ResponseEntity<ApiResponse<DefaultKeywordsResponse>> getDefaultKeywords() {
-		return null;
+		DefaultKeywordsResponse response = keywordService.getDefaultKeywords();
+		return ResponseEntity.ok(ApiResponse.success(response));
 	}
 
 	@Override

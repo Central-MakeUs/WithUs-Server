@@ -1,4 +1,8 @@
 package com.herethere.withus.keyword.dto.response;
 
-public record DefaultKeywordsResponse() {
+import java.util.List;
+
+public record DefaultKeywordsResponse(List<KeywordInfo> keywordInfoList) {
+	public record KeywordInfo(Long keywordId, String content, Long displayOrder) {
+	}
 }
