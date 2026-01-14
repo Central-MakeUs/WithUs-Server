@@ -122,8 +122,8 @@ public class QuestionService {
 		couple = coupleRepository.findByIdWithLock(couple.getId())
 			.orElseThrow(() -> new NotFoundException(COUPLE_NOT_FOUND));
 
-		long questionId = couple.updateToNextQuestion(date);
-		Question question = questionMap.get(questionId);
+		long questionNumber = couple.updateToNextQuestion(date);
+		Question question = questionMap.get(questionNumber);
 		if (question == null) {
 			throw new NotFoundException(QUESTION_NOT_FOUND);
 		}
