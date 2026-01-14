@@ -29,7 +29,7 @@ public class Keyword extends BaseEntity {
 	@Column(name = "content", nullable = false, unique = true, length = 10)
 	private String content;
 
-	@Column(name = "display_order")
+	@Column(name = "display_order", unique = true)
 	private Long displayOrder;
 
 	@Column(name = "is_default", nullable = false)

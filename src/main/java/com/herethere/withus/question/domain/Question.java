@@ -29,6 +29,6 @@ public class Question extends BaseEntity {
 	@Column(name = "content", length = 255, nullable = false)
 	private String content;
 
-	@Column(name = "question_number", nullable = false)
+	@Column(name = "question_number", nullable = false, unique = true)
 	private Long questionNumber;
 }
