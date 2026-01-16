@@ -10,6 +10,7 @@ import com.herethere.withus.auth.oauthclient.OAuthClient;
 import com.herethere.withus.auth.oauthclient.OAuthClientFactory;
 import com.herethere.withus.common.jwt.JwtUtil;
 import com.herethere.withus.common.jwt.dto.JwtPayload;
+import com.herethere.withus.notification.service.FcmTokenService;
 import com.herethere.withus.user.domain.User;
 import com.herethere.withus.user.repository.UserRepository;
 
@@ -21,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 public class AuthService {
 	private static final String PREFIX_GUEST = "GUEST_";
 	private final OAuthClientFactory oauthClientFactory;
+	private final FcmTokenService fcmTokenService;
 	private final UserRepository userRepository;
 	private final JwtUtil jwtUtil;
 
@@ -37,6 +39,8 @@ public class AuthService {
 					.nickname(PREFIX_GUEST + userInfo.oauthUserId())
 					.isInitialized(false)
 					.build()));
+		// FCM 토큰 저장
+		fcmTokenService.saveOrUpdateToken(user, request.fcmToken());
 
 		JwtPayload jwtPayload = new JwtPayload(user.getId(), user.getNickname());
 		String jwt = jwtUtil.createToken(jwtPayload);
@@ -44,7 +48,7 @@ public class AuthService {
 	}
 
 	@Transactional
-	public LoginResponse generateTempToken(String id) {
+	public LoginResponse generateTempToken(String id, String fcmToken) {
 		User user = userRepository.findByProviderAndProviderId(OAuthProviderType.KAKAO, id)
 			.orElseGet(() -> userRepository.save(
 				User.builder()
@@ -53,6 +57,9 @@ public class AuthService {
 					.nickname("tempUser")
 					.isInitialized(false)
 					.build()));
+
+		fcmTokenService.saveOrUpdateToken(user, fcmToken);
+
 		JwtPayload jwtPayload = new JwtPayload(user.getId(), user.getNickname());
 		String jwt = jwtUtil.createToken(jwtPayload);
 		return new LoginResponse(jwt, user.isInitialized());

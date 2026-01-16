@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.herethere.withus.auth.dto.request.LoginRequest;
 import com.herethere.withus.auth.dto.response.LoginResponse;
@@ -33,5 +34,5 @@ public interface AuthApi {
 		temp 유저에 대한 임시 토큰을 발급합니다.
 		""")
 	@PostMapping("/temp/token/{id}")
-	ResponseEntity<ApiResponse<LoginResponse>> generateTempToken(@PathVariable String id);
+	ResponseEntity<ApiResponse<LoginResponse>> generateTempToken(@PathVariable String id, @RequestParam String fcmToken);
 }
