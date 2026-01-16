@@ -10,7 +10,7 @@ import com.herethere.withus.auth.oauthclient.OAuthClient;
 import com.herethere.withus.auth.oauthclient.OAuthClientFactory;
 import com.herethere.withus.common.jwt.JwtUtil;
 import com.herethere.withus.common.jwt.dto.JwtPayload;
-import com.herethere.withus.notification.service.FcmTokenService;
+import com.herethere.withus.notification.service.FcmTokenManager;
 import com.herethere.withus.user.domain.User;
 import com.herethere.withus.user.repository.UserRepository;
 
@@ -22,7 +22,7 @@ import lombok.RequiredArgsConstructor;
 public class AuthService {
 	private static final String PREFIX_GUEST = "GUEST_";
 	private final OAuthClientFactory oauthClientFactory;
-	private final FcmTokenService fcmTokenService;
+	private final FcmTokenManager fcmTokenManager;
 	private final UserRepository userRepository;
 	private final JwtUtil jwtUtil;
 
@@ -40,7 +40,7 @@ public class AuthService {
 					.isInitialized(false)
 					.build()));
 		// FCM 토큰 저장
-		fcmTokenService.saveOrUpdateToken(user, request.fcmToken());
+		fcmTokenManager.saveOrUpdateToken(user, request.fcmToken());
 
 		JwtPayload jwtPayload = new JwtPayload(user.getId(), user.getNickname());
 		String jwt = jwtUtil.createToken(jwtPayload);
@@ -58,7 +58,7 @@ public class AuthService {
 					.isInitialized(false)
 					.build()));
 
-		fcmTokenService.saveOrUpdateToken(user, fcmToken);
+		fcmTokenManager.saveOrUpdateToken(user, fcmToken);
 
 		JwtPayload jwtPayload = new JwtPayload(user.getId(), user.getNickname());
 		String jwt = jwtUtil.createToken(jwtPayload);
