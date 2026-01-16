@@ -11,6 +11,7 @@ services:
       - "8080:8080"
     volumes:
       - ./logs:/logs
+      - ./config/firebase-key.json:/app/config/firebase-key.json:ro
     networks:
       - withus-network
     restart: unless-stopped
