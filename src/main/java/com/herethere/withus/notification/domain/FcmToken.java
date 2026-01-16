@@ -38,7 +38,7 @@ public class FcmToken extends BaseEntity {
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	private User user;
 
-	@Column(name = "token", columnDefinition = "TEXT", nullable = false, unique = true)
+	@Column(name = "token", length = 512, nullable = false, unique = true)
 	private String token;
 
 	public void changeUser(User user) {
