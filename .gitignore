@@ -40,3 +40,6 @@ out/
 .env
 *.env
 .env.*
+
+### fcm account ###
+firebase-key.json

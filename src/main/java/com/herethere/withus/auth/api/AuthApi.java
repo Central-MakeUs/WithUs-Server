@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.herethere.withus.auth.dto.request.LoginRequest;
 import com.herethere.withus.auth.dto.response.LoginResponse;
@@ -29,9 +30,11 @@ public interface AuthApi {
 		@PathVariable String provider,
 		@Valid @RequestBody LoginRequest request);
 
-	@Operation(summary = "임시 토큰 발급", description = """
-		temp 유저에 대한 임시 토큰을 발급합니다.
-		""")
+	@Operation(summary = "임시 토큰 발급", description = "temp 유저에 대한 임시 토큰을 발급합니다.")
 	@PostMapping("/temp/token/{id}")
-	ResponseEntity<ApiResponse<LoginResponse>> generateTempToken(@PathVariable String id);
+	ResponseEntity<ApiResponse<LoginResponse>> generateTempToken(@PathVariable String id, @RequestParam String fcmToken);
+
+	@Operation(summary = "알림 기능 확인 api", description = "알림 기능 체크용 입니다.")
+	@PostMapping("/temp/notification")
+	ResponseEntity<ApiResponse<Void>> checkNotification(@RequestParam String fcmToken);
 }

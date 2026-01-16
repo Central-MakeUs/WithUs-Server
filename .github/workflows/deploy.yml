@@ -60,6 +60,10 @@ jobs:
           cd ~
           echo "${{ secrets.ENV_FILE }}" > .env
           
+          mkdir -p ./config
+          echo '${{ secrets.FCM_JSON_RAW }}' > ./config/firebase-key.json
+          chmod 600 ./config/firebase-key.json
+          
           docker compose pull
           docker compose up -d
           EOF
