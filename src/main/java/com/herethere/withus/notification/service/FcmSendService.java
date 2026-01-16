@@ -3,6 +3,7 @@ package com.herethere.withus.notification.service;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -22,6 +23,7 @@ public class FcmSendService {
 	private final FirebaseMessaging firebaseMessaging;
 	private final FcmTokenManager fcmTokenManager;
 
+	@Async("fcmExecutor")
 	public void sendToUser(User user, String title, String body, Map<String, String> data) {
 		List<String> tokens = fcmTokenManager.getTokensByUser(user);
 
@@ -35,7 +37,29 @@ public class FcmSendService {
 		}
 	}
 
-	public void sendToToken(String token, String title, String body, Map<String, String> data) {
+	public void tempSendToToken(String token, String title, String body, Map<String, String> data) {
+		Map<String, String> safeData = data == null ? Map.of() : data;
+
+		Message message = Message.builder()
+			.setToken(token)
+			.setNotification(
+				Notification.builder()
+					.setTitle(title)
+					.setBody(body)
+					.build())
+			.putAllData(safeData)
+			.build();
+
+		try {
+			String response = firebaseMessaging.send(message);
+			log.debug("FCM 전송 성공: {}", response);
+
+		} catch (FirebaseMessagingException e) {
+			handleSendFailure(token, e);
+		}
+	}
+
+	private void sendToToken(String token, String title, String body, Map<String, String> data) {
 		Map<String, String> safeData = data == null ? Map.of() : data;
 
 		Message message = Message.builder()

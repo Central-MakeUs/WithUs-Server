@@ -37,7 +37,7 @@ public class AuthController implements AuthApi {
 
 	@Override
 	public ResponseEntity<ApiResponse<Void>> checkNotification(String fcmToken) {
-		fcmSendService.sendToToken(fcmToken, "확인용 알림 입니다.", "잘 작동 중입니다.", null);
+		fcmSendService.tempSendToToken(fcmToken, "확인용 알림 입니다.", "잘 작동 중입니다.", null);
 		return ResponseEntity.ok(ApiResponse.success());
 	}
 }
