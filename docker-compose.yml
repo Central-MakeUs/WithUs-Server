@@ -14,7 +14,7 @@ services:
       - ./config/firebase-key.json:/app/config/firebase-key.json:ro
     networks:
       - withus-network
-    restart: unless-stopped
+    restart: no
   nginx:
     image: nginx:1.27
     container_name: nginx
