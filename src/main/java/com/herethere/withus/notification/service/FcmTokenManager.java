@@ -1,5 +1,7 @@
 package com.herethere.withus.notification.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,5 +36,18 @@ public class FcmTokenManager {
 					fcmTokenRepository.save(newToken);
 				}
 			);
+	}
+
+	@Transactional(readOnly = true)
+	public List<String> getTokensByUser(User user) {
+		return fcmTokenRepository.findAllByUser(user)
+			.stream()
+			.map(FcmToken::getToken)
+			.toList();
+	}
+
+	@Transactional
+	public void deleteFcmTokenByTokenValue(String tokenValue) {
+		fcmTokenRepository.deleteByToken(tokenValue);
 	}
 }
