@@ -1,10 +1,21 @@
 package com.herethere.withus.user.dto.request;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-public record UserUpdateRequest(@NotBlank(message = "닉네임은 필수 항목입니다.")
-								@Size(min = 2, max = 8, message = "닉네임은 2자 이상 8자 이하로 입력해주세요.")
-								String nickname,
-								String imageObjectKey) {
+@Schema(description = "유저 정보 수정 및 초기 설정 요청")
+public record UserUpdateRequest(
+	@Schema(description = "설정할 닉네임 (2~8자)", example = "하늘이")
+	@NotBlank(message = "닉네임은 필수 항목입니다.")
+	@Size(min = 2, max = 8, message = "닉네임은 2자 이상 8자 이하로 입력해주세요.")
+	String nickname,
+
+	@Schema(
+		description = "S3 업로드 후 받은 이미지 객체 키 (presigned-url 응답의 imageKey)",
+		example = "profiles/1/uuid_filename.jpg",
+		nullable = true
+	)
+	String imageKey
+) {
 }

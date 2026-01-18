@@ -31,7 +31,7 @@ public class UserService {
 	@Transactional
 	public UserUpdateResponse updateUserProfile(UserUpdateRequest userUpdateRequest) {
 		User user = userContextService.getCurrentUser();
-		user.initializeProfile(userUpdateRequest.nickname(), userUpdateRequest.imageObjectKey());
+		user.initializeProfile(userUpdateRequest.nickname(), userUpdateRequest.imageKey());
 		return new UserUpdateResponse(user.getId(), user.getNickname(), user.getProfileImageKey());
 	}
 
