@@ -39,8 +39,8 @@ public class FcmTokenManager {
 	}
 
 	@Transactional(readOnly = true)
-	public List<String> getTokensByUser(User user) {
-		return fcmTokenRepository.findAllByUser(user)
+	public List<String> getTokensByUserId(Long userId) {
+		return fcmTokenRepository.findAllByUserId(userId)
 			.stream()
 			.map(FcmToken::getToken)
 			.toList();

@@ -3,7 +3,6 @@ package com.herethere.withus.notification.service;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -11,7 +10,6 @@ import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.MessagingErrorCode;
 import com.google.firebase.messaging.Notification;
-import com.herethere.withus.user.domain.User;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,12 +21,11 @@ public class FcmSendService {
 	private final FirebaseMessaging firebaseMessaging;
 	private final FcmTokenManager fcmTokenManager;
 
-	@Async("fcmExecutor")
-	public void sendToUser(User user, String title, String body, Map<String, String> data) {
-		List<String> tokens = fcmTokenManager.getTokensByUser(user);
+	public void sendToUser(Long userId, String title, String body, Map<String, String> data) {
+		List<String> tokens = fcmTokenManager.getTokensByUserId(userId);
 
 		if (tokens.isEmpty()) {
-			log.info("FCM 토큰 없음. userId={}", user.getId());
+			log.info("FCM 토큰 없음. userId={}", userId);
 			return;
 		}
 
