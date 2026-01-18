@@ -69,7 +69,7 @@ public class KeywordService {
 		User me = userContextService.getCurrentUser();
 		Couple couple = me.getCouple();
 		User partner = couple.getPartner(me.getId());
-		LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
+		LocalDate today = LocalDate.now(ZoneId.of("UTC"));
 
 		CoupleKeyword coupleKeyword = coupleKeywordRepository.findById((coupleKeywordId)).orElseThrow(
 			() -> new NotFoundException(ErrorCode.COUPLE_KEYWORD_NOT_FOUND)
@@ -96,7 +96,7 @@ public class KeywordService {
 	public void uploadTodayCoupleKeywordPicture(Long coupleKeywordId, TodayKeywordImageRequest request) {
 		User user = userContextService.getCurrentUser();
 		Couple couple = user.getCouple();
-		LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
+		LocalDate today = LocalDate.now(ZoneId.of("UTC"));
 
 		CoupleKeyword coupleKeyword = coupleKeywordRepository.findById((coupleKeywordId))
 			.orElseThrow(() -> new NotFoundException(ErrorCode.COUPLE_KEYWORD_NOT_FOUND));

@@ -15,7 +15,7 @@ public record CoupleInitializeRequest(
 	@NotNull
 	List<String> customKeywords,
 
-	@NotNull @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm", timezone = "Asia/Seoul")
+	@NotNull @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm", timezone = "UTC")
 	LocalTime questionTime
 ) {
 	@AssertTrue(message = "키워드는 합쳐서 1개 이상 3개 이하로 선택해주세요.")

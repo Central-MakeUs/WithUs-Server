@@ -154,7 +154,7 @@ public class QuestionService {
 	}
 
 	private String generateWaitingResponse(Couple couple) {
-		LocalTime now = LocalTime.now(ZoneId.of("Asia/Seoul"));
+		LocalTime now = LocalTime.now(ZoneId.of("UTC"));
 		LocalTime target = couple.getQuestionTime();
 		Duration duration = Duration.between(now, target);
 
