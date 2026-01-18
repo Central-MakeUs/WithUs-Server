@@ -21,7 +21,13 @@ import jakarta.validation.Valid;
 @Tag(name = "인증 API", description = "로그인 및 회원가입")
 public interface AuthApi {
 
-	@Operation(summary = "Oauth 로그인")
+	@Operation(
+		summary = "소셜 로그인 및 회원가입",
+		description = """
+			소셜 로그인을 진행합니다.
+			응답의 onboardingStatus를 확인하여 다음 화면을 결정합니다.
+			"""
+	)
 	@PostMapping("/login/{provider}")
 	ResponseEntity<ApiResponse<LoginResponse>> login(
 		@Parameter(
@@ -32,7 +38,8 @@ public interface AuthApi {
 
 	@Operation(summary = "임시 토큰 발급", description = "temp 유저에 대한 임시 토큰을 발급합니다.")
 	@PostMapping("/temp/token/{id}")
-	ResponseEntity<ApiResponse<LoginResponse>> generateTempToken(@PathVariable String id, @RequestParam String fcmToken);
+	ResponseEntity<ApiResponse<LoginResponse>> generateTempToken(@PathVariable String id,
+		@RequestParam String fcmToken);
 
 	@Operation(summary = "알림 기능 확인 api", description = "알림 기능 체크용 입니다.")
 	@PostMapping("/temp/notification")
