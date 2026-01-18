@@ -25,7 +25,7 @@ public interface CoupleApi {
 		description = """
 			상대방이 보낸 초대 코드를 입력하여 초대 정보를 확인합니다.
 			- 실제로 커플이 맺어지지는 않으며, 화면에 'jpg 님이 쏘피 님을 초대했어요!'를 띄우기 위한 용도입니다.
-			- 반환된 데이터를 확인한 후, 사용자가 '초대 수락하기'를 누르면 (/api/me/couple/join)을 호출하여 실제로 커플을 맺습니다.
+			- 반환된 데이터를 확인한 후, 사용자가 '초대 수락하기'를 누르면 `POST /api/me/couple/join`을 호출하여 실제로 커플을 맺습니다.
 			"""
 	)
 	@PostMapping("/join/preview")
@@ -51,9 +51,10 @@ public interface CoupleApi {
 		description = """
 			커플의 키워드와 질문 시간을 설정합니다.
 			- defaultKeywordIds: 커플이 선택한 시스템 기본 설정 키워드 ID 리스트
-			- customKeywords: 커플이 커스텀으로 추가한 키워드 리스트
+			- customKeywords: 커플이 커스텀으로 추가한 키워드 리스트 (ID가 없기 때문에 String으로 받습니다.)
 			- questionTime: 알림 시간 (포맷: HH:mm, 예: 21:00)
 			- 전체 키워드 합은 최소 1개, 최대 3개여야 합니다.
+			- 이후 온보딩 상태는 COMPLETE 로 변경됩니다.
 			"""
 	)
 	@PatchMapping("/settings")

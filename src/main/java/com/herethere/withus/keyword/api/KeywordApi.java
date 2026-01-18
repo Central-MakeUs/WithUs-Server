@@ -19,7 +19,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 @RequestMapping("/api")
-@Tag(name = "03. 키워드 API", description = "시스템 공통 키워드 및 커플별 오늘의 미션 관리")
+@Tag(name = "키워드 API", description = "시스템 공통 키워드 및 커플별 오늘의 미션 관리")
 public interface KeywordApi {
 
 	@Operation(
@@ -40,7 +40,7 @@ public interface KeywordApi {
 	ResponseEntity<ApiResponse<CoupleKeywordsResponse>> getCoupleKeywords();
 
 	@Operation(
-		summary = "오늘의 키워드 미션 상세 조회",
+		summary = "오늘의 키워드 상세 조회",
 		description = """
 			해당 키워드에 대해 질문과 나/상대방의 사진을 조회합니다.
 			- coupleKeywordId: `/me/couple/keywords` 에서 받아온 커플 키워드의 고유 ID입니다.
@@ -59,7 +59,7 @@ public interface KeywordApi {
 		description = """
 			해당 키워드에 해당하는 사진을 업로드합니다.
 			- coupleKeywordId: `/me/couple/keywords` 에서 받아온 커플 키워드의 고유 ID입니다.
-			- /api/images/presigned-url에서 response로 받은 ImageKey를 보내야 합니다.
+			- `/api/images/presigned-url`에서 response로 받은 ImageKey를 보내야 합니다.
 			- 이미 사진을 업로드한 경우 실패합니다.
 			"""
 	)

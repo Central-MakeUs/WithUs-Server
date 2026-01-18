@@ -27,7 +27,7 @@ public interface QuestionApi {
 			- 별도의 ID 파라미터 없이, 현재 시간과 커플 정보를 기준으로 서버가 질문을 찾아 반환합니다. (가장 최신의 것을 반환)
 			- 응답의 myInfo / partnerInfo를 통해 사진을 확인할 수 있습니다.
 			- 사진을 올리지 않으면 Info의 questionImageUrl과 answeredAt이 null입니다.
-			- 응답 바디에 포함된 coupleQuestionId를 사용하여 'POST /couple/questions/{coupleQuestionId}/image'로 사진을 업로드합니다.
+			- 응답 바디에 포함된 coupleQuestionId를 사용하여 `POST /couple/questions/{coupleQuestionId}/image`로 사진을 업로드합니다.
 			"""
 	)
 	@GetMapping("/couple/question/today")
@@ -38,7 +38,7 @@ public interface QuestionApi {
 		description = """
 			오늘의 질문에 대한 사진 답변을 등록합니다.
 			- coupleQuestionId: `GET /couple/question/today` 응답에서 받은 ID를 사용합니다.
-			- /api/images/presigned-url에서 response로 받은 ImageKey를 보내야 합니다.
+			- `GET /api/images/presigned-url`에서 response로 받은 ImageKey를 보내야 합니다.
 			- 이미 사진을 업로드한 경우 실패합니다.
 			"""
 	)
