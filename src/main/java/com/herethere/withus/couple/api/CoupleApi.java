@@ -18,23 +18,44 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 @RequestMapping("/api/me/couple")
-@Tag(name = "커플 API")
+@Tag(name = "커플 API", description = "커플 연결 및 초기 설정 관리")
 public interface CoupleApi {
-	@Operation(summary = "초대 코드 입력 API-1", description = "초대 코드를 입력하여 초대자의 이름을 확인합니다. "
-		+ "이후 따로 수락 버튼을 통해 초대를 실제로 받습니다.")
+	@Operation(
+		summary = "초대 코드 확인 (프리뷰)",
+		description = """
+			상대방이 보낸 초대 코드를 입력하여 초대 정보를 확인합니다.
+			- 실제로 커플이 맺어지지는 않으며, 화면에 'jpg 님이 쏘피 님을 초대했어요!'를 띄우기 위한 용도입니다.
+			- 반환된 데이터를 확인한 후, 사용자가 '초대 수락하기'를 누르면 (/api/me/couple/join)을 호출하여 실제로 커플을 맺습니다.
+			"""
+	)
 	@PostMapping("/join/preview")
 	ResponseEntity<ApiResponse<CoupleJoinPreviewResponse>> checkCoupleJoinPreview(
 		@Valid @RequestBody CoupleJoinPreviewRequest coupleJoinRequest
 	);
 
-	@Operation(summary = "초대 코드 입력 API-2", description = "실제로 초대를 받아 수락을 눌러 커플 관계가 맺어지는 API 입니다.")
+	@Operation(
+		summary = "초대 코드 수락 (실제 연결)",
+		description = """
+			실제로 초대 코드를 수락하여 상대방과 커플 관계를 형성합니다.
+			- 성공 시 두 유저는 하나의 Couple ID를 공유하게 됩니다.
+			- 이후 온보딩 상태는 NEED_COUPLE_INITIAL_SETUP으로 변경됩니다.
+			"""
+	)
 	@PostMapping("/join")
 	ResponseEntity<ApiResponse<CoupleJoinResponse>> joinCouple(
 		@Valid @RequestBody CoupleJoinRequest coupleJoinRequest
 	);
 
-	@Operation(summary = "커플 기본 세팅 설정", description = "키워드와 시간을 설정합니다. 리스트는 NotNull 입니다. "
-		+ "시간 형식은 HH:MM 입니다.")
+	@Operation(
+		summary = "커플 서비스 초기 설정",
+		description = """
+			커플의 키워드와 질문 시간을 설정합니다.
+			- defaultKeywordIds: 커플이 선택한 시스템 기본 설정 키워드 ID 리스트
+			- customKeywords: 커플이 커스텀으로 추가한 키워드 리스트
+			- questionTime: 알림 시간 (포맷: HH:mm, 예: 21:00)
+			- 전체 키워드 합은 최소 1개, 최대 3개여야 합니다.
+			"""
+	)
 	@PatchMapping("/settings")
 	ResponseEntity<ApiResponse<Void>> initializeCoupleSettings(
 		@Valid @RequestBody CoupleInitializeRequest coupleInitializeRequest
