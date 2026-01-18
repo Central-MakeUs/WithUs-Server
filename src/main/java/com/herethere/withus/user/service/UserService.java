@@ -9,10 +9,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.herethere.withus.common.exception.ConflictException;
 import com.herethere.withus.common.exception.NotFoundException;
+import com.herethere.withus.couple.OnboardingManager;
 import com.herethere.withus.user.domain.InviteCode;
 import com.herethere.withus.user.domain.User;
 import com.herethere.withus.user.dto.request.UserUpdateRequest;
 import com.herethere.withus.user.dto.response.InvitationCodeResponse;
+import com.herethere.withus.user.dto.response.OnboardingStatusResponse;
 import com.herethere.withus.user.dto.response.UserUpdateResponse;
 import com.herethere.withus.user.repository.InviteCodeRepository;
 
@@ -23,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 public class UserService {
 	private static final SecureRandom secureRandom = new SecureRandom();
 	private final UserContextService userContextService;
+	private final OnboardingManager onboardingManager;
 	private final InviteCodeRepository inviteCodeRepository;
 
 	@Transactional
@@ -47,6 +50,12 @@ public class UserService {
 				}
 			);
 		return new InvitationCodeResponse(inviteCode.getCode());
+	}
+
+	@Transactional(readOnly = true)
+	public OnboardingStatusResponse getOnboardingStatus() {
+		User user = userContextService.getCurrentUser();
+		return new OnboardingStatusResponse(onboardingManager.getStatus(user));
 	}
 
 	private InviteCode createNewInviteCode(User user) {

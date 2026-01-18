@@ -9,22 +9,28 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.herethere.withus.common.apiresponse.ApiResponse;
 import com.herethere.withus.user.dto.request.UserUpdateRequest;
 import com.herethere.withus.user.dto.response.InvitationCodeResponse;
+import com.herethere.withus.user.dto.response.OnboardingStatusResponse;
 import com.herethere.withus.user.dto.response.UserUpdateResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
-@RequestMapping("/api/me/user")
+@RequestMapping("/api")
 @Tag(name = "회원 API")
 public interface UserApi {
 	@Operation(summary = "유저 정보 수정 API", description = "유저 정보 수정 및 회원가입 이후 이 API로 초기 설정을 합니다.")
-	@PatchMapping
+	@PatchMapping("/me/user")
 	ResponseEntity<ApiResponse<UserUpdateResponse>> updateUserProfile(
 		@Valid @RequestBody UserUpdateRequest userUpdateRequest
 	);
 
 	@Operation(summary = "초대 코드 생성")
-	@PostMapping("/invitation-codes")
+	@PostMapping("/me/user/invitation-codes")
 	ResponseEntity<ApiResponse<InvitationCodeResponse>> generateInvitationCode();
+
+	@Operation(summary = "OnboardingStatus 조회")
+	@PostMapping("/me/status")
+	ResponseEntity<ApiResponse<OnboardingStatusResponse>> getOnboardingStatus();
+
 }

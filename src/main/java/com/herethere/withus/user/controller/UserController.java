@@ -7,6 +7,7 @@ import com.herethere.withus.common.apiresponse.ApiResponse;
 import com.herethere.withus.user.api.UserApi;
 import com.herethere.withus.user.dto.request.UserUpdateRequest;
 import com.herethere.withus.user.dto.response.InvitationCodeResponse;
+import com.herethere.withus.user.dto.response.OnboardingStatusResponse;
 import com.herethere.withus.user.dto.response.UserUpdateResponse;
 import com.herethere.withus.user.service.UserService;
 
@@ -26,6 +27,12 @@ public class UserController implements UserApi {
 	@Override
 	public ResponseEntity<ApiResponse<InvitationCodeResponse>> generateInvitationCode() {
 		InvitationCodeResponse response = userService.generateInvitationCode();
+		return ResponseEntity.ok(ApiResponse.success(response));
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<OnboardingStatusResponse>> getOnboardingStatus() {
+		OnboardingStatusResponse response = userService.getOnboardingStatus();
 		return ResponseEntity.ok(ApiResponse.success(response));
 	}
 }
