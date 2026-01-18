@@ -10,6 +10,7 @@ import com.herethere.withus.auth.oauthclient.OAuthClient;
 import com.herethere.withus.auth.oauthclient.OAuthClientFactory;
 import com.herethere.withus.common.jwt.JwtUtil;
 import com.herethere.withus.common.jwt.dto.JwtPayload;
+import com.herethere.withus.couple.OnboardingManager;
 import com.herethere.withus.notification.service.FcmTokenManager;
 import com.herethere.withus.user.domain.User;
 import com.herethere.withus.user.repository.UserRepository;
@@ -23,6 +24,7 @@ public class AuthService {
 	private static final String PREFIX_GUEST = "GUEST_";
 	private final OAuthClientFactory oauthClientFactory;
 	private final FcmTokenManager fcmTokenManager;
+	private final OnboardingManager onboardingManager;
 	private final UserRepository userRepository;
 	private final JwtUtil jwtUtil;
 
@@ -44,7 +46,7 @@ public class AuthService {
 
 		JwtPayload jwtPayload = new JwtPayload(user.getId(), user.getNickname());
 		String jwt = jwtUtil.createToken(jwtPayload);
-		return new LoginResponse(jwt, user.isInitialized());
+		return new LoginResponse(jwt, onboardingManager.getStatus(user));
 	}
 
 	@Transactional
@@ -62,6 +64,6 @@ public class AuthService {
 
 		JwtPayload jwtPayload = new JwtPayload(user.getId(), user.getNickname());
 		String jwt = jwtUtil.createToken(jwtPayload);
-		return new LoginResponse(jwt, user.isInitialized());
+		return new LoginResponse(jwt, onboardingManager.getStatus(user));
 	}
 }
