@@ -45,6 +45,7 @@ public interface KeywordApi {
 			해당 키워드에 대해 질문과 나/상대방의 사진을 조회합니다.
 			- coupleKeywordId: `/me/couple/keywords` 에서 받아온 커플 키워드의 고유 ID입니다.
 			- 응답의 myInfo / partnerInfo를 통해 사진을 확인할 수 있습니다.
+			- Info의 profileImageUrl이 null이면 앱의 기본이미지로 대체합니다.
 			- 사진을 올리지 않으면 Info의 questionImageUrl과 answeredAt이 null입니다.
 			"""
 	)
