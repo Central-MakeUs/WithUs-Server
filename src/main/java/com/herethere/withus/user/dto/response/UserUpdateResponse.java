@@ -12,7 +12,8 @@ public record UserUpdateResponse(
 
 	@Schema(
 		description = "프로필 이미지 URL",
-		example = "https://s3.com/profiles/1/uuid_image.jpg"
+		example = "https://s3.com/profiles/1/uuid_image.jpg",
+		nullable = true
 	)
 	String profileImageUrl
 ) {

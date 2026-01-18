@@ -27,13 +27,13 @@ public record TodayQuestionResponse(
 		@Schema(description = "사용자 닉네임", example = "김철수")
 		String name,
 
-		@Schema(description = "프로필 이미지 URL", example = "https://s3.com/profiles/1.jpg")
+		@Schema(description = "프로필 이미지 URL", example = "https://s3.com/profiles/1.jpg", nullable = true)
 		String profileImageUrl,
 
-		@Schema(description = "업로드한 답변 사진 URL (미업로드 시 null)", example = "https://s3.com/questions/505_ans.jpg")
+		@Schema(description = "업로드한 답변 사진 URL (미업로드 시 null)", example = "https://s3.com/questions/505_ans.jpg", nullable = true)
 		String questionImageUrl,
 
-		@Schema(type = "string", pattern = "HH:mm", example = "20:30", description = "답변 시각 (UTC 기준, 미업로드 시 null)")
+		@Schema(type = "string", pattern = "HH:mm", example = "20:30", description = "답변 시각 (UTC 기준, 미업로드 시 null)", nullable = true)
 		@JsonFormat(pattern = "HH:mm", timezone = "UTC")
 		LocalDateTime answeredAt
 	) {
