@@ -24,6 +24,9 @@ public record TodayQuestionResponse(
 	@Builder
 	@Schema(description = "답변 상세 정보")
 	public record MemberInfo(
+		@Schema(description = "사용자 고유 id", example = "123")
+		Long userId,
+
 		@Schema(description = "사용자 닉네임", example = "김철수")
 		String name,
 

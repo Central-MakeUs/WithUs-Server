@@ -47,6 +47,7 @@ public interface KeywordApi {
 			- 응답의 myInfo / partnerInfo를 통해 사진을 확인할 수 있습니다.
 			- Info의 profileImageUrl이 null이면 앱의 기본이미지로 대체합니다.
 			- 사진을 올리지 않으면 Info의 questionImageUrl과 answeredAt이 null입니다.
+			- partnerInfo의 userId를 사용하여 콕찌르기 버튼을 만듭니다.
 			"""
 	)
 	@GetMapping("/me/couple/keywords/{coupleKeywordId}/today")

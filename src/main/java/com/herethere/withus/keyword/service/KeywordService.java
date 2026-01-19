@@ -131,6 +131,7 @@ public class KeywordService {
 		}
 
 		return TodayKeywordResponse.MemberInfo.builder()
+			.userId(user.getId())
 			.name(user.getNickname())
 			.profileImageUrl(profileImageUrl)
 			.questionImageUrl(questionImageUrl)

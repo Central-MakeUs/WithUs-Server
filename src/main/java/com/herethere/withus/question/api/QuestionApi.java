@@ -30,6 +30,7 @@ public interface QuestionApi {
 			- 사진을 올리지 않으면 Info의 questionImageUrl과 answeredAt이 null입니다.
 			- Info의 profileImageUrl이 null이면 앱의 기본이미지로 대체합니다.
 			- 응답 바디에 포함된 coupleQuestionId를 사용하여 `POST /couple/questions/{coupleQuestionId}/image`로 사진을 업로드합니다.
+			- partnerInfo의 userId를 사용하여 콕찌르기 버튼을 만듭니다.
 			"""
 	)
 	@GetMapping("/couple/question/today")
