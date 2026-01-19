@@ -16,8 +16,8 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.herethere.withus.common.annotation.RequiresActiveCouple;
+import com.herethere.withus.common.exception.BadRequestException;
 import com.herethere.withus.common.exception.ConflictException;
-import com.herethere.withus.common.exception.ForbiddenException;
 import com.herethere.withus.common.exception.NotFoundException;
 import com.herethere.withus.couple.domain.Couple;
 import com.herethere.withus.couple.repository.CoupleRepository;
@@ -71,7 +71,14 @@ public class QuestionService {
 			.orElseThrow(() -> new NotFoundException(COUPLE_QUESTION_NOT_FOUND));
 
 		if (!coupleQuestion.getCouple().getId().equals(couple.getId())) {
-			throw new ForbiddenException(ACCESS_DENIED);
+			throw new ConflictException(ACCESS_DENIED);
+		}
+
+		CoupleQuestion latestCoupleQuestion = coupleQuestionRepository.findTopByCoupleOrderByCreatedAtDesc(couple)
+			.orElseThrow(() -> new NotFoundException(COUPLE_QUESTION_NOT_FOUND));
+
+		if (latestCoupleQuestion.getId().equals(coupleQuestion.getId())) {
+			throw new BadRequestException(NOT_TODAY_QUESTION);
 		}
 
 		if (questionPictureRepository.existsByUserAndCoupleQuestion(user, coupleQuestion)) {
@@ -94,15 +101,15 @@ public class QuestionService {
 		Couple couple = me.getCouple();
 		User partner = couple.getPartner(me.getId());
 
-		Optional<CoupleQuestion> optionalCoupleQuestion = coupleQuestionRepository.findTopByCoupleOrderByCreatedAtDesc(
+		Optional<CoupleQuestion> latestCoupleQuestion = coupleQuestionRepository.findTopByCoupleOrderByCreatedAtDesc(
 			couple);
 
 		// 만약 처음이라 CoupleQuestion이 없으면 대기 문구 반환
-		if (optionalCoupleQuestion.isEmpty()) {
+		if (latestCoupleQuestion.isEmpty()) {
 			return new TodayQuestionResponse(null, generateWaitingResponse(couple), null, null);
 		}
 
-		CoupleQuestion coupleQuestion = optionalCoupleQuestion.get();
+		CoupleQuestion coupleQuestion = latestCoupleQuestion.get();
 
 		QuestionPicture myPicture = questionPictureRepository.findByUserAndCoupleQuestion(me, coupleQuestion)
 			.orElse(null);
