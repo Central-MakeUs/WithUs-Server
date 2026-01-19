@@ -211,3 +211,12 @@ INSERT IGNORE INTO question (content, question_number, created_at, updated_at) V
 ('둘이 처음 비행기에서 찍은 사진은?', 198, NOW(), NOW()),
 ('서로 아직 어색함이 보이는 사진은?', 199, NOW(), NOW()),
 ('상대방이 보면 웃을 것 같은 나의 사진은?', 200, NOW(), NOW());
+
+-- 1. 유저 2명 생성
+INSERT IGNORE INTO user (id, nickname, provider, provider_id, is_initialized, created_at, updated_at) VALUES
+(1, '테스트유저A', 'KAKAO', 'kakao_12345', true, NOW(), NOW()),
+(2, '테스트유저B', 'KAKAO', 'kakao_67890', true, NOW(), NOW());
+
+-- 2. 커플 연결
+INSERT IGNORE INTO couple (user_a_id, user_b_id, status, last_question_index, anniversary_date, question_time, created_at, updated_at)
+VALUES (1, 2, 'ACTIVE', 0, '2024-01-01', '21:00:00', NOW(), NOW());
