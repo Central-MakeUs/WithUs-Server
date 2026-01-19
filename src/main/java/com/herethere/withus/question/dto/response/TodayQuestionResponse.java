@@ -9,7 +9,7 @@ import lombok.Builder;
 
 @Schema(description = "오늘의 질문 상세 조회 응답")
 public record TodayQuestionResponse(
-	@Schema(description = "오늘의 질문-커플 매핑 고유 ID (사진 업로드 시 이 ID를 사용하세요)", example = "505")
+	@Schema(description = "오늘의 질문-커플 매핑 고유 ID (사진 업로드 시 이 ID를 사용하세요)", example = "505", nullable = true)
 	Long coupleQuestionId,
 
 	@Schema(description = "오늘의 질문 내용", example = "상대가 가장 사랑스러워 보였던 순간은 언제인가요?")
