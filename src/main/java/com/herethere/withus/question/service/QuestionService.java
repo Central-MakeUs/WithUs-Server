@@ -143,6 +143,9 @@ public class QuestionService {
 		CoupleQuestion coupleQuestion = CoupleQuestion.builder().couple(couple).question(question).date(date).build();
 
 		coupleQuestionRepository.save(coupleQuestion);
+
+		eventPublisher.publishEvent(FcmNotificationEvent.createNewQuestionEvent(couple.getUserA()));
+		eventPublisher.publishEvent(FcmNotificationEvent.createNewQuestionEvent(couple.getUserB()));
 	}
 
 	private TodayQuestionResponse.MemberInfo getMemberInfo(User user, QuestionPicture questionPicture) {

@@ -31,4 +31,13 @@ public record FcmNotificationEvent(Long userId, String title, String body, Map<S
 			null //TODO: 나중에 이동할 화면 정보 추가
 		);
 	}
+
+	public static FcmNotificationEvent createNewQuestionEvent(User receiver) {
+		return FcmNotificationEvent.of(
+			receiver.getId(),
+			"오늘의 랜덤 질문이 도착했어요",
+			"오늘의 질문에 답해볼까요?",
+			null //TODO: 나중에 이동할 화면 정보 추가
+		);
+	}
 }
