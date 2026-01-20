@@ -77,7 +77,7 @@ public class QuestionService {
 		CoupleQuestion latestCoupleQuestion = coupleQuestionRepository.findTopByCoupleOrderByCreatedAtDesc(couple)
 			.orElseThrow(() -> new NotFoundException(COUPLE_QUESTION_NOT_FOUND));
 
-		if (latestCoupleQuestion.getId().equals(coupleQuestion.getId())) {
+		if (!latestCoupleQuestion.getId().equals(coupleQuestion.getId())) {
 			throw new BadRequestException(NOT_TODAY_QUESTION);
 		}
 
