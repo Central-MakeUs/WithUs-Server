@@ -18,12 +18,16 @@ public interface CoupleRepository extends JpaRepository<Couple, Long> {
 	@Query("""
 		select c
 		from Couple c
-		where c.questionTime <= :nowTime
-		  and (c.lastQuestionDate is null or c.lastQuestionDate < :today)
+		where (c.lastQuestionDate < :today)
+		  and (
+		    c.lastQuestionDate < :yesterday
+		    or c.questionTime <= :nowTime
+		  )
 		""")
 	List<Couple> findCouplesToProcess(
 		@Param("nowTime") LocalTime nowTime,
-		@Param("today") LocalDate today
+		@Param("today") LocalDate today,
+		@Param("yesterday") LocalDate yesterday
 	);
 
 	@Lock(LockModeType.PESSIMISTIC_WRITE)

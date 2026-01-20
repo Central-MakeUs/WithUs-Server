@@ -30,8 +30,9 @@ public class CoupleQuestionScheduler {
 		ZoneId utc = ZoneId.of("UTC");
 		LocalTime now = LocalTime.now(utc);
 		LocalDate today = LocalDate.now(utc);
+		LocalDate yesterday = today.minusDays(1);
 
-		List<Couple> couples = coupleRepository.findCouplesToProcess(now, today);
+		List<Couple> couples = coupleRepository.findCouplesToProcess(now, today, yesterday);
 
 		Map<Long, Question> questionMap = questionService.getAllQuestionMap();
 
