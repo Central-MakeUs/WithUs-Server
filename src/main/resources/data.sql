@@ -218,5 +218,5 @@ INSERT IGNORE INTO user (id, nickname, provider, provider_id, is_initialized, cr
 (2, '테스트유저B', 'KAKAO', 'kakao_67890', true, NOW(), NOW());
 
 -- 2. 커플 연결
-INSERT IGNORE INTO couple (user_a_id, user_b_id, status, last_question_index, anniversary_date, question_time, created_at, updated_at)
-VALUES (1, 2, 'ACTIVE', 0, '2024-01-01', '21:00:00', NOW(), NOW());
+INSERT IGNORE INTO couple (user_a_id, user_b_id, status, last_question_index, last_question_date, anniversary_date, question_time, created_at, updated_at)
+VALUES (1, 2, 'ACTIVE', 0, '2024-01-01', '2024-01-01', '21:00:00', NOW(), NOW());
