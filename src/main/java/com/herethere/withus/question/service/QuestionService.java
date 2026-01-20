@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +22,7 @@ import com.herethere.withus.common.exception.ConflictException;
 import com.herethere.withus.common.exception.NotFoundException;
 import com.herethere.withus.couple.domain.Couple;
 import com.herethere.withus.couple.repository.CoupleRepository;
+import com.herethere.withus.notification.dto.internal.FcmNotificationEvent;
 import com.herethere.withus.question.domain.CoupleQuestion;
 import com.herethere.withus.question.domain.Question;
 import com.herethere.withus.question.domain.QuestionPicture;
@@ -45,6 +47,7 @@ public class QuestionService {
 	private final CoupleRepository coupleRepository;
 	private final S3Service s3Service;
 	private final UserContextService userContextService;
+	private final ApplicationEventPublisher eventPublisher;
 
 	private Map<Long, Question> cachedQuestions;
 
@@ -92,6 +95,8 @@ public class QuestionService {
 			.build();
 
 		questionPictureRepository.save(questionPicture);
+
+		eventPublisher.publishEvent(FcmNotificationEvent.createUploadEvent(user, user.getPartner()));
 	}
 
 	@Transactional(readOnly = true)

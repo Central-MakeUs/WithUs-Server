@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +25,7 @@ import com.herethere.withus.keyword.dto.response.DefaultKeywordsResponse;
 import com.herethere.withus.keyword.dto.response.TodayKeywordResponse;
 import com.herethere.withus.keyword.repository.KeywordRecordRepository;
 import com.herethere.withus.keyword.repository.KeywordRepository;
+import com.herethere.withus.notification.dto.internal.FcmNotificationEvent;
 import com.herethere.withus.s3.service.S3Service;
 import com.herethere.withus.user.domain.User;
 import com.herethere.withus.user.service.UserContextService;
@@ -38,6 +40,7 @@ public class KeywordService {
 	private final KeywordRecordRepository keywordRecordRepository;
 	private final S3Service s3Service;
 	private final UserContextService userContextService;
+	private final ApplicationEventPublisher eventPublisher;
 
 	@Transactional(readOnly = true)
 	public DefaultKeywordsResponse getDefaultKeywords() {
@@ -116,6 +119,8 @@ public class KeywordService {
 			.imageKey(request.imageKey())
 			.build();
 		keywordRecordRepository.save(keywordRecord);
+
+		eventPublisher.publishEvent(FcmNotificationEvent.createUploadEvent(user, user.getPartner()));
 	}
 
 	private TodayKeywordResponse.MemberInfo getMemberInfo(User user, KeywordRecord keywordRecord) {
