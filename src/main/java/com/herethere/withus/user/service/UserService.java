@@ -4,12 +4,15 @@ import static com.herethere.withus.common.exception.ErrorCode.*;
 
 import java.security.SecureRandom;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.herethere.withus.common.exception.BadRequestException;
 import com.herethere.withus.common.exception.ConflictException;
 import com.herethere.withus.common.exception.NotFoundException;
 import com.herethere.withus.couple.OnboardingManager;
+import com.herethere.withus.notification.dto.internal.FcmNotificationEvent;
 import com.herethere.withus.user.domain.InviteCode;
 import com.herethere.withus.user.domain.User;
 import com.herethere.withus.user.dto.request.UserUpdateRequest;
@@ -27,6 +30,7 @@ public class UserService {
 	private final UserContextService userContextService;
 	private final OnboardingManager onboardingManager;
 	private final InviteCodeRepository inviteCodeRepository;
+	private final ApplicationEventPublisher eventPublisher;
 
 	@Transactional
 	public UserUpdateResponse updateUserProfile(UserUpdateRequest userUpdateRequest) {
@@ -56,6 +60,20 @@ public class UserService {
 	public OnboardingStatusResponse getOnboardingStatus() {
 		User user = userContextService.getCurrentUser();
 		return new OnboardingStatusResponse(onboardingManager.getStatus(user));
+	}
+
+	@Transactional(readOnly = true)
+	public void pokeUser(Long userId) {
+		User user = userContextService.getCurrentUser();
+		User partner = user.getPartner();
+
+		if (!partner.getId().equals(userId)) {
+			throw new BadRequestException(NOT_YOUR_PARTNER);
+		}
+
+		// TODO: 캐시를 사용한 찌르기 스팸 방지 로직 추가
+
+		eventPublisher.publishEvent(FcmNotificationEvent.createPokeEvent(user, partner));
 	}
 
 	private InviteCode createNewInviteCode(User user) {

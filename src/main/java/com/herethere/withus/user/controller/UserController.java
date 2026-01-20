@@ -35,4 +35,10 @@ public class UserController implements UserApi {
 		OnboardingStatusResponse response = userService.getOnboardingStatus();
 		return ResponseEntity.ok(ApiResponse.success(response));
 	}
+
+	@Override
+	public ResponseEntity<ApiResponse<Void>> pokeUser(Long userId) {
+		userService.pokeUser(userId);
+		return ResponseEntity.ok(ApiResponse.success());
+	}
 }

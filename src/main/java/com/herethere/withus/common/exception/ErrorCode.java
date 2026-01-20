@@ -23,6 +23,7 @@ public enum ErrorCode {
 
 	// USER
 	USER_NOT_FOUND(404, "존재하지 않는 사용자입니다."),
+	NOT_YOUR_PARTNER(400, "같은 커플인 사용자가 아닙니다."),
 
 	// COUPLE
 	COUPLE_ALREADY_EXISTS(409, "사용자가 이미 커플이 존재합니다."),

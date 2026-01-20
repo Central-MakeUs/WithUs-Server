@@ -2,6 +2,7 @@ package com.herethere.withus.user.api;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,6 +14,7 @@ import com.herethere.withus.user.dto.response.OnboardingStatusResponse;
 import com.herethere.withus.user.dto.response.UserUpdateResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
@@ -56,4 +58,17 @@ public interface UserApi {
 	)
 	@PostMapping("/me/status")
 	ResponseEntity<ApiResponse<OnboardingStatusResponse>> getOnboardingStatus();
+
+	@Operation(
+		summary = "콕 찌르기",
+		description = """
+			커플 상대를 콕 찔러서 알림을 보냅니다.
+			- 오늘의 질문, 키워드 모두 같은 API를 사용하여 콕 찌르기를 실행합니다.
+			- 오늘의 질문이나 키워드 사진 조회에서 Info에 포함된 userId로 실행시킵니다.
+			"""
+	)
+	@PostMapping("/users/{userId}/poke")
+	ResponseEntity<ApiResponse<Void>> pokeUser(
+		@Parameter(description = "콕 찌르기 대상 고유 ID", example = "505")
+		@PathVariable Long userId);
 }
