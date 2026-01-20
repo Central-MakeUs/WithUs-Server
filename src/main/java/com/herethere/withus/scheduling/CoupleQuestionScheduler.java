@@ -27,9 +27,9 @@ public class CoupleQuestionScheduler {
 
 	@Scheduled(cron = "5 * * * * *", zone = "UTC")
 	public void processCoupleQuestions() {
-		ZoneId seoulZone = ZoneId.of("UTC");
-		LocalTime now = LocalTime.now(seoulZone);
-		LocalDate today = LocalDate.now(seoulZone);
+		ZoneId utc = ZoneId.of("UTC");
+		LocalTime now = LocalTime.now(utc);
+		LocalDate today = LocalDate.now(utc);
 
 		List<Couple> couples = coupleRepository.findCouplesToProcess(now, today);
 
