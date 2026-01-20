@@ -2,6 +2,7 @@ package com.herethere.withus.couple.domain;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.ZoneId;
 
 import com.herethere.withus.common.baseentity.BaseEntity;
 import com.herethere.withus.user.domain.User;
@@ -53,7 +54,7 @@ public class Couple extends BaseEntity {
 	@Column(name = "status", length = 10, nullable = false)
 	private CoupleStatus status;
 
-	@Column(name = "last_question_date")
+	@Column(name = "last_question_date", nullable = false)
 	private LocalDate lastQuestionDate;
 
 	@Column(name = "last_question_index", nullable = false)
@@ -65,6 +66,7 @@ public class Couple extends BaseEntity {
 			.userB(userB)
 			.status(CoupleStatus.PENDING)
 			.lastQuestionIndex(0L)
+			.lastQuestionDate(LocalDate.now(ZoneId.of("UTC")))
 			.build();
 
 		userA.setCoupleAsA(couple);
