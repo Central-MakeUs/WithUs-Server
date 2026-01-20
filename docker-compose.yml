@@ -10,7 +10,7 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - ./logs:/logs
+      - ./logs:/app/logs
       - ./config/firebase-key.json:/app/config/firebase-key.json:ro
     networks:
       - withus-network
