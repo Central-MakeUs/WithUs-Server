@@ -9,6 +9,7 @@ import com.herethere.withus.user.dto.request.UserOnboardingRequest;
 import com.herethere.withus.user.dto.request.UserUpdateRequest;
 import com.herethere.withus.user.dto.response.InvitationCodeResponse;
 import com.herethere.withus.user.dto.response.OnboardingStatusResponse;
+import com.herethere.withus.user.dto.response.UserOnboardingResponse;
 import com.herethere.withus.user.dto.response.UserUpdateResponse;
 import com.herethere.withus.user.service.UserService;
 
@@ -44,7 +45,8 @@ public class UserController implements UserApi {
 	}
 
 	@Override
-	public ResponseEntity<ApiResponse<Void>> onboardUser(UserOnboardingRequest userOnboardingRequest) {
+	public ResponseEntity<ApiResponse<UserOnboardingResponse>> onboardUser(UserOnboardingRequest userOnboardingRequest) {
+		userService.onboardUser(userOnboardingRequest);
 		return null;
 	}
 }

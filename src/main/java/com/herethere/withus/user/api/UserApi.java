@@ -13,6 +13,7 @@ import com.herethere.withus.user.dto.request.UserOnboardingRequest;
 import com.herethere.withus.user.dto.request.UserUpdateRequest;
 import com.herethere.withus.user.dto.response.InvitationCodeResponse;
 import com.herethere.withus.user.dto.response.OnboardingStatusResponse;
+import com.herethere.withus.user.dto.response.UserOnboardingResponse;
 import com.herethere.withus.user.dto.response.UserUpdateResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -86,7 +87,7 @@ public interface UserApi {
 			"""
 	)
 	@PutMapping("/me/onboarding")
-	ResponseEntity<ApiResponse<Void>> onboardUser(
+	ResponseEntity<ApiResponse<UserOnboardingResponse>> onboardUser(
 		@Valid @RequestBody UserOnboardingRequest userOnboardingRequest
 	);
 }

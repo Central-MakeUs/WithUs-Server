@@ -6,6 +6,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -35,4 +36,11 @@ public record UserOnboardingRequest(
 		nullable = true
 	)
 	String imageKey) {
+	@Schema(hidden = true)
+	@AssertTrue(message = "키워드는 합쳐서 1개 이상 2개 이하로 선택해주세요.")
+	public boolean isValidSize() {
+		int total = (defaultKeywordIds == null ? 0 : defaultKeywordIds.size()) + (customKeywords == null ? 0 :
+			customKeywords.size());
+		return total >= 1 && total <= 2;
+	}
 }
