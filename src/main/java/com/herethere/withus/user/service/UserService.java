@@ -3,6 +3,8 @@ package com.herethere.withus.user.service;
 import static com.herethere.withus.common.exception.ErrorCode.*;
 
 import java.security.SecureRandom;
+import java.util.List;
+import java.util.Set;
 
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -12,14 +14,20 @@ import com.herethere.withus.common.exception.BadRequestException;
 import com.herethere.withus.common.exception.ConflictException;
 import com.herethere.withus.common.exception.NotFoundException;
 import com.herethere.withus.couple.OnboardingManager;
+import com.herethere.withus.keyword.domain.Keyword;
+import com.herethere.withus.keyword.service.KeywordService;
 import com.herethere.withus.notification.dto.internal.FcmNotificationEvent;
 import com.herethere.withus.user.domain.InviteCode;
 import com.herethere.withus.user.domain.User;
+import com.herethere.withus.user.domain.UserKeyword;
+import com.herethere.withus.user.dto.request.UserOnboardingRequest;
 import com.herethere.withus.user.dto.request.UserUpdateRequest;
 import com.herethere.withus.user.dto.response.InvitationCodeResponse;
 import com.herethere.withus.user.dto.response.OnboardingStatusResponse;
+import com.herethere.withus.user.dto.response.UserOnboardingResponse;
 import com.herethere.withus.user.dto.response.UserUpdateResponse;
 import com.herethere.withus.user.repository.InviteCodeRepository;
+import com.herethere.withus.user.repository.UserKeywordRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -29,13 +37,15 @@ public class UserService {
 	private static final SecureRandom secureRandom = new SecureRandom();
 	private final UserContextService userContextService;
 	private final OnboardingManager onboardingManager;
+	private final KeywordService keywordService;
 	private final InviteCodeRepository inviteCodeRepository;
+	private final UserKeywordRepository userKeywordRepository;
 	private final ApplicationEventPublisher eventPublisher;
 
 	@Transactional
 	public UserUpdateResponse updateUserProfile(UserUpdateRequest userUpdateRequest) {
 		User user = userContextService.getCurrentUser();
-		user.initializeProfile(userUpdateRequest.nickname(), userUpdateRequest.imageKey());
+		user.updateProfile(userUpdateRequest.nickname(), userUpdateRequest.imageKey());
 		return new UserUpdateResponse(user.getId(), user.getNickname(), user.getProfileImageKey());
 	}
 
@@ -74,6 +84,29 @@ public class UserService {
 		// TODO: 캐시를 사용한 찌르기 스팸 방지 로직 추가
 
 		eventPublisher.publishEvent(FcmNotificationEvent.createPokeEvent(user, partner));
+	}
+
+	@Transactional
+	public UserOnboardingResponse onboardUser(UserOnboardingRequest request) {
+		User user = userContextService.getCurrentUser();
+		if (user.isInitialized()) {
+			throw new ConflictException(USER_ALREADY_INITIALIZED); // TODO: 추후 기획에 따라 빠질 수 있음
+		}
+
+		user.completeOnboarding(request.nickname(), request.birthday(), request.imageKey());
+
+		Set<Keyword> chosenKeywordSet = keywordService.getChosenKeywords(request.defaultKeywordIds(),
+			request.customKeywords());
+
+		List<UserKeyword> userKeywords = chosenKeywordSet.stream()
+			.map(k -> UserKeyword.builder()
+				.keyword(k)
+				.user(user)
+				.build())
+			.toList();
+		userKeywordRepository.saveAll(userKeywords);
+
+		return UserOnboardingResponse.from(user, chosenKeywordSet);
 	}
 
 	private InviteCode createNewInviteCode(User user) {

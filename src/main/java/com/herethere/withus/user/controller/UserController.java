@@ -46,7 +46,7 @@ public class UserController implements UserApi {
 
 	@Override
 	public ResponseEntity<ApiResponse<UserOnboardingResponse>> onboardUser(UserOnboardingRequest userOnboardingRequest) {
-		userService.onboardUser(userOnboardingRequest);
-		return null;
+		UserOnboardingResponse response = userService.onboardUser(userOnboardingRequest);
+		return ResponseEntity.ok(ApiResponse.success(response));
 	}
 }

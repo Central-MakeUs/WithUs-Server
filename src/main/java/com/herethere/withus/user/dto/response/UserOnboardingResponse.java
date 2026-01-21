@@ -1,6 +1,10 @@
 package com.herethere.withus.user.dto.response;
 
 import java.util.List;
+import java.util.Set;
+
+import com.herethere.withus.keyword.domain.Keyword;
+import com.herethere.withus.user.domain.User;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -21,6 +25,14 @@ public record UserOnboardingResponse(
 	)
 	String profileImageUrl
 ) {
+	public static UserOnboardingResponse from(User user, Set<Keyword> keywordSet) {
+		List<KeywordInfo> keywordInfos = keywordSet.stream().map(
+			k -> new KeywordInfo(k.getId(), k.getContent())
+		).toList();
+
+		return new UserOnboardingResponse(user.getId(), user.getNickname(), keywordInfos, user.getProfileImageKey());
+	}
+
 	public record KeywordInfo(
 		@Schema(description = "키워드 고유 ID", example = "1")
 		Long keywordId,
