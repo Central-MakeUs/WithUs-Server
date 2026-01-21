@@ -1,7 +1,6 @@
 package com.herethere.withus.couple.domain;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.time.ZoneId;
 
 import com.herethere.withus.common.baseentity.BaseEntity;
@@ -44,12 +43,6 @@ public class Couple extends BaseEntity {
 	@JoinColumn(name = "user_b_id", unique = true, nullable = false)
 	private User userB;
 
-	@Column(name = "anniversary_date")
-	private LocalDate anniversaryDate;
-
-	@Column(name = "question_time")
-	private LocalTime questionTime;
-
 	@Enumerated(EnumType.STRING)
 	@Column(name = "status", length = 10, nullable = false)
 	private CoupleStatus status;
@@ -64,7 +57,7 @@ public class Couple extends BaseEntity {
 		Couple couple = Couple.builder()
 			.userA(userA)
 			.userB(userB)
-			.status(CoupleStatus.PENDING)
+			.status(CoupleStatus.ACTIVE)
 			.lastQuestionIndex(0L)
 			.lastQuestionDate(LocalDate.now(ZoneId.of("UTC")))
 			.build();
@@ -83,12 +76,5 @@ public class Couple extends BaseEntity {
 		lastQuestionDate = date;
 		lastQuestionIndex++;
 		return lastQuestionIndex;
-	}
-
-	public void initialize(LocalTime questionTime) {
-		this.questionTime = questionTime;
-		if (status == CoupleStatus.PENDING) {
-			status = CoupleStatus.ACTIVE;
-		}
 	}
 }
