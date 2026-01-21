@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.herethere.withus.common.apiresponse.ApiResponse;
 import com.herethere.withus.user.api.UserApi;
+import com.herethere.withus.user.dto.request.UserOnboardingRequest;
 import com.herethere.withus.user.dto.request.UserUpdateRequest;
 import com.herethere.withus.user.dto.response.InvitationCodeResponse;
 import com.herethere.withus.user.dto.response.OnboardingStatusResponse;
@@ -40,5 +41,10 @@ public class UserController implements UserApi {
 	public ResponseEntity<ApiResponse<Void>> pokeUser(Long userId) {
 		userService.pokeUser(userId);
 		return ResponseEntity.ok(ApiResponse.success());
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<Void>> onboardUser(UserOnboardingRequest userOnboardingRequest) {
+		return null;
 	}
 }
