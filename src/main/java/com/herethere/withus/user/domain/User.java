@@ -1,5 +1,7 @@
 package com.herethere.withus.user.domain;
 
+import java.time.LocalDate;
+
 import com.herethere.withus.auth.domain.OAuthProviderType;
 import com.herethere.withus.common.baseentity.BaseEntity;
 import com.herethere.withus.common.exception.BadRequestException;
@@ -52,6 +54,9 @@ public class User extends BaseEntity {
 
 	@Column(name = "provider_id", length = 50, nullable = false)
 	private String providerId;
+
+	@Column(name = "birthday")
+	private LocalDate birthday;
 
 	@Column(name = "is_initialized", nullable = false)
 	private boolean isInitialized;
