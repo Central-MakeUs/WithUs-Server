@@ -9,6 +9,4 @@ import com.herethere.withus.couple.domain.CoupleKeyword;
 
 public interface CoupleKeywordRepository extends JpaRepository<CoupleKeyword, Long> {
 	List<CoupleKeyword> findAllByCouple(Couple couple);
-
-	void saveAll(List<CoupleKeyword> coupleKeywords);
 }
