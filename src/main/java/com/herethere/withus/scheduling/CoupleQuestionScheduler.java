@@ -1,7 +1,6 @@
 package com.herethere.withus.scheduling;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
@@ -25,14 +24,12 @@ public class CoupleQuestionScheduler {
 	private final QuestionService questionService;
 	private final CoupleRepository coupleRepository;
 
-	@Scheduled(cron = "5 * * * * *", zone = "UTC")
+	@Scheduled(cron = "5 0 0 * * *", zone = "Asia/Seoul")
 	public void processCoupleQuestions() {
-		ZoneId utc = ZoneId.of("UTC");
-		LocalTime now = LocalTime.now(utc);
-		LocalDate today = LocalDate.now(utc);
-		LocalDate yesterday = today.minusDays(1);
+		ZoneId seoul = ZoneId.of("Asia/Seoul");
+		LocalDate today = LocalDate.now(seoul);
 
-		List<Couple> couples = coupleRepository.findCouplesToProcess(now, today, yesterday);
+		List<Couple> couples = coupleRepository.findCouplesToProcess(today);
 
 		Map<Long, Question> questionMap = questionService.getAllQuestionMap();
 
