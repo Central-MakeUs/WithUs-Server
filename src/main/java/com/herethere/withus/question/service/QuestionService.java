@@ -5,8 +5,8 @@ import static com.herethere.withus.common.exception.ErrorCode.*;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -111,7 +111,7 @@ public class QuestionService {
 
 		// 만약 처음이라 CoupleQuestion이 없으면 대기 문구 반환
 		if (latestCoupleQuestion.isEmpty()) {
-			return new TodayQuestionResponse(null, generateWaitingResponse(couple), null, null);
+			return new TodayQuestionResponse(null, generateWaitingResponse(), null, null);
 		}
 
 		CoupleQuestion coupleQuestion = latestCoupleQuestion.get();
@@ -169,14 +169,15 @@ public class QuestionService {
 			.build();
 	}
 
-	private String generateWaitingResponse(Couple couple) {
-		LocalTime now = LocalTime.now(ZoneId.of("UTC"));
-		LocalTime target = couple.getQuestionTime();
-		Duration duration = Duration.between(now, target);
+	private String generateWaitingResponse() {
+		ZonedDateTime now = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
+		ZonedDateTime target = now.toLocalDate().atStartOfDay(now.getZone());
 
-		if (duration.isNegative()) {
-			duration = duration.plusDays(1);
+		if (now.isAfter(target)) {
+			target = target.plusDays(1);
 		}
+
+		Duration duration = Duration.between(now, target);
 
 		long hours = duration.toHours();
 		long minutes = duration.toMinutesPart();

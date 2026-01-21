@@ -1,13 +1,11 @@
 package com.herethere.withus.couple.api;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.herethere.withus.common.apiresponse.ApiResponse;
-import com.herethere.withus.couple.dto.request.CoupleInitializeRequest;
 import com.herethere.withus.couple.dto.request.CoupleJoinPreviewRequest;
 import com.herethere.withus.couple.dto.request.CoupleJoinRequest;
 import com.herethere.withus.couple.dto.response.CoupleJoinPreviewResponse;
@@ -44,21 +42,5 @@ public interface CoupleApi {
 	@PostMapping("/join")
 	ResponseEntity<ApiResponse<CoupleJoinResponse>> joinCouple(
 		@Valid @RequestBody CoupleJoinRequest coupleJoinRequest
-	);
-
-	@Operation(
-		summary = "커플 서비스 초기 설정",
-		description = """
-			커플의 키워드와 질문 시간을 설정합니다.
-			- defaultKeywordIds: 커플이 선택한 시스템 기본 설정 키워드 ID 리스트
-			- customKeywords: 커플이 커스텀으로 추가한 키워드 리스트 (ID가 없기 때문에 String으로 받습니다.)
-			- questionTime: 알림 시간 (포맷: HH:mm, 예: 21:00)
-			- 전체 키워드 합은 최소 1개, 최대 3개여야 합니다.
-			- 이후 온보딩 상태는 COMPLETE 로 변경됩니다.
-			"""
-	)
-	@PatchMapping("/settings")
-	ResponseEntity<ApiResponse<Void>> initializeCoupleSettings(
-		@Valid @RequestBody CoupleInitializeRequest coupleInitializeRequest
 	);
 }

@@ -1,7 +1,6 @@
 package com.herethere.withus.couple.repository;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,15 +18,9 @@ public interface CoupleRepository extends JpaRepository<Couple, Long> {
 		select c
 		from Couple c
 		where (c.lastQuestionDate < :today)
-		  and (
-		    c.lastQuestionDate < :yesterday
-		    or c.questionTime <= :nowTime
-		  )
 		""")
 	List<Couple> findCouplesToProcess(
-		@Param("nowTime") LocalTime nowTime,
-		@Param("today") LocalDate today,
-		@Param("yesterday") LocalDate yesterday
+		@Param("today") LocalDate today
 	);
 
 	@Lock(LockModeType.PESSIMISTIC_WRITE)

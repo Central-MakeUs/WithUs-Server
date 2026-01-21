@@ -4,6 +4,7 @@ import static com.herethere.withus.common.exception.ErrorCode.*;
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,8 +13,6 @@ import com.herethere.withus.common.exception.ConflictException;
 import com.herethere.withus.common.exception.NotFoundException;
 import com.herethere.withus.couple.domain.Couple;
 import com.herethere.withus.couple.domain.CoupleKeyword;
-import com.herethere.withus.couple.domain.CoupleStatus;
-import com.herethere.withus.couple.dto.request.CoupleInitializeRequest;
 import com.herethere.withus.couple.dto.request.CoupleJoinPreviewRequest;
 import com.herethere.withus.couple.dto.request.CoupleJoinRequest;
 import com.herethere.withus.couple.dto.response.CoupleJoinPreviewResponse;
@@ -25,7 +24,9 @@ import com.herethere.withus.keyword.repository.KeywordRepository;
 import com.herethere.withus.keyword.service.KeywordService;
 import com.herethere.withus.user.domain.InviteCode;
 import com.herethere.withus.user.domain.User;
+import com.herethere.withus.user.domain.UserKeyword;
 import com.herethere.withus.user.repository.InviteCodeRepository;
+import com.herethere.withus.user.repository.UserKeywordRepository;
 import com.herethere.withus.user.repository.UserRepository;
 import com.herethere.withus.user.service.UserContextService;
 
@@ -41,6 +42,7 @@ public class CoupleService {
 	private final UserRepository userRepository;
 	private final KeywordRepository keywordRepository;
 	private final CoupleKeywordRepository coupleKeywordRepository;
+	private final UserKeywordRepository userKeywordRepository;
 
 	@Transactional(readOnly = true)
 	public CoupleJoinPreviewResponse checkCoupleJoinPreview(CoupleJoinPreviewRequest request) {
@@ -77,40 +79,26 @@ public class CoupleService {
 
 		Couple couple = coupleRepository.save(Couple.create(sender, receiver));
 
-		inviteCodeRepository.delete(inviteCode);
-		inviteCodeRepository.deleteByUser(receiver);
+		// 유저 두명의 키워드를 가져와서 합치고, 그걸 커플 키워드로 저장한다.
+		List<UserKeyword> userKeywords = userKeywordRepository.findAllByUserIn(List.of(sender, receiver));
 
-		return new CoupleJoinResponse(couple.getId());
-	}
+		Set<Keyword> combinedKeywords = userKeywords.stream()
+			.map(UserKeyword::getKeyword)
+			.collect(Collectors.toSet());
 
-	@Transactional
-	public void initializeCoupleSettings(CoupleInitializeRequest request) {
-		User user = userContextService.getCurrentUser();
-		Couple couple = user.getCouple();
-
-		if (couple == null) {
-			throw new NotFoundException(COUPLE_NOT_FOUND);
-		}
-		if (couple.getStatus() == CoupleStatus.ACTIVE) {
-			throw new ConflictException(COUPLE_ALREADY_INITIALIZED);
-		}
-		if (couple.getStatus() == CoupleStatus.DELETED) {
-			throw new ConflictException(COUPLE_DELETED);
-		}
-
-		Set<Keyword> chosenKeywordSet = keywordService.getChosenKeywords(request.defaultKeywordIds(),
-			request.customKeywords());
-
-		List<CoupleKeyword> coupleKeywords = chosenKeywordSet.stream()
+		List<CoupleKeyword> coupleKeywords = combinedKeywords.stream()
 			.map(k -> CoupleKeyword.builder()
-				.keyword(k)
 				.couple(couple)
+				.keyword(k)
 				.build())
 			.toList();
 
 		coupleKeywordRepository.saveAll(coupleKeywords);
 
-		couple.initialize(request.questionTime());
+		inviteCodeRepository.delete(inviteCode);
+		inviteCodeRepository.deleteByUser(receiver);
+
+		return new CoupleJoinResponse(couple.getId());
 	}
 
 	private InviteCode getInviteCode(String code) {

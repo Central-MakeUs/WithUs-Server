@@ -1,5 +1,6 @@
 package com.herethere.withus.user.dto.response;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
@@ -26,9 +27,10 @@ public record UserOnboardingResponse(
 	String profileImageUrl
 ) {
 	public static UserOnboardingResponse from(User user, Set<Keyword> keywordSet) {
-		List<KeywordInfo> keywordInfos = keywordSet.stream().map(
-			k -> new KeywordInfo(k.getId(), k.getContent())
-		).toList();
+		List<KeywordInfo> keywordInfos = keywordSet.stream()
+			.map(k -> new KeywordInfo(k.getId(), k.getContent()))
+			.sorted(Comparator.comparing(KeywordInfo::content))
+			.toList();
 
 		return new UserOnboardingResponse(user.getId(), user.getNickname(), keywordInfos, user.getProfileImageKey());
 	}

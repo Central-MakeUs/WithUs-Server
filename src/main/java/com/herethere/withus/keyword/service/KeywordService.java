@@ -3,6 +3,7 @@ package com.herethere.withus.keyword.service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -49,6 +50,7 @@ public class KeywordService {
 		List<Keyword> keywordList = keywordRepository.findAllByIsDefaultTrueOrderByDisplayOrderAsc();
 		List<DefaultKeywordsResponse.KeywordInfo> keywordInfos = keywordList.stream()
 			.map(k -> new DefaultKeywordsResponse.KeywordInfo(k.getId(), k.getContent(), k.getDisplayOrder()))
+			.sorted(Comparator.comparing(DefaultKeywordsResponse.KeywordInfo::displayOrder))
 			.toList();
 		return new DefaultKeywordsResponse(keywordInfos);
 	}
@@ -61,9 +63,10 @@ public class KeywordService {
 
 		List<CoupleKeyword> coupleKeywords = coupleKeywordRepository.findAllByCouple(couple);
 		List<CoupleKeywordsResponse.CoupleKeywordInfo> coupleKeywordInfos = coupleKeywords.stream().map(c -> {
-			Keyword keyword = c.getKeyword();
-			return new CoupleKeywordsResponse.CoupleKeywordInfo(keyword.getId(), c.getId(), keyword.getContent());
-		}).toList();
+				Keyword keyword = c.getKeyword();
+				return new CoupleKeywordsResponse.CoupleKeywordInfo(keyword.getId(), c.getId(), keyword.getContent());
+			}).sorted(Comparator.comparing(CoupleKeywordsResponse.CoupleKeywordInfo::content))
+			.toList();
 
 		return new CoupleKeywordsResponse(coupleKeywordInfos);
 	}
