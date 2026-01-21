@@ -1,5 +1,7 @@
 package com.herethere.withus.user.domain;
 
+import java.time.LocalDate;
+
 import com.herethere.withus.auth.domain.OAuthProviderType;
 import com.herethere.withus.common.baseentity.BaseEntity;
 import com.herethere.withus.common.exception.BadRequestException;
@@ -53,14 +55,23 @@ public class User extends BaseEntity {
 	@Column(name = "provider_id", length = 50, nullable = false)
 	private String providerId;
 
+	@Column(name = "birthday")
+	private LocalDate birthday;
+
 	@Column(name = "is_initialized", nullable = false)
 	private boolean isInitialized;
 
 	@Column(name = "profile_image_key", length = 255)
 	private String profileImageKey;
 
-	public void initializeProfile(String nickname, String profileImageKey) {
+	public void updateProfile(String nickname, String profileImageKey) {
 		this.nickname = nickname;
+		this.profileImageKey = profileImageKey;
+	}
+
+	public void completeOnboarding(String nickname, LocalDate birthday, String profileImageKey) {
+		this.nickname = nickname;
+		this.birthday = birthday;
 		this.profileImageKey = profileImageKey;
 		isInitialized = true;
 	}
