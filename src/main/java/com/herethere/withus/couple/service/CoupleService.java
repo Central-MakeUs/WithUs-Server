@@ -2,7 +2,6 @@ package com.herethere.withus.couple.service;
 
 import static com.herethere.withus.common.exception.ErrorCode.*;
 
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -23,6 +22,7 @@ import com.herethere.withus.couple.repository.CoupleKeywordRepository;
 import com.herethere.withus.couple.repository.CoupleRepository;
 import com.herethere.withus.keyword.domain.Keyword;
 import com.herethere.withus.keyword.repository.KeywordRepository;
+import com.herethere.withus.keyword.service.KeywordService;
 import com.herethere.withus.user.domain.InviteCode;
 import com.herethere.withus.user.domain.User;
 import com.herethere.withus.user.repository.InviteCodeRepository;
@@ -35,6 +35,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CoupleService {
 	private final UserContextService userContextService;
+	private final KeywordService keywordService;
 	private final CoupleRepository coupleRepository;
 	private final InviteCodeRepository inviteCodeRepository;
 	private final UserRepository userRepository;
@@ -97,9 +98,10 @@ public class CoupleService {
 			throw new ConflictException(COUPLE_DELETED);
 		}
 
-		Set<Keyword> finalKeywords = getFinalKeywords(request.defaultKeywordIds(), request.customKeywords());
+		Set<Keyword> chosenKeywordSet = keywordService.getChosenKeywords(request.defaultKeywordIds(),
+			request.customKeywords());
 
-		List<CoupleKeyword> coupleKeywords = finalKeywords.stream()
+		List<CoupleKeyword> coupleKeywords = chosenKeywordSet.stream()
 			.map(k -> CoupleKeyword.builder()
 				.keyword(k)
 				.couple(couple)
@@ -109,31 +111,6 @@ public class CoupleService {
 		coupleKeywordRepository.saveAll(coupleKeywords);
 
 		couple.initialize(request.questionTime());
-	}
-
-	private Set<Keyword> getFinalKeywords(List<Long> defaultKeywordIds, List<String> customKeywords) {
-		Set<Keyword> finalKeywords = new LinkedHashSet<>();
-		finalKeywords.addAll(keywordRepository.findAllById(defaultKeywordIds));
-
-		// 커스텀 키워드 저장
-		for (String keywordContent : customKeywords) {
-			String trimmedKeyword = keywordContent.trim();
-			if (trimmedKeyword.isEmpty()) {
-				continue;
-			}
-			Keyword keyword = keywordRepository.findByContent(trimmedKeyword).orElseGet(
-				() -> {
-					return keywordRepository.save(
-						Keyword.builder()
-							.content(trimmedKeyword)
-							.isDefault(false)
-							.build()
-					);
-				}
-			);
-			finalKeywords.add(keyword);
-		}
-		return finalKeywords;
 	}
 
 	private InviteCode getInviteCode(String code) {

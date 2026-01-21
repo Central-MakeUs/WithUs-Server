@@ -3,7 +3,9 @@ package com.herethere.withus.keyword.service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -121,6 +123,31 @@ public class KeywordService {
 		keywordRecordRepository.save(keywordRecord);
 
 		eventPublisher.publishEvent(FcmNotificationEvent.createUploadEvent(user, user.getPartner()));
+	}
+
+	public Set<Keyword> getChosenKeywords(List<Long> defaultKeywordIds, List<String> customKeywords) {
+		Set<Keyword> chosenKeywords = new LinkedHashSet<>();
+		chosenKeywords.addAll(keywordRepository.findAllById(defaultKeywordIds));
+
+		// 커스텀 키워드 저장
+		for (String keywordContent : customKeywords) {
+			String trimmedKeyword = keywordContent.trim();
+			if (trimmedKeyword.isEmpty()) {
+				continue;
+			}
+			Keyword keyword = keywordRepository.findByContent(trimmedKeyword).orElseGet(
+				() -> {
+					return keywordRepository.save(
+						Keyword.builder()
+							.content(trimmedKeyword)
+							.isDefault(false)
+							.build()
+					);
+				}
+			);
+			chosenKeywords.add(keyword);
+		}
+		return chosenKeywords;
 	}
 
 	private TodayKeywordResponse.MemberInfo getMemberInfo(User user, KeywordRecord keywordRecord) {
