@@ -1,5 +1,7 @@
 package com.herethere.withus.fourcut.service;
 
+import static com.herethere.withus.common.exception.ErrorCode.*;
+
 import java.util.List;
 
 import org.springframework.data.domain.PageRequest;
@@ -9,9 +11,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.herethere.withus.common.annotation.RequiresActiveCouple;
 import com.herethere.withus.common.dto.internal.CursorPayload;
+import com.herethere.withus.common.exception.BadRequestException;
+import com.herethere.withus.common.exception.ForbiddenException;
 import com.herethere.withus.common.util.CursorCodec;
 import com.herethere.withus.couple.domain.Couple;
 import com.herethere.withus.fourcut.domain.FourCut;
+import com.herethere.withus.fourcut.dto.request.FourCutUploadRequest;
 import com.herethere.withus.fourcut.dto.response.FourCutCursorResponse;
 import com.herethere.withus.fourcut.repository.FourCutRepository;
 import com.herethere.withus.s3.service.S3Service;
@@ -56,5 +61,33 @@ public class FourCutService {
 		}).toList();
 
 		return new FourCutCursorResponse(fourCutInfos, nextCursor, hasNext);
+	}
+
+	@Transactional
+	@RequiresActiveCouple
+	public void uploadFourCutImage(FourCutUploadRequest fourCutUploadRequest) {
+		User user = userContextService.getCurrentUser();
+		Couple couple = user.getCouple();
+		String imageKey = fourCutUploadRequest.imageKey();
+
+		if (imageKey == null || imageKey.isBlank()) {
+			throw new BadRequestException(NEED_IMAGE_KEY);
+		}
+
+		if (!imageKey.endsWith(".jpg")) {
+			throw new BadRequestException(WRONG_IMAGE_FORMAT);
+		}
+
+		String expectedPrefix = "users/" + user.getId() + "/";
+		if (!imageKey.startsWith(expectedPrefix)) {
+			throw new ForbiddenException(WRONG_IMAGE_KEY);
+		}
+
+		FourCut fourCut = FourCut.builder()
+			.couple(couple)
+			.user(user)
+			.imageKey(imageKey)
+			.build();
+		fourCutRepository.save(fourCut);
 	}
 }

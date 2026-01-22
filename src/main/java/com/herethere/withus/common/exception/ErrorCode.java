@@ -53,7 +53,7 @@ public enum ErrorCode {
 	// OAUTH
 	PROVIDER_NOT_FOUND(404, "존재하지 않는 OAuth Provider 입니다."),
 
-	// INVALID_INPUT
+	// BAD_REQUEST
 	INVALID_INPUT(400, "잘못된 입력입니다."),
 
 	// ACCESS_DENIED
@@ -64,7 +64,12 @@ public enum ErrorCode {
 
 	// CURSOR
 	INVALID_CURSOR(400, "잘못된 커서 요청입니다."),
-	CURSOR_ENCODING_FAILED(500, "커서 인코딩을 실패했습니다.");
+	CURSOR_ENCODING_FAILED(500, "커서 인코딩을 실패했습니다."),
+
+	// IMAGE
+	NEED_IMAGE_KEY(400, "이미지 키가 존재하지 않습니다."),
+	WRONG_IMAGE_FORMAT(400, "이미지가 형식에 맞지 않습니다."),
+	WRONG_IMAGE_KEY(403, "잘못된 이미지 키입니다.");
 
 	private final int status;
 	private final String message;
