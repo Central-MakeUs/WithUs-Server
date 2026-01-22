@@ -60,7 +60,11 @@ public enum ErrorCode {
 	ACCESS_DENIED(403, "잘못된 접근입니다."),
 
 	// AUTH
-	UNAUTHENTICATED_USER(401, "인증되지 않은 사용자입니다.");
+	UNAUTHENTICATED_USER(401, "인증되지 않은 사용자입니다."),
+
+	// CURSOR
+	INVALID_CURSOR(400, "잘못된 커서 요청입니다."),
+	CURSOR_ENCODING_FAILED(500, "커서 인코딩을 실패했습니다.");
 
 	private final int status;
 	private final String message;
