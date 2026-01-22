@@ -3,15 +3,19 @@ package com.herethere.withus.fourcut.api;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.herethere.withus.common.apiresponse.ApiResponse;
+import com.herethere.withus.fourcut.dto.request.FourCutUploadRequest;
 import com.herethere.withus.fourcut.dto.response.FourCutCursorResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 
@@ -46,5 +50,17 @@ public interface FourCutApi {
 		)
 		@RequestParam(required = false)
 		String cursor
+	);
+
+	@Operation(
+		summary = "네컷 사진 업로드",
+		description = """
+			네컷 사진을 업로드 합니다.
+			- /api/images/presigned-url에서 response로 받은 ImageKey를 보내야 합니다.
+			"""
+	)
+	@PostMapping("/me/couple/four-cuts")
+	ResponseEntity<ApiResponse<Void>> uploadFourCutImage(
+		@Valid @RequestBody FourCutUploadRequest fourCutUploadRequest
 	);
 }
