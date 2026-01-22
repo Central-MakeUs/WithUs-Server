@@ -19,7 +19,7 @@ public record UserOnboardingRequest(
 
 	@Schema(description = "생일", example = "2000-01-02")
 	@NotNull(message = "생일은 필수 항목입니다.")
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-mm-dd")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
 	LocalDate birthday,
 
 	@Schema(description = "선택한 기본 키워드 ID 리스트 (없으면 빈 리스트 [])", example = "[1, 2]")
