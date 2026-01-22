@@ -1,5 +1,5 @@
 package com.herethere.withus.s3.domain;
 
 public enum ImageType {
-	PROFILE, MEMORY
+	PROFILE, MEMORY, FOUR_CUT
 }
