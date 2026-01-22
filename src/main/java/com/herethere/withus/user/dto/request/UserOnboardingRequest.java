@@ -26,7 +26,7 @@ public record UserOnboardingRequest(
 	@NotNull
 	List<Long> defaultKeywordIds,
 
-	@Schema(description = "직접 입력한 커스텀 키워드 리스트 (없으면 빈 리스트 [])", example = "['산책', '맛집']")
+	@Schema(description = "직접 입력한 커스텀 키워드 리스트 (없으면 빈 리스트 [])",  example = "[\"산책\", \"맛집\"]")
 	@NotNull
 	List<String> customKeywords,
 
