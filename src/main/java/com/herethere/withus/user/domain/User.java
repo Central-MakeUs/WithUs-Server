@@ -4,8 +4,8 @@ import java.time.LocalDate;
 
 import com.herethere.withus.auth.domain.OAuthProviderType;
 import com.herethere.withus.common.baseentity.BaseEntity;
-import com.herethere.withus.common.exception.BadRequestException;
 import com.herethere.withus.common.exception.ErrorCode;
+import com.herethere.withus.common.exception.NotFoundException;
 import com.herethere.withus.couple.domain.Couple;
 
 import jakarta.persistence.Column;
@@ -84,7 +84,7 @@ public class User extends BaseEntity {
 	public User getPartner() {
 		Couple couple = getCouple();
 		if (couple == null) {
-			throw new BadRequestException(ErrorCode.COUPLE_NOT_FOUND);
+			throw new NotFoundException(ErrorCode.COUPLE_NOT_FOUND);
 		}
 		return couple.getUserA().getId().equals(this.id) ? couple.getUserB() : couple.getUserA();
 	}
