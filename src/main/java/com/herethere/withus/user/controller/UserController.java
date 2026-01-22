@@ -28,7 +28,8 @@ public class UserController implements UserApi {
 
 	@Override
 	public ResponseEntity<ApiResponse<UserUpdateResponse>> getUserProfile() {
-		return null;
+		UserUpdateResponse response = userService.getUserProfile();
+		return ResponseEntity.ok(ApiResponse.success(response));
 	}
 
 	@Override

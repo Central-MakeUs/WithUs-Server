@@ -49,6 +49,12 @@ public class UserService {
 		return new UserUpdateResponse(user.getId(), user.getNickname(), user.getBirthday(), user.getProfileImageKey());
 	}
 
+	@Transactional(readOnly = true)
+	public UserUpdateResponse getUserProfile() {
+		User user = userContextService.getCurrentUser();
+		return new UserUpdateResponse(user.getId(), user.getNickname(), user.getBirthday(), user.getProfileImageKey());
+	}
+
 	@Transactional
 	public InvitationCodeResponse generateInvitationCode() {
 		User user = userContextService.getCurrentUser();
