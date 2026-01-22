@@ -45,8 +45,14 @@ public class UserService {
 	@Transactional
 	public UserUpdateResponse updateUserProfile(UserUpdateRequest userUpdateRequest) {
 		User user = userContextService.getCurrentUser();
-		user.updateProfile(userUpdateRequest.nickname(), userUpdateRequest.imageKey());
-		return new UserUpdateResponse(user.getId(), user.getNickname(), user.getProfileImageKey());
+		user.updateProfile(userUpdateRequest.nickname(), userUpdateRequest.birthday(), userUpdateRequest.imageKey());
+		return new UserUpdateResponse(user.getId(), user.getNickname(), user.getBirthday(), user.getProfileImageKey());
+	}
+
+	@Transactional(readOnly = true)
+	public UserUpdateResponse getUserProfile() {
+		User user = userContextService.getCurrentUser();
+		return new UserUpdateResponse(user.getId(), user.getNickname(), user.getBirthday(), user.getProfileImageKey());
 	}
 
 	@Transactional

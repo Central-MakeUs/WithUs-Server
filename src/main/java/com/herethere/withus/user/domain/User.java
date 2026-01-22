@@ -64,8 +64,9 @@ public class User extends BaseEntity {
 	@Column(name = "profile_image_key", length = 255)
 	private String profileImageKey;
 
-	public void updateProfile(String nickname, String profileImageKey) {
+	public void updateProfile(String nickname, LocalDate birthday, String profileImageKey) {
 		this.nickname = nickname;
+		this.birthday = birthday;
 		this.profileImageKey = profileImageKey;
 	}
 
