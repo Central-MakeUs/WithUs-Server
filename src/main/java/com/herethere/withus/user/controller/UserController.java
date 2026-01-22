@@ -27,6 +27,11 @@ public class UserController implements UserApi {
 	}
 
 	@Override
+	public ResponseEntity<ApiResponse<UserUpdateResponse>> getUserProfile() {
+		return null;
+	}
+
+	@Override
 	public ResponseEntity<ApiResponse<InvitationCodeResponse>> generateInvitationCode() {
 		InvitationCodeResponse response = userService.generateInvitationCode();
 		return ResponseEntity.ok(ApiResponse.success(response));

@@ -1,7 +1,7 @@
 package com.herethere.withus.user.api;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -28,19 +28,29 @@ public interface UserApi {
 	@Operation(
 		summary = "유저 프로필 설정 및 수정",
 		description = """
-			유저의 닉네임, 프로필 사진 등을 설정합니다.
-			- **회원가입 직후**: 이 API를 호출하여 초기 프로필을 완성해야 온보딩 다음 단계로 넘어갈 수 있습니다.
-			- 이 API 호출 후에 User의 OnboardingStatus는 NEED_COUPLE_CONNECT가 됩니다.
-			- 이후 언제든지 프로필 정보를 수정할 때 동일하게 사용합니다.
+			유저의 프로필을 수정합니다. (닉네임, 생일, 프로필사진)
+			- `GET /me/user/profile`을 통해 현재 유저의 프로필을 받고, 입력칸을 채워서 유저에게 보여줘야 합니다.
+			- 입력받은 값으로 전부 덮어씌웁니다.(PUT)
 			- 만약 유저가 프로필 사진을 선택하지 않았다면, null로 관리합니다.
 			- 추후 응답에서도 profileImageUrl 이 null 이라면 앱에 존재하는 기본 이미지로 대체합니다.
-			- 기획 변경에 따라 추후 수정 예정입니다. (회원가입 시에는 /api/me/onboarding을 사용합니다.)
 			"""
 	)
-	@PatchMapping("/me/user")
+	@PutMapping("/me/user/profile")
 	ResponseEntity<ApiResponse<UserUpdateResponse>> updateUserProfile(
 		@Valid @RequestBody UserUpdateRequest userUpdateRequest
 	);
+
+	@Operation(
+		summary = "유저 프로필 조회",
+		description = """
+			유저의 프로필을 조회합니다.
+			- `POST /me/user/profile`에서 입력칸을 채우기 위해 사용합니다.
+			- 만약 유저가 프로필 사진을 선택하지 않았다면, null로 관리합니다.
+			- 응답에서도 profileImageUrl 이 null 이라면 앱에 존재하는 기본 이미지로 대체합니다.
+			"""
+	)
+	@GetMapping("/me/user/profile")
+	ResponseEntity<ApiResponse<UserUpdateResponse>> getUserProfile();
 
 	@Operation(
 		summary = "커플 초대 코드 생성",
