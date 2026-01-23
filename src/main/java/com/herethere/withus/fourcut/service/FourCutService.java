@@ -13,6 +13,7 @@ import com.herethere.withus.common.annotation.RequiresActiveCouple;
 import com.herethere.withus.common.dto.internal.CursorPayload;
 import com.herethere.withus.common.exception.BadRequestException;
 import com.herethere.withus.common.exception.ForbiddenException;
+import com.herethere.withus.common.exception.NotFoundException;
 import com.herethere.withus.common.util.CursorCodec;
 import com.herethere.withus.couple.domain.Couple;
 import com.herethere.withus.fourcut.domain.FourCut;
@@ -89,5 +90,19 @@ public class FourCutService {
 			.imageKey(imageKey)
 			.build();
 		fourCutRepository.save(fourCut);
+	}
+
+	@Transactional
+	@RequiresActiveCouple
+	public void deleteFourCut(Long fourCutId) {
+		User user = userContextService.getCurrentUser();
+		Couple couple = user.getCouple();
+		FourCut fourCut = fourCutRepository.findById(fourCutId)
+			.orElseThrow(() -> new NotFoundException(FOUR_CUT_NOT_FOUND));
+
+		if (!fourCut.getCouple().getId().equals(couple.getId())) {
+			throw new ForbiddenException(FOUR_CUT_NOT_FOUND);
+		}
+		fourCutRepository.delete(fourCut);
 	}
 }

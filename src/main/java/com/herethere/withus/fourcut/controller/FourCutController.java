@@ -31,6 +31,6 @@ public class FourCutController implements FourCutApi {
 	@Override
 	public ResponseEntity<ApiResponse<Void>> deleteFourCutImage(Long fourCutId) {
 		fourCutService.deleteFourCut(fourCutId);
-		return null;
+		return ResponseEntity.ok(ApiResponse.success());
 	}
 }

@@ -45,6 +45,9 @@ public enum ErrorCode {
 	KEYWORD_NOT_FOUND(404, "해당 키워드가 존재하지 않습니다."),
 	NOT_VALID_KEYWORD_COUNT(409, "잘못된 키워드 개수입니다."),
 
+	// FOUR_CUT
+	FOUR_CUT_NOT_FOUND(404, "해당 네컷 사진이 존재하지 않습니다."),
+
 	// INVITATION_CODE
 	CODE_GENERATE_FAILED(503, "중복으로 인해 초대 코드 생성을 실패했습니다."),
 	CODE_NOT_FOUND(404, "초대 코드를 찾을 수 없습니다."),
