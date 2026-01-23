@@ -2,7 +2,9 @@ package com.herethere.withus.fourcut.api;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -62,5 +64,18 @@ public interface FourCutApi {
 	@PostMapping("/me/couple/four-cuts")
 	ResponseEntity<ApiResponse<Void>> uploadFourCutImage(
 		@Valid @RequestBody FourCutUploadRequest fourCutUploadRequest
+	);
+
+	@Operation(
+		summary = "네컷 사진 삭제",
+		description = """
+			네컷 사진을 하나를 삭제합니다.
+			- 응답에서 받은 fourCutId를 전달하여 해당 네컷 사진을 삭제합니다.
+			"""
+	)
+	@DeleteMapping("/me/couple/four-cuts/{fourCutId}")
+	ResponseEntity<ApiResponse<Void>> deleteFourCutImage(
+		@Parameter(description = "네컷 고유 ID", example = "10")
+		@PathVariable Long fourCutId
 	);
 }

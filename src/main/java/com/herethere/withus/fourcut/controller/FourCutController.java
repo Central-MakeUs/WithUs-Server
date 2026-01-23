@@ -27,4 +27,10 @@ public class FourCutController implements FourCutApi {
 		fourCutService.uploadFourCutImage(fourCutUploadRequest);
 		return ResponseEntity.ok(ApiResponse.success());
 	}
+
+	@Override
+	public ResponseEntity<ApiResponse<Void>> deleteFourCutImage(Long fourCutId) {
+		fourCutService.deleteFourCut(fourCutId);
+		return null;
+	}
 }
