@@ -86,6 +86,10 @@ public class CoupleService {
 			.map(UserKeyword::getKeyword)
 			.collect(Collectors.toSet());
 
+		if (combinedKeywords.isEmpty() || combinedKeywords.size() > 4) {
+			throw new ConflictException(NOT_VALID_KEYWORD_COUNT);
+		}
+
 		List<CoupleKeyword> coupleKeywords = combinedKeywords.stream()
 			.map(k -> CoupleKeyword.builder()
 				.couple(couple)

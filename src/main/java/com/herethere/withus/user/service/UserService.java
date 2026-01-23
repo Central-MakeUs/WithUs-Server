@@ -104,6 +104,10 @@ public class UserService {
 		Set<Keyword> chosenKeywordSet = keywordService.getChosenKeywords(request.defaultKeywordIds(),
 			request.customKeywords());
 
+		if (chosenKeywordSet.isEmpty() || chosenKeywordSet.size() > 2) {
+			throw new ConflictException(NOT_VALID_KEYWORD_COUNT);
+		}
+
 		List<UserKeyword> userKeywords = chosenKeywordSet.stream()
 			.map(k -> UserKeyword.builder()
 				.keyword(k)
