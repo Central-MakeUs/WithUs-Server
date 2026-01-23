@@ -21,7 +21,7 @@ import jakarta.validation.constraints.Min;
 
 @Validated
 @RequestMapping("/api")
-@Tag(name = "커플 API", description = "커플 연결 및 초기 설정 관리")
+@Tag(name = "네컷 API", description = "네컷 사진 관리")
 public interface FourCutApi {
 
 	@Operation(
