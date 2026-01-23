@@ -78,7 +78,7 @@ public class FourCutService {
 			throw new BadRequestException(WRONG_IMAGE_FORMAT);
 		}
 
-		String expectedPrefix = "users/" + user.getId() + "/";
+		String expectedPrefix = "users/" + user.getId() + "/four-cut/";
 		if (!imageKey.startsWith(expectedPrefix)) {
 			throw new ForbiddenException(WRONG_IMAGE_KEY);
 		}
