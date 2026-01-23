@@ -45,6 +45,9 @@ public enum ErrorCode {
 	KEYWORD_NOT_FOUND(404, "해당 키워드가 존재하지 않습니다."),
 	NOT_VALID_KEYWORD_COUNT(409, "잘못된 키워드 개수입니다."),
 
+	// FOUR_CUT
+	FOUR_CUT_NOT_FOUND(404, "해당 네컷 사진이 존재하지 않습니다."),
+
 	// INVITATION_CODE
 	CODE_GENERATE_FAILED(503, "중복으로 인해 초대 코드 생성을 실패했습니다."),
 	CODE_NOT_FOUND(404, "초대 코드를 찾을 수 없습니다."),
@@ -53,14 +56,23 @@ public enum ErrorCode {
 	// OAUTH
 	PROVIDER_NOT_FOUND(404, "존재하지 않는 OAuth Provider 입니다."),
 
-	// INVALID_INPUT
+	// BAD_REQUEST
 	INVALID_INPUT(400, "잘못된 입력입니다."),
 
 	// ACCESS_DENIED
 	ACCESS_DENIED(403, "잘못된 접근입니다."),
 
 	// AUTH
-	UNAUTHENTICATED_USER(401, "인증되지 않은 사용자입니다.");
+	UNAUTHENTICATED_USER(401, "인증되지 않은 사용자입니다."),
+
+	// CURSOR
+	INVALID_CURSOR(400, "잘못된 커서 요청입니다."),
+	CURSOR_ENCODING_FAILED(500, "커서 인코딩을 실패했습니다."),
+
+	// IMAGE
+	NEED_IMAGE_KEY(400, "이미지 키가 존재하지 않습니다."),
+	WRONG_IMAGE_FORMAT(400, "이미지가 형식에 맞지 않습니다."),
+	WRONG_IMAGE_KEY(403, "잘못된 이미지 키입니다.");
 
 	private final int status;
 	private final String message;
