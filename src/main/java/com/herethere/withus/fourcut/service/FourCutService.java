@@ -9,7 +9,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.herethere.withus.common.annotation.RequiresActiveCouple;
 import com.herethere.withus.common.dto.internal.CursorPayload;
 import com.herethere.withus.common.exception.BadRequestException;
 import com.herethere.withus.common.exception.ForbiddenException;
@@ -64,7 +63,6 @@ public class FourCutService {
 	}
 
 	@Transactional
-	@RequiresActiveCouple
 	public void uploadFourCutImage(FourCutUploadRequest fourCutUploadRequest) {
 		User user = userContextService.getCoupledUser();
 		Couple couple = user.getCouple();
@@ -92,7 +90,6 @@ public class FourCutService {
 	}
 
 	@Transactional
-	@RequiresActiveCouple
 	public void deleteFourCut(Long fourCutId) {
 		User user = userContextService.getCoupledUser();
 		Couple couple = user.getCouple();

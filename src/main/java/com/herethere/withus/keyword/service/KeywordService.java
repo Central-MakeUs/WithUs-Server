@@ -12,7 +12,6 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.herethere.withus.common.annotation.RequiresActiveCouple;
 import com.herethere.withus.common.exception.ConflictException;
 import com.herethere.withus.common.exception.ErrorCode;
 import com.herethere.withus.common.exception.ForbiddenException;
@@ -56,7 +55,6 @@ public class KeywordService {
 	}
 
 	@Transactional(readOnly = true)
-	@RequiresActiveCouple
 	public CoupleKeywordsResponse getCoupleKeywords() {
 		User user = userContextService.getCoupledUser();
 		Couple couple = user.getCouple();
@@ -72,7 +70,6 @@ public class KeywordService {
 	}
 
 	@Transactional(readOnly = true)
-	@RequiresActiveCouple
 	public TodayKeywordResponse getTodayCoupleKeyword(Long coupleKeywordId) {
 		User me = userContextService.getCoupledUser();
 		Couple couple = me.getCouple();
@@ -100,7 +97,6 @@ public class KeywordService {
 	}
 
 	@Transactional
-	@RequiresActiveCouple
 	public void uploadTodayCoupleKeywordPicture(Long coupleKeywordId, TodayKeywordImageRequest request) {
 		User user = userContextService.getCoupledUser();
 		Couple couple = user.getCouple();
