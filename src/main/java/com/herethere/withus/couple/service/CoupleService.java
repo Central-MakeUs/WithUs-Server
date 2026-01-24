@@ -49,7 +49,7 @@ public class CoupleService {
 		InviteCode inviteCode = getInviteCode(request.inviteCode());
 
 		User sender = inviteCode.getUser();
-		User receiver = userContextService.getCurrentUser();
+		User receiver = userContextService.getInitializedUser();
 
 		if (sender.getId().equals(receiver.getId())) {
 			throw new ConflictException(INVITED_SAME_USER);
@@ -67,7 +67,7 @@ public class CoupleService {
 		InviteCode inviteCode = getInviteCode(request.inviteCode());
 
 		User sender = inviteCode.getUser();
-		User receiver = userContextService.getCurrentUser();
+		User receiver = userContextService.getInitializedUser();
 
 		if (sender.getId().equals(receiver.getId())) {
 			throw new ConflictException(INVITED_SAME_USER);

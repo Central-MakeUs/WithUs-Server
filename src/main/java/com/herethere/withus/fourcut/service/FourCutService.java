@@ -35,10 +35,9 @@ public class FourCutService {
 	private final CursorCodec cursorCodec;
 
 	@Transactional(readOnly = true)
-	@RequiresActiveCouple
 	public FourCutCursorResponse getFourCutsByCursor(int size, String cursor) {
 		CursorPayload payload = cursorCodec.decode(cursor);
-		User user = userContextService.getCurrentUser();
+		User user = userContextService.getCoupledUser();
 		Couple couple = user.getCouple();
 		Pageable pageable = PageRequest.of(0, size + 1);
 
@@ -67,7 +66,7 @@ public class FourCutService {
 	@Transactional
 	@RequiresActiveCouple
 	public void uploadFourCutImage(FourCutUploadRequest fourCutUploadRequest) {
-		User user = userContextService.getCurrentUser();
+		User user = userContextService.getCoupledUser();
 		Couple couple = user.getCouple();
 		String imageKey = fourCutUploadRequest.imageKey();
 
@@ -95,7 +94,7 @@ public class FourCutService {
 	@Transactional
 	@RequiresActiveCouple
 	public void deleteFourCut(Long fourCutId) {
-		User user = userContextService.getCurrentUser();
+		User user = userContextService.getCoupledUser();
 		Couple couple = user.getCouple();
 		FourCut fourCut = fourCutRepository.findById(fourCutId)
 			.orElseThrow(() -> new NotFoundException(FOUR_CUT_NOT_FOUND));

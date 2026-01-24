@@ -58,7 +58,7 @@ public class KeywordService {
 	@Transactional(readOnly = true)
 	@RequiresActiveCouple
 	public CoupleKeywordsResponse getCoupleKeywords() {
-		User user = userContextService.getCurrentUser();
+		User user = userContextService.getCoupledUser();
 		Couple couple = user.getCouple();
 
 		List<CoupleKeyword> coupleKeywords = coupleKeywordRepository.findAllByCouple(couple);
@@ -74,7 +74,7 @@ public class KeywordService {
 	@Transactional(readOnly = true)
 	@RequiresActiveCouple
 	public TodayKeywordResponse getTodayCoupleKeyword(Long coupleKeywordId) {
-		User me = userContextService.getCurrentUser();
+		User me = userContextService.getCoupledUser();
 		Couple couple = me.getCouple();
 		User partner = couple.getPartner(me.getId());
 		LocalDate today = LocalDate.now(ZoneId.of("UTC"));
@@ -102,7 +102,7 @@ public class KeywordService {
 	@Transactional
 	@RequiresActiveCouple
 	public void uploadTodayCoupleKeywordPicture(Long coupleKeywordId, TodayKeywordImageRequest request) {
-		User user = userContextService.getCurrentUser();
+		User user = userContextService.getCoupledUser();
 		Couple couple = user.getCouple();
 		LocalDate today = LocalDate.now(ZoneId.of("UTC"));
 

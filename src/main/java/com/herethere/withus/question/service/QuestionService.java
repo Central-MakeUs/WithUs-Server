@@ -68,7 +68,7 @@ public class QuestionService {
 	@Transactional
 	@RequiresActiveCouple
 	public void uploadTodayQuestionImage(Long coupleQuestionId, TodayQuestionImageRequest request) {
-		User user = userContextService.getCurrentUser();
+		User user = userContextService.getCoupledUser();
 		Couple couple = user.getCouple();
 		CoupleQuestion coupleQuestion = coupleQuestionRepository.findById(coupleQuestionId)
 			.orElseThrow(() -> new NotFoundException(COUPLE_QUESTION_NOT_FOUND));
@@ -102,7 +102,7 @@ public class QuestionService {
 	@Transactional(readOnly = true)
 	@RequiresActiveCouple
 	public TodayQuestionResponse getTodayQuestion() {
-		User me = userContextService.getCurrentUser();
+		User me = userContextService.getCoupledUser();
 		Couple couple = me.getCouple();
 		User partner = couple.getPartner(me.getId());
 

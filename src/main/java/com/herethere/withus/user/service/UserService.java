@@ -44,20 +44,20 @@ public class UserService {
 
 	@Transactional
 	public UserUpdateResponse updateUserProfile(UserUpdateRequest userUpdateRequest) {
-		User user = userContextService.getCurrentUser();
+		User user = userContextService.getInitializedUser();
 		user.updateProfile(userUpdateRequest.nickname(), userUpdateRequest.birthday(), userUpdateRequest.imageKey());
 		return new UserUpdateResponse(user.getId(), user.getNickname(), user.getBirthday(), user.getProfileImageKey());
 	}
 
 	@Transactional(readOnly = true)
 	public UserUpdateResponse getUserProfile() {
-		User user = userContextService.getCurrentUser();
+		User user = userContextService.getInitializedUser();
 		return new UserUpdateResponse(user.getId(), user.getNickname(), user.getBirthday(), user.getProfileImageKey());
 	}
 
 	@Transactional
 	public InvitationCodeResponse generateInvitationCode() {
-		User user = userContextService.getCurrentUser();
+		User user = userContextService.getInitializedUser();
 		if (user.getCouple() != null) {
 			throw new ConflictException(COUPLE_ALREADY_EXISTS);
 		}
@@ -80,7 +80,7 @@ public class UserService {
 
 	@Transactional(readOnly = true)
 	public void pokeUser(Long userId) {
-		User user = userContextService.getCurrentUser();
+		User user = userContextService.getCoupledUser();
 		User partner = user.getPartner();
 
 		if (!partner.getId().equals(userId)) {
