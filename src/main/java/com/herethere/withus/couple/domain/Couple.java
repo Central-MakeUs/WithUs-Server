@@ -64,7 +64,7 @@ public class Couple extends BaseEntity {
 			.userB(userB)
 			.status(CoupleStatus.ACTIVE)
 			.lastQuestionIndex(0L)
-			.lastQuestionDate(LocalDate.now(ZoneId.of("UTC")))
+			.lastQuestionDate(LocalDate.now(ZoneId.of("Asia/Seoul")))
 			.build();
 
 		userA.setCoupleAsA(couple);
