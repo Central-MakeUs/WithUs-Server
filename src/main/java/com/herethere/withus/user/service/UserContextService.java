@@ -4,6 +4,7 @@ import static com.herethere.withus.common.exception.ErrorCode.*;
 
 import org.springframework.stereotype.Component;
 
+import com.herethere.withus.common.exception.ConflictException;
 import com.herethere.withus.common.exception.NotFoundException;
 import com.herethere.withus.common.security.SecurityUtil;
 import com.herethere.withus.user.domain.User;
@@ -20,5 +21,21 @@ public class UserContextService {
 	public User getCurrentUser() {
 		Long userId = SecurityUtil.getCurrentUserId();
 		return userRepository.findById(userId).orElseThrow(() -> new NotFoundException(USER_NOT_FOUND));
+	}
+
+	public User getInitializedUser() {
+		User user = getCurrentUser();
+		if (!user.isInitialized()) {
+			throw new ConflictException(USER_NOT_INITIALIZED);
+		}
+		return user;
+	}
+
+	public User getCoupledUser() {
+		User user = getCurrentUser();
+		if (user.getCouple() == null) {
+			throw new ConflictException(COUPLE_NOT_FOUND);
+		}
+		return user;
 	}
 }
