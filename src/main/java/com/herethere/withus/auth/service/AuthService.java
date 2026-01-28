@@ -10,7 +10,7 @@ import com.herethere.withus.auth.oauthclient.OAuthClient;
 import com.herethere.withus.auth.oauthclient.OAuthClientFactory;
 import com.herethere.withus.common.jwt.JwtUtil;
 import com.herethere.withus.common.jwt.dto.JwtPayload;
-import com.herethere.withus.couple.OnboardingManager;
+import com.herethere.withus.couple.service.OnboardingManager;
 import com.herethere.withus.notification.service.FcmTokenManager;
 import com.herethere.withus.user.domain.User;
 import com.herethere.withus.user.repository.UserRepository;

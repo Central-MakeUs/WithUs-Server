@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.herethere.withus.common.exception.BadRequestException;
 import com.herethere.withus.common.exception.ConflictException;
 import com.herethere.withus.common.exception.NotFoundException;
-import com.herethere.withus.couple.OnboardingManager;
+import com.herethere.withus.couple.service.OnboardingManager;
 import com.herethere.withus.keyword.domain.Keyword;
 import com.herethere.withus.keyword.service.KeywordService;
 import com.herethere.withus.notification.dto.internal.FcmNotificationEvent;

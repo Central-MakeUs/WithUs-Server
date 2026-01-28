@@ -1,4 +1,4 @@
-package com.herethere.withus.couple;
+package com.herethere.withus.couple.service;
 
 import org.springframework.stereotype.Service;
 
