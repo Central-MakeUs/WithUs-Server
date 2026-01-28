@@ -30,8 +30,7 @@ public class S3Service {
 		ImageType imageType = request.imageType();
 		String imageKey = generateImageKey(imageType);
 		String uploadUrl = createPutPresignedUrl(imageKey);
-		String accessUrl = createGetPresignedUrl(imageKey);
-		return new PresignedUrlResponse(uploadUrl, accessUrl, imageKey);
+		return new PresignedUrlResponse(uploadUrl, imageKey);
 	}
 
 	public String createGetPresignedUrl(String imageKey) {
