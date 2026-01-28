@@ -69,6 +69,6 @@ public class S3Service {
 	private String generateImageKey(ImageType imageType) {
 		String userId = String.valueOf(SecurityUtil.getCurrentUserId());
 		String fileName = UUID.randomUUID().toString().replace("-", "") + ".jpg";
-		return String.join("/", "users", userId, imageType.getPath(), fileName);
+		return String.join("/", "temp", "origin", "users", userId, imageType.getPath(), fileName);
 	}
 }
