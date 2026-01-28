@@ -30,6 +30,7 @@ import com.herethere.withus.question.dto.response.TodayQuestionResponse;
 import com.herethere.withus.question.repository.CoupleQuestionRepository;
 import com.herethere.withus.question.repository.QuestionPictureRepository;
 import com.herethere.withus.question.repository.QuestionRepository;
+import com.herethere.withus.s3.domain.FileCategory;
 import com.herethere.withus.s3.service.S3Service;
 import com.herethere.withus.user.domain.User;
 import com.herethere.withus.user.service.UserContextService;
@@ -150,17 +151,17 @@ public class QuestionService {
 		String questionImageUrl = null;
 		LocalDateTime answeredAt = null;
 		if (user.getProfileImageKey() != null) {
-			profileImageUrl = s3Service.createGetPresignedUrl(user.getProfileImageKey());
+			profileImageUrl = s3Service.createGetPresignedUrl(user.getProfileImageKey(), FileCategory.THUMBNAIL);
 		}
 		if (questionPicture != null) {
-			questionImageUrl = s3Service.createGetPresignedUrl(questionPicture.getImageKey());
+			questionImageUrl = s3Service.createGetPresignedUrl(questionPicture.getImageKey(), FileCategory.ORIGIN);
 			answeredAt = questionPicture.getCreatedAt();
 		}
 
 		return TodayQuestionResponse.MemberInfo.builder()
 			.userId(user.getId())
 			.name(user.getNickname())
-			.profileImageUrl(profileImageUrl)
+			.profileThumbnailImageUrl(profileImageUrl)
 			.questionImageUrl(questionImageUrl)
 			.answeredAt(answeredAt)
 			.build();

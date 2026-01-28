@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 
 import com.herethere.withus.common.security.SecurityUtil;
+import com.herethere.withus.s3.domain.FileCategory;
 import com.herethere.withus.s3.domain.ImageType;
 import com.herethere.withus.s3.dto.request.PresignedUrlRequest;
 import com.herethere.withus.s3.dto.response.PresignedUrlResponse;
@@ -33,7 +34,9 @@ public class S3Service {
 		return new PresignedUrlResponse(uploadUrl, imageKey);
 	}
 
-	public String createGetPresignedUrl(String imageKey) {
+	public String createGetPresignedUrl(String imageKey, FileCategory fileCategory) {
+		imageKey = fileCategory.addPrefix(imageKey);
+
 		GetObjectRequest getObjectRequest = GetObjectRequest.builder()
 			.bucket(bucketName)
 			.key(imageKey)

@@ -28,6 +28,7 @@ import com.herethere.withus.keyword.dto.response.TodayKeywordResponse;
 import com.herethere.withus.keyword.repository.KeywordRecordRepository;
 import com.herethere.withus.keyword.repository.KeywordRepository;
 import com.herethere.withus.notification.dto.internal.FcmNotificationEvent;
+import com.herethere.withus.s3.domain.FileCategory;
 import com.herethere.withus.s3.service.S3Service;
 import com.herethere.withus.user.domain.User;
 import com.herethere.withus.user.service.UserContextService;
@@ -154,17 +155,17 @@ public class KeywordService {
 		String questionImageUrl = null;
 		LocalDateTime answeredAt = null;
 		if (user.getProfileImageKey() != null) {
-			profileImageUrl = s3Service.createGetPresignedUrl(user.getProfileImageKey());
+			profileImageUrl = s3Service.createGetPresignedUrl(user.getProfileImageKey(), FileCategory.THUMBNAIL);
 		}
 		if (keywordRecord != null) {
-			questionImageUrl = s3Service.createGetPresignedUrl(keywordRecord.getImageKey());
+			questionImageUrl = s3Service.createGetPresignedUrl(keywordRecord.getImageKey(), FileCategory.ORIGIN);
 			answeredAt = keywordRecord.getCreatedAt();
 		}
 
 		return TodayKeywordResponse.MemberInfo.builder()
 			.userId(user.getId())
 			.name(user.getNickname())
-			.profileImageUrl(profileImageUrl)
+			.profileThumbnailImageUrl(profileImageUrl)
 			.questionImageUrl(questionImageUrl)
 			.answeredAt(answeredAt)
 			.build();
