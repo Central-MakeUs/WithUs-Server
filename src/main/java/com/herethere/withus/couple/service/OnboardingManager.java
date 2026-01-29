@@ -3,7 +3,6 @@ package com.herethere.withus.couple.service;
 import org.springframework.stereotype.Service;
 
 import com.herethere.withus.couple.domain.Couple;
-import com.herethere.withus.couple.domain.CoupleStatus;
 import com.herethere.withus.couple.domain.OnboardingStatus;
 import com.herethere.withus.user.domain.User;
 
@@ -22,10 +21,6 @@ public class OnboardingManager {
 		if (couple == null) {
 			return OnboardingStatus.NEED_COUPLE_CONNECT;
 		}
-		if (couple.getStatus() != CoupleStatus.ACTIVE) {
-			return OnboardingStatus.NEED_COUPLE_INITIAL_SETUP;
-		}
-
 		return OnboardingStatus.COMPLETED;
 	}
 }

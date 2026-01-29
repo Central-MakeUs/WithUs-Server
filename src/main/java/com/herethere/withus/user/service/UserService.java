@@ -3,8 +3,6 @@ package com.herethere.withus.user.service;
 import static com.herethere.withus.common.exception.ErrorCode.*;
 
 import java.security.SecureRandom;
-import java.util.List;
-import java.util.Set;
 
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -14,14 +12,12 @@ import com.herethere.withus.common.exception.BadRequestException;
 import com.herethere.withus.common.exception.ConflictException;
 import com.herethere.withus.common.exception.NotFoundException;
 import com.herethere.withus.couple.service.OnboardingManager;
-import com.herethere.withus.keyword.domain.Keyword;
 import com.herethere.withus.keyword.service.KeywordService;
 import com.herethere.withus.notification.dto.internal.FcmNotificationEvent;
 import com.herethere.withus.s3.domain.ImageType;
 import com.herethere.withus.s3.service.S3Service;
 import com.herethere.withus.user.domain.InviteCode;
 import com.herethere.withus.user.domain.User;
-import com.herethere.withus.user.domain.UserKeyword;
 import com.herethere.withus.user.dto.request.UserOnboardingRequest;
 import com.herethere.withus.user.dto.request.UserUpdateRequest;
 import com.herethere.withus.user.dto.response.InvitationCodeResponse;
@@ -29,7 +25,6 @@ import com.herethere.withus.user.dto.response.OnboardingStatusResponse;
 import com.herethere.withus.user.dto.response.UserOnboardingResponse;
 import com.herethere.withus.user.dto.response.UserUpdateResponse;
 import com.herethere.withus.user.repository.InviteCodeRepository;
-import com.herethere.withus.user.repository.UserKeywordRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -42,7 +37,6 @@ public class UserService {
 	private final KeywordService keywordService;
 	private final S3Service s3Service;
 	private final InviteCodeRepository inviteCodeRepository;
-	private final UserKeywordRepository userKeywordRepository;
 	private final ApplicationEventPublisher eventPublisher;
 
 	@Transactional
@@ -106,22 +100,7 @@ public class UserService {
 
 		user.completeOnboarding(request.nickname(), request.birthday(), finalImageKey);
 
-		Set<Keyword> chosenKeywordSet = keywordService.getChosenKeywords(request.defaultKeywordIds(),
-			request.customKeywords());
-
-		if (chosenKeywordSet.isEmpty() || chosenKeywordSet.size() > 2) {
-			throw new ConflictException(NOT_VALID_KEYWORD_COUNT);
-		}
-
-		List<UserKeyword> userKeywords = chosenKeywordSet.stream()
-			.map(k -> UserKeyword.builder()
-				.keyword(k)
-				.user(user)
-				.build())
-			.toList();
-		userKeywordRepository.saveAll(userKeywords);
-
-		return UserOnboardingResponse.from(user, chosenKeywordSet);
+		return new UserOnboardingResponse(user.getId(), user.getNickname(), user.getProfileImageKey());
 	}
 
 	private InviteCode createNewInviteCode(User user) {

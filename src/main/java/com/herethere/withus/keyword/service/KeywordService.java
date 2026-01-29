@@ -18,6 +18,7 @@ import com.herethere.withus.common.exception.ForbiddenException;
 import com.herethere.withus.common.exception.NotFoundException;
 import com.herethere.withus.couple.domain.Couple;
 import com.herethere.withus.couple.domain.CoupleKeyword;
+import com.herethere.withus.couple.domain.CoupleKeywordStatus;
 import com.herethere.withus.couple.repository.CoupleKeywordRepository;
 import com.herethere.withus.keyword.domain.Keyword;
 import com.herethere.withus.keyword.domain.KeywordRecord;
@@ -60,7 +61,8 @@ public class KeywordService {
 		User user = userContextService.getCoupledUser();
 		Couple couple = user.getCouple();
 
-		List<CoupleKeyword> coupleKeywords = coupleKeywordRepository.findAllByCouple(couple);
+		List<CoupleKeyword> coupleKeywords = coupleKeywordRepository.findAllByCoupleAndStatus(couple,
+			CoupleKeywordStatus.ACTIVE);
 		List<CoupleKeywordsResponse.CoupleKeywordInfo> coupleKeywordInfos = coupleKeywords.stream().map(c -> {
 				Keyword keyword = c.getKeyword();
 				return new CoupleKeywordsResponse.CoupleKeywordInfo(keyword.getId(), c.getId(), keyword.getContent());
@@ -77,9 +79,13 @@ public class KeywordService {
 		User partner = couple.getPartner(me.getId());
 		LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
 
-		CoupleKeyword coupleKeyword = coupleKeywordRepository.findById((coupleKeywordId)).orElseThrow(
+		CoupleKeyword coupleKeyword = coupleKeywordRepository.findById(coupleKeywordId).orElseThrow(
 			() -> new NotFoundException(ErrorCode.COUPLE_KEYWORD_NOT_FOUND)
 		);
+		if (coupleKeyword.getStatus() == CoupleKeywordStatus.DELETED) {
+			throw new NotFoundException(ErrorCode.COUPLE_KEYWORD_NOT_FOUND);
+		}
+
 		Keyword keyword = coupleKeyword.getKeyword();
 
 		if (!coupleKeyword.getCouple().getId().equals(couple.getId())) {
@@ -105,6 +111,10 @@ public class KeywordService {
 
 		CoupleKeyword coupleKeyword = coupleKeywordRepository.findById((coupleKeywordId))
 			.orElseThrow(() -> new NotFoundException(ErrorCode.COUPLE_KEYWORD_NOT_FOUND));
+
+		if (coupleKeyword.getStatus() == CoupleKeywordStatus.DELETED) {
+			throw new NotFoundException(ErrorCode.COUPLE_KEYWORD_NOT_FOUND);
+		}
 
 		if (!coupleKeyword.getCouple().getId().equals(couple.getId())) {
 			throw new ForbiddenException(ErrorCode.ACCESS_DENIED);
