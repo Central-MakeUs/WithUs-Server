@@ -152,6 +152,10 @@ public class S3Service {
 			throw new BadRequestException(INVALID_INPUT);
 		}
 
+		if (!imageKey.endsWith(".jpg")) {
+			throw new BadRequestException(WRONG_IMAGE_FORMAT);
+		}
+
 		String expectedPrefix = "temp/origin/users/" + userId + "/" + imageType.getPath();
 		if (!imageKey.startsWith(expectedPrefix)) {
 			throw new ForbiddenException(ACCESS_DENIED);
