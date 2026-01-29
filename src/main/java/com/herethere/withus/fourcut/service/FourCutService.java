@@ -9,7 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.herethere.withus.common.dto.internal.CursorPayload;
+import com.herethere.withus.common.dto.internal.CreatedAtIdCursor;
 import com.herethere.withus.common.exception.ForbiddenException;
 import com.herethere.withus.common.exception.NotFoundException;
 import com.herethere.withus.common.util.CursorCodec;
@@ -35,7 +35,7 @@ public class FourCutService {
 
 	@Transactional(readOnly = true)
 	public FourCutCursorResponse getFourCutsByCursor(int size, String cursor) {
-		CursorPayload payload = cursorCodec.decode(cursor);
+		CreatedAtIdCursor payload = cursorCodec.decode(cursor, CreatedAtIdCursor.class);
 		User user = userContextService.getCoupledUser();
 		Couple couple = user.getCouple();
 		Pageable pageable = PageRequest.of(0, size + 1);
@@ -51,7 +51,7 @@ public class FourCutService {
 		String nextCursor = null;
 		if (hasNext) {
 			FourCut last = page.getLast();
-			nextCursor = cursorCodec.encode(last.getCreatedAt(), last.getId());
+			nextCursor = cursorCodec.encode(new CreatedAtIdCursor(last.getCreatedAt(), last.getId()));
 		}
 
 		List<FourCutCursorResponse.FourCutInfo> fourCutInfos = page.stream().map(fc -> {
