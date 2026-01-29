@@ -87,7 +87,7 @@ public class QuestionService {
 			throw new ConflictException(PICTURE_ALREADY_UPLOADED);
 		}
 
-		String finalImageKey = s3Service.processImagePublish(request.imageKey(), user.getId(), ImageType.MEMORY);
+		String finalImageKey = s3Service.processImagePublish(request.imageKey(), user.getId(), ImageType.ARCHIVE);
 
 		QuestionPicture questionPicture = QuestionPicture.builder()
 			.user(user)

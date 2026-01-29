@@ -5,8 +5,8 @@ import lombok.Getter;
 @Getter
 public enum ImageType {
 	PROFILE("profile"),
-	MEMORY("memory"),
-	FOUR_CUT("four-cut");
+	ARCHIVE("archive"),
+	MEMORY("memory");
 
 	private final String path;
 

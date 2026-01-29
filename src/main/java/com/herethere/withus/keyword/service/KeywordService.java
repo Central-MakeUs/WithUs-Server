@@ -124,7 +124,7 @@ public class KeywordService {
 			throw new ConflictException(ErrorCode.PICTURE_ALREADY_UPLOADED);
 		}
 
-		String finalImageKey = s3Service.processImagePublish(request.imageKey(), user.getId(), ImageType.MEMORY);
+		String finalImageKey = s3Service.processImagePublish(request.imageKey(), user.getId(), ImageType.ARCHIVE);
 
 		KeywordRecord keywordRecord = KeywordRecord.builder()
 			.coupleKeyword(coupleKeyword)

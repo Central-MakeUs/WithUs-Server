@@ -68,7 +68,7 @@ public class FourCutService {
 		Couple couple = user.getCouple();
 		String imageKey = fourCutUploadRequest.imageKey();
 
-		String finalImageKey = s3Service.processImagePublish(imageKey, user.getId(), ImageType.FOUR_CUT);
+		String finalImageKey = s3Service.processImagePublish(imageKey, user.getId(), ImageType.MEMORY);
 
 		FourCut fourCut = FourCut.builder()
 			.couple(couple)
