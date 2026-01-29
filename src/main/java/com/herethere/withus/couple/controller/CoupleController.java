@@ -8,6 +8,7 @@ import com.herethere.withus.common.apiresponse.ApiResponse;
 import com.herethere.withus.couple.api.CoupleApi;
 import com.herethere.withus.couple.dto.request.CoupleJoinPreviewRequest;
 import com.herethere.withus.couple.dto.request.CoupleJoinRequest;
+import com.herethere.withus.couple.dto.request.SetCoupleKeywordRequest;
 import com.herethere.withus.couple.dto.response.CoupleJoinPreviewResponse;
 import com.herethere.withus.couple.dto.response.CoupleJoinResponse;
 import com.herethere.withus.couple.service.CoupleService;
@@ -30,5 +31,11 @@ public class CoupleController implements CoupleApi {
 	public ResponseEntity<ApiResponse<CoupleJoinResponse>> joinCouple(CoupleJoinRequest coupleJoinRequest) {
 		CoupleJoinResponse response = coupleService.joinCouple(coupleJoinRequest);
 		return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(response));
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<Void>> setCoupleKeywords(SetCoupleKeywordRequest setCoupleKeywordRequest) {
+		coupleService.setCoupleKeywords(setCoupleKeywordRequest);
+		return ResponseEntity.ok(ApiResponse.success());
 	}
 }
