@@ -25,8 +25,8 @@ public record FourCutCursorResponse(
 		@Schema(description = "네컷 사진 ID", example = "123")
 		Long fourCutId,
 
-		@Schema(description = "네컷 사진 이미지 URL", example = "https://cdn.withus.com/fourcuts/123.png")
-		String imageUrl,
+		@Schema(description = "네컷 사진 썸네일 이미지 URL", example = "https://cdn.withus.com/fourcuts/123.png")
+		String thumbnailUrl,
 
 		@Schema(description = "생성 일시 (UTC)", example = "2026-01-23T01:11:52")
 		LocalDateTime createdAt

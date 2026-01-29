@@ -13,10 +13,12 @@ import org.springframework.transaction.annotation.Transactional;
 import com.herethere.withus.common.exception.BadRequestException;
 import com.herethere.withus.common.exception.ConflictException;
 import com.herethere.withus.common.exception.NotFoundException;
-import com.herethere.withus.couple.OnboardingManager;
+import com.herethere.withus.couple.service.OnboardingManager;
 import com.herethere.withus.keyword.domain.Keyword;
 import com.herethere.withus.keyword.service.KeywordService;
 import com.herethere.withus.notification.dto.internal.FcmNotificationEvent;
+import com.herethere.withus.s3.domain.ImageType;
+import com.herethere.withus.s3.service.S3Service;
 import com.herethere.withus.user.domain.InviteCode;
 import com.herethere.withus.user.domain.User;
 import com.herethere.withus.user.domain.UserKeyword;
@@ -38,6 +40,7 @@ public class UserService {
 	private final UserContextService userContextService;
 	private final OnboardingManager onboardingManager;
 	private final KeywordService keywordService;
+	private final S3Service s3Service;
 	private final InviteCodeRepository inviteCodeRepository;
 	private final UserKeywordRepository userKeywordRepository;
 	private final ApplicationEventPublisher eventPublisher;
@@ -99,7 +102,9 @@ public class UserService {
 			throw new ConflictException(USER_ALREADY_INITIALIZED); // TODO: 추후 기획에 따라 빠질 수 있음
 		}
 
-		user.completeOnboarding(request.nickname(), request.birthday(), request.imageKey());
+		String finalImageKey = s3Service.processImagePublish(request.imageKey(), user.getId(), ImageType.PROFILE);
+
+		user.completeOnboarding(request.nickname(), request.birthday(), finalImageKey);
 
 		Set<Keyword> chosenKeywordSet = keywordService.getChosenKeywords(request.defaultKeywordIds(),
 			request.customKeywords());

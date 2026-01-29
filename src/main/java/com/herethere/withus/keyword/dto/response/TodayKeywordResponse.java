@@ -30,8 +30,8 @@ public record TodayKeywordResponse(
 		@Schema(description = "사용자 닉네임", example = "김철수")
 		String name,
 
-		@Schema(description = "프로필 이미지 URL", example = "https://s3.com/profile/1.jpg", nullable = true)
-		String profileImageUrl,
+		@Schema(description = "프로필 썸네일 이미지 URL", example = "https://s3.com/profile/1.jpg", nullable = true)
+		String profileThumbnailImageUrl,
 
 		@Schema(description = "오늘 업로드한 사진 URL (미업로드 시 null)", example = "https://s3.com/question/101.jpg", nullable = true)
 		String questionImageUrl,

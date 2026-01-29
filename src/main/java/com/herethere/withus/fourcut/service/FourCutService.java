@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.herethere.withus.common.dto.internal.CursorPayload;
-import com.herethere.withus.common.exception.BadRequestException;
 import com.herethere.withus.common.exception.ForbiddenException;
 import com.herethere.withus.common.exception.NotFoundException;
 import com.herethere.withus.common.util.CursorCodec;
@@ -19,6 +18,7 @@ import com.herethere.withus.fourcut.domain.FourCut;
 import com.herethere.withus.fourcut.dto.request.FourCutUploadRequest;
 import com.herethere.withus.fourcut.dto.response.FourCutCursorResponse;
 import com.herethere.withus.fourcut.repository.FourCutRepository;
+import com.herethere.withus.s3.domain.ImageType;
 import com.herethere.withus.s3.service.S3Service;
 import com.herethere.withus.user.domain.User;
 import com.herethere.withus.user.service.UserContextService;
@@ -55,7 +55,7 @@ public class FourCutService {
 		}
 
 		List<FourCutCursorResponse.FourCutInfo> fourCutInfos = page.stream().map(fc -> {
-			String imageUrl = s3Service.createGetPresignedUrl(fc.getImageKey());
+			String imageUrl = s3Service.createThumbnailImageUrl(fc.getImageKey());
 			return new FourCutCursorResponse.FourCutInfo(fc.getId(), imageUrl, fc.getCreatedAt());
 		}).toList();
 
@@ -68,23 +68,12 @@ public class FourCutService {
 		Couple couple = user.getCouple();
 		String imageKey = fourCutUploadRequest.imageKey();
 
-		if (imageKey == null || imageKey.isBlank()) {
-			throw new BadRequestException(NEED_IMAGE_KEY);
-		}
-
-		if (!imageKey.endsWith(".jpg")) {
-			throw new BadRequestException(WRONG_IMAGE_FORMAT);
-		}
-
-		String expectedPrefix = "users/" + user.getId() + "/four-cut/";
-		if (!imageKey.startsWith(expectedPrefix)) {
-			throw new ForbiddenException(WRONG_IMAGE_KEY);
-		}
+		String finalImageKey = s3Service.processImagePublish(imageKey, user.getId(), ImageType.FOUR_CUT);
 
 		FourCut fourCut = FourCut.builder()
 			.couple(couple)
 			.user(user)
-			.imageKey(imageKey)
+			.imageKey(finalImageKey)
 			.build();
 		fourCutRepository.save(fourCut);
 	}
