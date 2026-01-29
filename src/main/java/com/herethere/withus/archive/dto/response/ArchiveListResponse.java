@@ -22,16 +22,10 @@ public record ArchiveListResponse(
 		LocalDate date,
 
 		@Schema(description = "나의 사진 정보 (해당 날짜에 없으면 null)")
-		ImageInfo myImageInfo,
+		String myImageUrl,
 
 		@Schema(description = "상대방의 사진 정보 (해당 날짜에 없으면 null)")
-		ImageInfo partnerImageInfo
+		String partnerImageUrl
 	) {
-	}
-
-	@Schema(description = "이미지 상세 정보")
-	public record ImageInfo(
-		@Schema(description = "보관 썸네일 이미지 URL ", example = "https://withus-bucket.s3.amazonaws.com/archives/sample.jpg")
-		String imageUrl) {
 	}
 }

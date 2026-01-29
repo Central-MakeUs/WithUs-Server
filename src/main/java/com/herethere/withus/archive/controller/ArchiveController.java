@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.herethere.withus.archive.api.ArchiveApi;
 import com.herethere.withus.archive.dto.response.ArchiveListResponse;
+import com.herethere.withus.archive.service.ArchiveService;
 import com.herethere.withus.common.apiresponse.ApiResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -13,8 +14,11 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ArchiveController implements ArchiveApi {
 
+	private final ArchiveService archiveService;
+
 	@Override
 	public ResponseEntity<ApiResponse<ArchiveListResponse>> getArchivesByCursor(int size, String cursor) {
-		return null;
+		ArchiveListResponse response = archiveService.getArchivesByCursor(cursor, size);
+		return ResponseEntity.ok(ApiResponse.success(response));
 	}
 }
