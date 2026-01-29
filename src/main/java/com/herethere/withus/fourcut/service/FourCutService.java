@@ -2,6 +2,7 @@ package com.herethere.withus.fourcut.service;
 
 import static com.herethere.withus.common.exception.ErrorCode.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.domain.PageRequest;
@@ -35,14 +36,17 @@ public class FourCutService {
 
 	@Transactional(readOnly = true)
 	public FourCutCursorResponse getFourCutsByCursor(int size, String cursor) {
-		CreatedAtIdCursor payload = cursorCodec.decode(cursor, CreatedAtIdCursor.class);
+		CreatedAtIdCursor payload = cursor == null ? null : cursorCodec.decode(cursor, CreatedAtIdCursor.class);
+		LocalDateTime createdAtCursor = payload == null ? null : payload.createdAt();
+		Long idCursor = payload == null ? null : payload.id();
+
 		User user = userContextService.getCoupledUser();
 		Couple couple = user.getCouple();
 		Pageable pageable = PageRequest.of(0, size + 1);
 
 		// 조회
-		List<FourCut> results = fourCutRepository.findFourCutsByCursor(couple.getId(), payload.createdAt(),
-			payload.id(), pageable);
+		List<FourCut> results = fourCutRepository.findFourCutsByCursor(couple.getId(), createdAtCursor,
+			idCursor, pageable);
 
 		boolean hasNext = results.size() > size;
 		// 실제 전달할 페이지
