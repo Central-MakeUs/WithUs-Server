@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.herethere.withus.archive.dto.internal.ArchiveDayDto;
 import com.herethere.withus.archive.dto.response.ArchiveListResponse;
@@ -26,6 +27,7 @@ public class ArchiveService {
 	private final S3Service s3Service;
 	private final CursorCodec cursorCodec;
 
+	@Transactional(readOnly = true)
 	public ArchiveListResponse getArchivesByCursor(String cursor, int size) {
 		DateCursor dateCursor = cursor == null ? null : cursorCodec.decode(cursor, DateCursor.class);
 		LocalDate date = dateCursor == null ? null : dateCursor.date();
