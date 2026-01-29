@@ -19,7 +19,6 @@ import com.herethere.withus.fourcut.domain.FourCut;
 import com.herethere.withus.fourcut.dto.request.FourCutUploadRequest;
 import com.herethere.withus.fourcut.dto.response.FourCutCursorResponse;
 import com.herethere.withus.fourcut.repository.FourCutRepository;
-import com.herethere.withus.s3.domain.FileCategory;
 import com.herethere.withus.s3.service.S3Service;
 import com.herethere.withus.user.domain.User;
 import com.herethere.withus.user.service.UserContextService;
@@ -56,7 +55,7 @@ public class FourCutService {
 		}
 
 		List<FourCutCursorResponse.FourCutInfo> fourCutInfos = page.stream().map(fc -> {
-			String imageUrl = s3Service.createGetPresignedUrl(fc.getImageKey(), FileCategory.THUMBNAIL);
+			String imageUrl = s3Service.createThumbnailImageUrl(fc.getImageKey());
 			return new FourCutCursorResponse.FourCutInfo(fc.getId(), imageUrl, fc.getCreatedAt());
 		}).toList();
 

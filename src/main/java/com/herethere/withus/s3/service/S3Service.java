@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import com.herethere.withus.common.exception.BadRequestException;
 import com.herethere.withus.common.exception.ForbiddenException;
 import com.herethere.withus.common.security.SecurityUtil;
-import com.herethere.withus.s3.domain.FileCategory;
 import com.herethere.withus.s3.domain.ImageType;
 import com.herethere.withus.s3.dto.request.PresignedUrlRequest;
 import com.herethere.withus.s3.dto.response.PresignedUrlResponse;
@@ -21,6 +20,7 @@ import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.CopyObjectRequest;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
@@ -49,9 +49,7 @@ public class S3Service {
 		return new PresignedUrlResponse(uploadUrl, imageKey);
 	}
 
-	public String createGetPresignedUrl(String imageKey, FileCategory fileCategory) {
-		imageKey = fileCategory.addPrefix(imageKey);
-
+	public String createOriginImageUrl(String imageKey) {
 		GetObjectRequest getObjectRequest = GetObjectRequest.builder()
 			.bucket(bucketName)
 			.key(imageKey)
@@ -67,23 +65,47 @@ public class S3Service {
 		return presignedRequest.url().toString();
 	}
 
-	public void processImagePublish(String imageKey, Long userId, ImageType imageType) {
-		validateUploadImageKey(imageKey, userId, imageType);
-		// 1. 원본 이동
-		moveObject(TEMP_ORIGIN + imageKey, FINAL_ORIGIN + imageKey);
+	public String createThumbnailImageUrl(String imageKey) {
+		// 1. 원본 키에서 썸네일 키로 변환 (origin -> thumb)
+		// 예: images/origin/users/1/photo.jpg -> images/thumbnail/users/1/photo.jpg
+		String thumbnailKey = imageKey.replace(FINAL_ORIGIN, FINAL_THUMB);
 
-		// 2. 썸네일 이동 (없을 수 있음)
+		// 2. S3에 썸네일 파일이 실제로 존재하는지 확인
+		boolean exists = false;
 		try {
-			// 존재 여부를 묻지 않고 일단 Move 시도
-			moveObject(TEMP_THUMB + imageKey, FINAL_THUMB + imageKey);
+			s3Client.headObject(HeadObjectRequest.builder()
+				.bucket(bucketName)
+				.key(thumbnailKey)
+				.build());
+			exists = true;
 		} catch (S3Exception e) {
-			// 404 에러(파일 없음)인 경우, 람다가 아직 안 만든 것이니 로그만 남기고 통과
-			if (e.statusCode() == 404) {
-				log.warn("썸네일이 아직 생성되지 않았습니다. 원본으로 대체 응답 준비 필요: {}", imageKey);
-			} else {
-				throw e;
+			// 파일이 없으면(404) exists는 false 유지
+			if (e.statusCode() != 404) {
+				throw e; // 404 이외의 에러는 밖으로 던짐
 			}
 		}
+
+		// 3. 존재하면 썸네일 키로, 없으면 원본 키로 Presigned URL 생성
+		String finalKey = exists ? thumbnailKey : imageKey;
+
+		GetObjectRequest getObjectRequest = GetObjectRequest.builder()
+			.bucket(bucketName)
+			.key(finalKey)
+			.build();
+
+		GetObjectPresignRequest presignRequest = GetObjectPresignRequest.builder()
+			.signatureDuration(Duration.ofMinutes(60))
+			.getObjectRequest(getObjectRequest)
+			.build();
+
+		PresignedGetObjectRequest presignedRequest = s3Presigner.presignGetObject(presignRequest);
+
+		return presignedRequest.url().toString();
+	}
+
+	public void processImagePublish(String imageKey, Long userId, ImageType imageType) {
+		validateUploadImageKey(imageKey, userId, imageType);
+		moveObject(TEMP_ORIGIN + imageKey, FINAL_ORIGIN + imageKey);
 	}
 
 	private String createPutPresignedUrl(String imageKey) {
