@@ -25,7 +25,6 @@ import com.herethere.withus.user.dto.response.OnboardingStatusResponse;
 import com.herethere.withus.user.dto.response.UserOnboardingResponse;
 import com.herethere.withus.user.dto.response.UserUpdateResponse;
 import com.herethere.withus.user.repository.InviteCodeRepository;
-import com.herethere.withus.user.repository.UserKeywordRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -38,7 +37,6 @@ public class UserService {
 	private final KeywordService keywordService;
 	private final S3Service s3Service;
 	private final InviteCodeRepository inviteCodeRepository;
-	private final UserKeywordRepository userKeywordRepository;
 	private final ApplicationEventPublisher eventPublisher;
 
 	@Transactional
@@ -101,7 +99,6 @@ public class UserService {
 		String finalImageKey = s3Service.processImagePublish(request.imageKey(), user.getId(), ImageType.PROFILE);
 
 		user.completeOnboarding(request.nickname(), request.birthday(), finalImageKey);
-
 
 		return new UserOnboardingResponse(user.getId(), user.getNickname(), user.getProfileImageKey());
 	}

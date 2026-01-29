@@ -19,7 +19,6 @@ import com.herethere.withus.keyword.service.KeywordService;
 import com.herethere.withus.user.domain.InviteCode;
 import com.herethere.withus.user.domain.User;
 import com.herethere.withus.user.repository.InviteCodeRepository;
-import com.herethere.withus.user.repository.UserKeywordRepository;
 import com.herethere.withus.user.repository.UserRepository;
 import com.herethere.withus.user.service.UserContextService;
 
@@ -35,7 +34,6 @@ public class CoupleService {
 	private final UserRepository userRepository;
 	private final KeywordRepository keywordRepository;
 	private final CoupleKeywordRepository coupleKeywordRepository;
-	private final UserKeywordRepository userKeywordRepository;
 
 	@Transactional(readOnly = true)
 	public CoupleJoinPreviewResponse checkCoupleJoinPreview(CoupleJoinPreviewRequest request) {
