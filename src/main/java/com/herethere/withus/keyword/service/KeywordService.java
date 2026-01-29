@@ -28,6 +28,7 @@ import com.herethere.withus.keyword.dto.response.TodayKeywordResponse;
 import com.herethere.withus.keyword.repository.KeywordRecordRepository;
 import com.herethere.withus.keyword.repository.KeywordRepository;
 import com.herethere.withus.notification.dto.internal.FcmNotificationEvent;
+import com.herethere.withus.s3.domain.ImageType;
 import com.herethere.withus.s3.service.S3Service;
 import com.herethere.withus.user.domain.User;
 import com.herethere.withus.user.service.UserContextService;
@@ -113,11 +114,13 @@ public class KeywordService {
 			throw new ConflictException(ErrorCode.PICTURE_ALREADY_UPLOADED);
 		}
 
+		String finalImageKey = s3Service.processImagePublish(request.imageKey(), user.getId(), ImageType.MEMORY);
+
 		KeywordRecord keywordRecord = KeywordRecord.builder()
 			.coupleKeyword(coupleKeyword)
 			.user(user)
 			.date(today)
-			.imageKey(request.imageKey())
+			.imageKey(finalImageKey)
 			.build();
 		keywordRecordRepository.save(keywordRecord);
 

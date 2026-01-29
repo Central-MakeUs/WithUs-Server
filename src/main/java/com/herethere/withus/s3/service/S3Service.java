@@ -103,9 +103,11 @@ public class S3Service {
 		return presignedRequest.url().toString();
 	}
 
-	public void processImagePublish(String imageKey, Long userId, ImageType imageType) {
+	public String processImagePublish(String imageKey, Long userId, ImageType imageType) {
 		validateUploadImageKey(imageKey, userId, imageType);
 		moveObject(TEMP_ORIGIN + imageKey, FINAL_ORIGIN + imageKey);
+
+		return imageKey.replace(TEMP_ORIGIN, FINAL_ORIGIN);
 	}
 
 	private String createPutPresignedUrl(String imageKey) {
