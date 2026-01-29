@@ -63,13 +63,13 @@ public interface ArchiveRepository extends JpaRepository<QuestionPicture, Long> 
 		
 				:meId AS meUserId,
 				COALESCE(
-					MAX(CASE WHEN qp.user_id = :meId THEN qp.imageKey END),
+					MAX(CASE WHEN qp.user_id = :meId THEN qp.image_key END),
 					MAX(CASE WHEN kr.user_id = :meId THEN kr.image_key END)
 				) AS meImageKey,
 		
 				:partnerId AS partnerUserId,
 				COALESCE(
-					MAX(CASE WHEN qp.user_id = :partnerId THEN qp.imageKey END),
+					MAX(CASE WHEN qp.user_id = :partnerId THEN qp.image_key END),
 					MAX(CASE WHEN kr.user_id = :partnerId THEN kr.image_key END)
 				) AS partnerImageKey
 		

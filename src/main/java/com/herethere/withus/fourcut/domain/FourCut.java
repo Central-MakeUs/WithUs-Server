@@ -39,6 +39,6 @@ public class FourCut extends BaseEntity {
 	@JoinColumn(name = "couple_id", nullable = false)
 	private Couple couple;
 
-	@Column(name = "image_key", length = 255)
+	@Column(name = "image_key", length = 255, nullable = false)
 	private String imageKey;
 }
