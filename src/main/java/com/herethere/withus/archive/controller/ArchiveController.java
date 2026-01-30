@@ -27,6 +27,7 @@ public class ArchiveController implements ArchiveApi {
 
 	@Override
 	public ResponseEntity<ApiResponse<ArchiveDateResponse>> getArchiveByDate(LocalDate date) {
-		return null;
+		ArchiveDateResponse response = archiveService.getArchiveByDate(date);
+		return ResponseEntity.ok(ApiResponse.success(response));
 	}
 }

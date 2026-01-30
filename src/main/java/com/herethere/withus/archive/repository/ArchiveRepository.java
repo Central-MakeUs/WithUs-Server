@@ -2,13 +2,18 @@ package com.herethere.withus.archive.repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.herethere.withus.archive.dto.internal.ArchiveDayDto;
+import com.herethere.withus.archive.dto.internal.QuestionPictureDto;
+import com.herethere.withus.keyword.domain.KeywordRecord;
+import com.herethere.withus.question.domain.CoupleQuestion;
 import com.herethere.withus.question.domain.QuestionPicture;
+import com.herethere.withus.user.domain.User;
 
 public interface ArchiveRepository extends JpaRepository<QuestionPicture, Long> {
 
@@ -99,4 +104,34 @@ public interface ArchiveRepository extends JpaRepository<QuestionPicture, Long> 
 		@Param("lastDate") LocalDate lastDate,
 		@Param("size") int size
 	);
+
+	@Query("""
+			SELECT new com.herethere.withus.archive.dto.internal.QuestionPictureDto(
+				qp.imageKey,
+				qp.createdAt
+			)
+			FROM QuestionPicture qp
+			JOIN qp.user u
+			JOIN qp.coupleQuestion cq
+			WHERE cq.id = :coupleQuestionId
+			  AND u.id = :userId
+		""")
+	Optional<QuestionPictureDto> findQuestionPictureByCoupleQuestionAndUser(
+		@Param("coupleQuestionId") Long coupleQuestionId,
+		@Param("userId") Long userId
+	);
+
+	@Query("""
+	SELECT kr
+	FROM KeywordRecord kr
+	JOIN kr.coupleKeyword ck
+	WHERE ck.couple.id = :coupleId
+	  AND kr.date = :date
+""")
+	List<KeywordRecord> findKeywordRecordsByCoupleAndDate(
+		@Param("coupleId") Long coupleId,
+		@Param("date") LocalDate date
+	);
+
+	Optional<QuestionPicture> findByCoupleQuestionAndUser(CoupleQuestion coupleQuestion, User user);
 }
