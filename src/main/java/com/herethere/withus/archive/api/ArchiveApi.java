@@ -28,7 +28,7 @@ public interface ArchiveApi {
 			- 상세 정보를 요청할 때는, date를 가지고 요청하면 됩니다.
 			- 둘 다 null인 경우는 존재하지 않고, 하나만 null인 경우에는 프론트에서 해당 사진만 보여줍니다.
 			""")
-	@GetMapping("/api/archives")
+	@GetMapping("/me/couple/archives")
 	ResponseEntity<ApiResponse<ArchiveListResponse>> getArchivesByCursor(
 		@Parameter(
 			description = "한 번에 조회할 네컷 사진 개수 (기본값: 20, 최소 1, 최대 50)",
