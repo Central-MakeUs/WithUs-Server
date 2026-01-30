@@ -1,9 +1,12 @@
 package com.herethere.withus.archive.controller;
 
+import java.time.LocalDate;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.herethere.withus.archive.api.ArchiveApi;
+import com.herethere.withus.archive.dto.response.ArchiveDateResponse;
 import com.herethere.withus.archive.dto.response.ArchiveListResponse;
 import com.herethere.withus.archive.service.ArchiveService;
 import com.herethere.withus.common.apiresponse.ApiResponse;
@@ -20,5 +23,10 @@ public class ArchiveController implements ArchiveApi {
 	public ResponseEntity<ApiResponse<ArchiveListResponse>> getArchivesByCursor(int size, String cursor) {
 		ArchiveListResponse response = archiveService.getArchivesByCursor(cursor, size);
 		return ResponseEntity.ok(ApiResponse.success(response));
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<ArchiveDateResponse>> getArchiveByDate(LocalDate date) {
+		return null;
 	}
 }

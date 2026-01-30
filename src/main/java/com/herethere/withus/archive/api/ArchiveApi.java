@@ -1,10 +1,13 @@
 package com.herethere.withus.archive.api;
 
+import java.time.LocalDate;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.herethere.withus.archive.dto.response.ArchiveDateResponse;
 import com.herethere.withus.archive.dto.response.ArchiveListResponse;
 import com.herethere.withus.common.apiresponse.ApiResponse;
 
@@ -45,5 +48,27 @@ public interface ArchiveApi {
 		)
 		@RequestParam(required = false)
 		String cursor
+	);
+
+	@Operation(
+		summary = "보관 사진 날짜 기준 조회",
+		description = """
+			우리 커플의 보관 사진을 특정 날짜 기준으로 전체 조회합니다.
+			- 날짜는 YYYY-MM-DD 형식입니다.
+			- 해당 날짜에 촬영된 모든 보관 사진을 반환합니다.
+			- `/me/couple/archives` 응답의 date로 요청을 합니다.
+			- 만약 해당 날짜의 사진이 하나도 없다면, 에러를 보냅니다.
+			- 사진을 보내지 않았다면 해당 사람의 imageInfo는 null입니다.
+			"""
+	)
+	@GetMapping("/me/couple/archives/date")
+	ResponseEntity<ApiResponse<ArchiveDateResponse>> getArchiveByDate(
+		@Parameter(
+			description = "조회할 날짜 (YYYY-MM-DD)",
+			example = "2026-01-23",
+			required = true
+		)
+		@RequestParam
+		LocalDate date
 	);
 }
