@@ -31,7 +31,7 @@ public class ArchiveService {
 	public ArchiveListResponse getArchivesByCursor(String cursor, int size) {
 		DateCursor dateCursor = cursor == null ? null : cursorCodec.decode(cursor, DateCursor.class);
 		LocalDate date = dateCursor == null ? null : dateCursor.date();
-		User user = userContextService.getCurrentUser();
+		User user = userContextService.getCoupledUser();
 		Couple couple = user.getCouple();
 		User partner = couple.getPartner(user.getId());
 		List<ArchiveDayDto> images = archiveRepository.findArchiveDaysByCursor(couple.getId(),
