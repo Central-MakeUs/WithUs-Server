@@ -121,8 +121,8 @@ public class QuestionService {
 		QuestionPicture partnerPicture = questionPictureRepository.findByUserAndCoupleQuestion(partner, coupleQuestion)
 			.orElse(null);
 
-		TodayQuestionResponse.MemberInfo myInfo = getMemberInfo(me, myPicture);
-		TodayQuestionResponse.MemberInfo partnerInfo = getMemberInfo(partner, partnerPicture);
+		TodayQuestionResponse.ImageInfo myInfo = getImageInfo(me, myPicture);
+		TodayQuestionResponse.ImageInfo partnerInfo = getImageInfo(partner, partnerPicture);
 
 		return new TodayQuestionResponse(coupleQuestion.getId(), coupleQuestion.getQuestion().getContent(), myInfo,
 			partnerInfo);
@@ -148,7 +148,7 @@ public class QuestionService {
 		eventPublisher.publishEvent(FcmNotificationEvent.createNewQuestionEvent(couple.getUserB()));
 	}
 
-	private TodayQuestionResponse.MemberInfo getMemberInfo(User user, QuestionPicture questionPicture) {
+	private TodayQuestionResponse.ImageInfo getImageInfo(User user, QuestionPicture questionPicture) {
 		String profileImageUrl = null;
 		String questionImageUrl = null;
 		LocalDateTime answeredAt = null;
@@ -160,7 +160,7 @@ public class QuestionService {
 			answeredAt = questionPicture.getCreatedAt();
 		}
 
-		return TodayQuestionResponse.MemberInfo.builder()
+		return TodayQuestionResponse.ImageInfo.builder()
 			.userId(user.getId())
 			.name(user.getNickname())
 			.profileThumbnailImageUrl(profileImageUrl)

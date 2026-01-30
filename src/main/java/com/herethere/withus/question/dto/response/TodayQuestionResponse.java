@@ -16,14 +16,14 @@ public record TodayQuestionResponse(
 	String question,
 
 	@Schema(description = "나의 답변 정보")
-	MemberInfo myInfo,
+	ImageInfo myInfo,
 
 	@Schema(description = "상대방의 답변 정보")
-	MemberInfo partnerInfo
+	ImageInfo partnerInfo
 ) {
 	@Builder
 	@Schema(description = "답변 상세 정보")
-	public record MemberInfo(
+	public record ImageInfo(
 		@Schema(description = "사용자 고유 id", example = "123")
 		Long userId,
 
