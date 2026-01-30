@@ -82,8 +82,10 @@ public class ArchiveService {
 		User user = userContextService.getCoupledUser();
 		Couple couple = user.getCouple();
 		User partner = couple.getPartner(user.getId());
-		String myProfileImage = s3Service.createThumbnailImageUrl(user.getProfileImageKey());
-		String partnerProfileImage = s3Service.createThumbnailImageUrl(partner.getProfileImageKey());
+		String myProfileImage =
+			user.getProfileImageKey() == null ? null : s3Service.createThumbnailImageUrl(user.getProfileImageKey());
+		String partnerProfileImage = partner.getProfileImageKey() == null ? null :
+			s3Service.createThumbnailImageUrl(partner.getProfileImageKey());
 
 		List<ArchiveDateResponse.ArchiveInfo> archiveInfoList = new ArrayList<>();
 
