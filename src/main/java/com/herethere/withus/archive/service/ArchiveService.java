@@ -1,7 +1,9 @@
 package com.herethere.withus.archive.service;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -46,31 +48,47 @@ public class ArchiveService {
 	@Transactional(readOnly = true)
 	public ArchiveListResponse getArchivesByCursor(String cursor, int size) {
 		DateCursor dateCursor = cursorCodec.decode(cursor, DateCursor.class);
-		LocalDate date = dateCursor == null ? null : dateCursor.date();
+		LocalDate lastDate = dateCursor == null ? null : dateCursor.date();
+
 		User user = userContextService.getCoupledUser();
 		Couple couple = user.getCouple();
 		User partner = couple.getPartner(user.getId());
-		List<ArchiveDayDto> images = archiveRepository.findArchiveDaysByCursor(couple.getId(),
-			user.getId(), partner.getId(), date, size + 1);
 
-		boolean hasNext = images.size() > size;
+		LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
 
-		String nextCursor = null;
-		if (hasNext) {
-			images = images.subList(0, size);
-			LocalDate nextCursorDate = images.getLast().date();
-			nextCursor = cursorCodec.encode(new DateCursor(nextCursorDate));
+		List<LocalDate> targetDates = archiveRepository.findTargetDates(couple.getId(), lastDate, today, size + 1);
+
+		boolean hasNext = targetDates.size() > size;
+
+		targetDates = hasNext ? targetDates.subList(0, size) : targetDates;
+
+		if (targetDates.isEmpty()) {
+			return new ArchiveListResponse(List.of(), false, null);
 		}
 
-		List<ArchiveListResponse.ArchiveInfo> archiveInfos = images.stream().map(
-			i -> {
-				String meImageUrl = s3Service.createThumbnailImageUrl(i.meImageKey());
-				String partnerImageUrl = s3Service.createThumbnailImageUrl(i.partnerImageKey());
-				return new ArchiveListResponse.ArchiveInfo(i.date(), meImageUrl, partnerImageUrl);
-			}
-		).toList();
+		LocalDate nextCursorDate = targetDates.getLast();
+		String nextCursor = hasNext ? cursorCodec.encode(nextCursorDate) : null;
 
-		return new ArchiveListResponse(archiveInfos, hasNext, nextCursor);
+		List<ArchiveDayDto> archiveDayDtos = archiveRepository.findAllByDates(couple.getId(), user.getId(),
+			partner.getId(), targetDates);
+
+		Map<LocalDate, List<ArchiveListResponse.ImageInfo>> groupedByDate = archiveDayDtos.stream()
+			.collect(Collectors.groupingBy(
+				ArchiveDayDto::date,
+				LinkedHashMap::new,
+				Collectors.mapping(dto -> new ArchiveListResponse.ImageInfo(
+					dto.archiveType(),
+					dto.sourceId(),
+					s3Service.createThumbnailImageUrl(dto.meImageKey()),
+					s3Service.createThumbnailImageUrl(dto.partnerImageKey())
+				), Collectors.toList())
+			));
+
+		List<ArchiveListResponse.ArchiveInfo> archiveList = groupedByDate.entrySet().stream()
+			.map(entry -> new ArchiveListResponse.ArchiveInfo(entry.getKey(), entry.getValue()))
+			.toList();
+
+		return new ArchiveListResponse(archiveList, hasNext, nextCursor);
 	}
 
 	@Transactional(readOnly = true)

@@ -18,91 +18,75 @@ import com.herethere.withus.user.domain.User;
 public interface ArchiveRepository extends JpaRepository<QuestionPicture, Long> {
 
 	@Query(value = """
-		WITH
-		-- 1. question_picture가 존재하는 날짜들
-		question_dates AS (
-		    SELECT DISTINCT
-		        cq.date,
-		        cq.couple_id
-		    FROM question_picture qp
-		    JOIN couple_question cq ON qp.couple_question_id = cq.id
+		SELECT DISTINCT all_dates.date
+		FROM (
+		    -- 1. 사진이 있는 질문 날짜
+		    SELECT cq.date
+		    FROM couple_question cq
+		    JOIN question_picture qp ON qp.couple_question_id = cq.id
 		    WHERE cq.couple_id = :coupleId
-		),
 		
-		-- 2. 해당 날짜에 실제로 올라온 keyword_record 중에서 대표 1개 뽑기
-		keyword_ranked AS (
-		    SELECT
-		        kr.id,
-		        kr.user_id,
-		        kr.image_key,
-		        kr.date,
-		        ck.couple_id,
-		        k.content,
-		        ROW_NUMBER() OVER (
-		            PARTITION BY ck.couple_id, kr.date
-		            ORDER BY k.content ASC
-		        ) AS rn
+		    UNION
+		
+		    -- 2. 키워드 기록이 있는 날짜
+		    SELECT kr.date
 		    FROM keyword_record kr
 		    JOIN couple_keyword ck ON kr.couple_keyword_id = ck.id
-		    JOIN keyword k ON ck.keyword_id = k.id
 		    WHERE ck.couple_id = :coupleId
-		),
-		
-		keyword_rep AS (
-		    SELECT *
-		    FROM keyword_ranked
-		    WHERE rn = 1
-		),
-		
-		-- 3. 응답에 포함될 날짜 집합
-		representative_dates AS (
-		    SELECT date FROM question_dates
-		    UNION
-		    SELECT date FROM keyword_rep
-		),
-		
-		-- 4. 날짜별로 me / partner 이미지 채우기
-		final_rows AS (
-			SELECT
-				rd.date AS date,
-		
-				:meId AS meUserId,
-				COALESCE(
-					MAX(CASE WHEN qp.user_id = :meId THEN qp.image_key END),
-					MAX(CASE WHEN kr.user_id = :meId THEN kr.image_key END)
-				) AS meImageKey,
-		
-				:partnerId AS partnerUserId,
-				COALESCE(
-					MAX(CASE WHEN qp.user_id = :partnerId THEN qp.image_key END),
-					MAX(CASE WHEN kr.user_id = :partnerId THEN kr.image_key END)
-				) AS partnerImageKey
-		
-			FROM representative_dates rd
-		
-			LEFT JOIN couple_question cq
-				ON cq.date = rd.date AND cq.couple_id = :coupleId
-			LEFT JOIN question_picture qp
-				ON qp.couple_question_id = cq.id
-		
-			LEFT JOIN keyword_rep kr
-				ON kr.date = rd.date AND kr.couple_id = :coupleId
-		
-			GROUP BY rd.date
-		)
-		
-		SELECT *
-		FROM final_rows
-		WHERE (:lastDate IS NULL OR date < :lastDate)
-		ORDER BY date DESC
-		LIMIT :size;
+		) AS all_dates
+		WHERE all_dates.date < :today 
+		AND (:lastDate IS NULL OR all_dates.date < :lastDate)
+		ORDER BY all_dates.date DESC
+		LIMIT :size
 		""", nativeQuery = true)
-	List<ArchiveDayDto> findArchiveDaysByCursor(
+	List<LocalDate> findTargetDates(
+		@Param("coupleId") Long coupleId,
+		@Param("lastDate") LocalDate lastDate,
+		@Param("today") LocalDate today,
+		@Param("size") int size
+	);
+
+	@Query(value = """
+		SELECT * FROM (
+		    -- 1. 질문 사진 상세 (sortOrder 1, 키워드가 아니므로 content는 NULL)
+		    SELECT 
+		        cq.date AS date,
+		        'QUESTION' AS archiveType,
+		        cq.id AS sourceId,
+		        NULL AS content, -- 정렬을 위한 컬럼 맞춤
+		        MAX(CASE WHEN qp.user_id = :meId THEN qp.image_key END) AS meImageKey,
+		        MAX(CASE WHEN qp.user_id = :partnerId THEN qp.image_key END) AS partnerImageKey,
+		        1 AS sortOrder
+		    FROM couple_question cq
+		    JOIN question_picture qp ON qp.couple_question_id = cq.id
+		    WHERE cq.couple_id = :coupleId AND cq.date IN (:targetDates)
+		    GROUP BY cq.date, cq.id
+		
+		    UNION ALL
+		
+		    -- 2. 키워드 기록 상세 (sortOrder 2)
+		    SELECT 
+		        kr.date AS date,
+		        'KEYWORD' AS archiveType,
+		        ck.id AS sourceId,
+		        k.content AS content, -- 키워드 텍스트 추출
+		        MAX(CASE WHEN kr.user_id = :meId THEN kr.image_key END) AS meImageKey,
+		        MAX(CASE WHEN kr.user_id = :partnerId THEN kr.image_key END) AS partnerImageKey,
+		        2 AS sortOrder
+		    FROM keyword_record kr
+		    JOIN couple_keyword ck ON kr.couple_keyword_id = ck.id
+		    JOIN keyword k ON ck.keyword_id = k.id -- 키워드 텍스트 조인
+		    WHERE ck.couple_id = :coupleId AND kr.date IN (:targetDates)
+		    GROUP BY kr.date, ck.id, k.content
+		) AS combined
+		-- 정렬: 1순위 날짜(내림차순), 2순위 타입(질문 우선), 3순위 키워드 내용(오름차순)
+		ORDER BY date DESC, sortOrder ASC, content ASC
+		""", nativeQuery = true)
+	List<ArchiveDayDto> findAllByDates(
 		@Param("coupleId") Long coupleId,
 		@Param("meId") Long meId,
 		@Param("partnerId") Long partnerId,
-		@Param("lastDate") LocalDate lastDate,
-		@Param("size") int size
+		@Param("targetDates") List<LocalDate> targetDates
 	);
 
 	@Query("""
@@ -122,12 +106,12 @@ public interface ArchiveRepository extends JpaRepository<QuestionPicture, Long> 
 	);
 
 	@Query("""
-	SELECT kr
-	FROM KeywordRecord kr
-	JOIN kr.coupleKeyword ck
-	WHERE ck.couple.id = :coupleId
-	  AND kr.date = :date
-""")
+			SELECT kr
+			FROM KeywordRecord kr
+			JOIN kr.coupleKeyword ck
+			WHERE ck.couple.id = :coupleId
+			  AND kr.date = :date
+		""")
 	List<KeywordRecord> findKeywordRecordsByCoupleAndDate(
 		@Param("coupleId") Long coupleId,
 		@Param("date") LocalDate date
