@@ -4,11 +4,13 @@ import java.time.LocalDate;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.herethere.withus.archive.dto.response.ArchiveDateResponse;
 import com.herethere.withus.archive.dto.response.ArchiveListResponse;
+import com.herethere.withus.archive.dto.response.ArchiveQuestionDetailResponse;
 import com.herethere.withus.archive.dto.response.ArchiveQuestionListResponse;
 import com.herethere.withus.archive.enums.ArchiveType;
 import com.herethere.withus.common.apiresponse.ApiResponse;
@@ -111,5 +113,24 @@ public interface ArchiveApi {
 		)
 		@RequestParam(required = false)
 		String cursor
+	);
+
+	@Operation(
+		summary = "보관 질문 상세 조회",
+		description = """
+			우리 커플의 보관 질문을 상세 조회합니다.
+			- `/api/me/couple/archives/questions`의 응답의 id를 path에 넣어서 요청합니다.
+			- 둘 모두의 사진이 존재하지 않는 경우가 있을 수 있습니다. (추후 사진 삭제 시)
+			- 둘 모두의 사진이 없어 빈 리스트일 경우엔, 삭제된 사진이라는 메시지를 띄워줘야 합니다.
+			"""
+	)
+	@GetMapping("/me/couple/archives/questions/{coupleQuestionId}")
+	ResponseEntity<ApiResponse<ArchiveQuestionDetailResponse>> getDetailArchiveQuestion(
+		@Parameter(
+			description = "couple-question id",
+			example = "11"
+		)
+		@PathVariable
+		Long coupleQuestionId
 	);
 }
