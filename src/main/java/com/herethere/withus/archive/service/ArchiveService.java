@@ -8,6 +8,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,15 +18,16 @@ import com.herethere.withus.archive.dto.internal.ArchiveDayView;
 import com.herethere.withus.archive.dto.internal.ArchiveDetailView;
 import com.herethere.withus.archive.dto.response.ArchiveDateResponse;
 import com.herethere.withus.archive.dto.response.ArchiveListResponse;
+import com.herethere.withus.archive.dto.response.ArchiveQuestionListResponse;
 import com.herethere.withus.archive.enums.ArchiveType;
 import com.herethere.withus.archive.repository.ArchiveRepository;
 import com.herethere.withus.common.dto.internal.DateCursor;
+import com.herethere.withus.common.dto.internal.NumberCursor;
 import com.herethere.withus.common.util.CursorCodec;
 import com.herethere.withus.couple.domain.Couple;
-import com.herethere.withus.couple.repository.CoupleKeywordRepository;
-import com.herethere.withus.keyword.repository.KeywordRecordRepository;
+import com.herethere.withus.question.domain.CoupleQuestion;
+import com.herethere.withus.question.domain.Question;
 import com.herethere.withus.question.repository.CoupleQuestionRepository;
-import com.herethere.withus.question.repository.QuestionPictureRepository;
 import com.herethere.withus.s3.service.S3Service;
 import com.herethere.withus.user.domain.User;
 import com.herethere.withus.user.service.UserContextService;
@@ -37,9 +41,6 @@ public class ArchiveService {
 	private final UserContextService userContextService;
 	private final ArchiveRepository archiveRepository;
 	private final CoupleQuestionRepository coupleQuestionRepository;
-	private final QuestionPictureRepository questionPictureRepository;
-	private final CoupleKeywordRepository coupleKeywordRepository;
-	private final KeywordRecordRepository keywordRecordRepository;
 	private final S3Service s3Service;
 	private final CursorCodec cursorCodec;
 
@@ -119,6 +120,35 @@ public class ArchiveService {
 		}).toList();
 
 		return new ArchiveDateResponse(date, archiveInfos);
+	}
+
+	@Transactional(readOnly = true)
+	public ArchiveQuestionListResponse getArchiveQuestions(int size, String cursor) {
+		NumberCursor numberCursor = cursorCodec.decode(cursor, NumberCursor.class);
+		Long number = numberCursor == null ? null : numberCursor.number();
+
+		User user = userContextService.getCoupledUser();
+		Couple couple = user.getCouple();
+
+		Pageable pageable = PageRequest.of(0, size);
+		Slice<CoupleQuestion> result = coupleQuestionRepository.findNextQuestions(couple.getId(), number, pageable);
+
+		boolean hasNext = result.hasNext();
+		List<CoupleQuestion> coupleQuestions = result.getContent();
+
+		String nextCursor = null;
+		if (result.hasNext()) {
+			long lastNumberOnPage = result.getContent().getLast().getQuestion().getQuestionNumber();
+			nextCursor = cursorCodec.encode(new NumberCursor(lastNumberOnPage));
+		}
+
+		List<ArchiveQuestionListResponse.QuestionInfo> questionInfos = coupleQuestions.stream().map(cq -> {
+			Question question = cq.getQuestion();
+			return new ArchiveQuestionListResponse.QuestionInfo(cq.getId(), question.getQuestionNumber(),
+				question.getContent());
+		}).toList();
+
+		return new ArchiveQuestionListResponse(questionInfos, hasNext, nextCursor);
 	}
 }
 
