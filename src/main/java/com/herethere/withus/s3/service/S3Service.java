@@ -6,6 +6,7 @@ import java.time.Duration;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import com.herethere.withus.common.exception.BadRequestException;
 import com.herethere.withus.common.exception.ForbiddenException;
@@ -50,6 +51,11 @@ public class S3Service {
 	}
 
 	public String createOriginImageUrl(String imageKey) {
+		if (!StringUtils.hasText(imageKey)) {
+			log.warn("이미지 키가 비어있어 URL을 생성할 수 없습니다.");
+			return null;
+		}
+
 		GetObjectRequest getObjectRequest = GetObjectRequest.builder()
 			.bucket(bucketName)
 			.key(imageKey)
@@ -66,6 +72,11 @@ public class S3Service {
 	}
 
 	public String createThumbnailImageUrl(String imageKey) {
+		if (!StringUtils.hasText(imageKey)) {
+			log.warn("이미지 키가 비어있어 URL을 생성할 수 없습니다.");
+			return null;
+		}
+
 		// 1. 원본 키에서 썸네일 키로 변환 (origin -> thumb)
 		// 예: images/origin/users/1/photo.jpg -> images/thumbnail/users/1/photo.jpg
 		String thumbnailKey = imageKey.replace(FINAL_ORIGIN, FINAL_THUMB);

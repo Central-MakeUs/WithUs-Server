@@ -2,6 +2,7 @@ package com.herethere.withus.fourcut.service;
 
 import static com.herethere.withus.common.exception.ErrorCode.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.domain.PageRequest;
@@ -9,7 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.herethere.withus.common.dto.internal.CursorPayload;
+import com.herethere.withus.common.dto.internal.CreatedAtIdCursor;
 import com.herethere.withus.common.exception.ForbiddenException;
 import com.herethere.withus.common.exception.NotFoundException;
 import com.herethere.withus.common.util.CursorCodec;
@@ -35,14 +36,17 @@ public class FourCutService {
 
 	@Transactional(readOnly = true)
 	public FourCutCursorResponse getFourCutsByCursor(int size, String cursor) {
-		CursorPayload payload = cursorCodec.decode(cursor);
+		CreatedAtIdCursor payload = cursorCodec.decode(cursor, CreatedAtIdCursor.class);
+		LocalDateTime createdAtCursor = payload == null ? null : payload.createdAt();
+		Long idCursor = payload == null ? null : payload.id();
+
 		User user = userContextService.getCoupledUser();
 		Couple couple = user.getCouple();
 		Pageable pageable = PageRequest.of(0, size + 1);
 
 		// 조회
-		List<FourCut> results = fourCutRepository.findFourCutsByCursor(couple.getId(), payload.createdAt(),
-			payload.id(), pageable);
+		List<FourCut> results = fourCutRepository.findFourCutsByCursor(couple.getId(), createdAtCursor,
+			idCursor, pageable);
 
 		boolean hasNext = results.size() > size;
 		// 실제 전달할 페이지
@@ -51,7 +55,7 @@ public class FourCutService {
 		String nextCursor = null;
 		if (hasNext) {
 			FourCut last = page.getLast();
-			nextCursor = cursorCodec.encode(last.getCreatedAt(), last.getId());
+			nextCursor = cursorCodec.encode(new CreatedAtIdCursor(last.getCreatedAt(), last.getId()));
 		}
 
 		List<FourCutCursorResponse.FourCutInfo> fourCutInfos = page.stream().map(fc -> {
@@ -68,7 +72,7 @@ public class FourCutService {
 		Couple couple = user.getCouple();
 		String imageKey = fourCutUploadRequest.imageKey();
 
-		String finalImageKey = s3Service.processImagePublish(imageKey, user.getId(), ImageType.FOUR_CUT);
+		String finalImageKey = s3Service.processImagePublish(imageKey, user.getId(), ImageType.MEMORY);
 
 		FourCut fourCut = FourCut.builder()
 			.couple(couple)

@@ -97,8 +97,8 @@ public class KeywordService {
 		KeywordRecord partnerRecord = keywordRecordRepository.findByUserAndCoupleKeywordAndDate(partner, coupleKeyword,
 			today).orElse(null);
 
-		TodayKeywordResponse.MemberInfo myInfo = getMemberInfo(me, myRecord);
-		TodayKeywordResponse.MemberInfo partnerInfo = getMemberInfo(partner, partnerRecord);
+		TodayKeywordResponse.ImageInfo myInfo = getImageInfo(me, myRecord);
+		TodayKeywordResponse.ImageInfo partnerInfo = getImageInfo(partner, partnerRecord);
 
 		return new TodayKeywordResponse(coupleKeyword.getId(), generateKeywordQuestion(keyword), myInfo, partnerInfo);
 	}
@@ -124,7 +124,7 @@ public class KeywordService {
 			throw new ConflictException(ErrorCode.PICTURE_ALREADY_UPLOADED);
 		}
 
-		String finalImageKey = s3Service.processImagePublish(request.imageKey(), user.getId(), ImageType.MEMORY);
+		String finalImageKey = s3Service.processImagePublish(request.imageKey(), user.getId(), ImageType.ARCHIVE);
 
 		KeywordRecord keywordRecord = KeywordRecord.builder()
 			.coupleKeyword(coupleKeyword)
@@ -162,7 +162,7 @@ public class KeywordService {
 		return chosenKeywords;
 	}
 
-	private TodayKeywordResponse.MemberInfo getMemberInfo(User user, KeywordRecord keywordRecord) {
+	private TodayKeywordResponse.ImageInfo getImageInfo(User user, KeywordRecord keywordRecord) {
 		String profileImageUrl = null;
 		String questionImageUrl = null;
 		LocalDateTime answeredAt = null;
@@ -174,7 +174,7 @@ public class KeywordService {
 			answeredAt = keywordRecord.getCreatedAt();
 		}
 
-		return TodayKeywordResponse.MemberInfo.builder()
+		return TodayKeywordResponse.ImageInfo.builder()
 			.userId(user.getId())
 			.name(user.getNickname())
 			.profileThumbnailImageUrl(profileImageUrl)

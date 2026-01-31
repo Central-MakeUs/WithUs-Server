@@ -46,6 +46,6 @@ public class QuestionPicture extends BaseEntity {
 	@JoinColumn(name = "couple_question_id", nullable = false)
 	private CoupleQuestion coupleQuestion;
 
-	@Column(name = "imageKey", nullable = false, length = 255)
+	@Column(name = "image_key", nullable = false, length = 255)
 	private String imageKey;
 }
