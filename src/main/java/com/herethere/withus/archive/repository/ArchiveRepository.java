@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.herethere.withus.archive.dto.internal.ArchiveDayDto;
+import com.herethere.withus.archive.dto.internal.ArchiveDayView;
 import com.herethere.withus.archive.dto.internal.QuestionPictureDto;
 import com.herethere.withus.keyword.domain.KeywordRecord;
 import com.herethere.withus.question.domain.CoupleQuestion;
@@ -82,7 +82,7 @@ public interface ArchiveRepository extends JpaRepository<QuestionPicture, Long> 
 		-- 정렬: 1순위 날짜(내림차순), 2순위 타입(질문 우선), 3순위 키워드 내용(오름차순)
 		ORDER BY date DESC, sortOrder ASC, content ASC
 		""", nativeQuery = true)
-	List<ArchiveDayDto> findAllByDates(
+	List<ArchiveDayView> findAllByDates(
 		@Param("coupleId") Long coupleId,
 		@Param("meId") Long meId,
 		@Param("partnerId") Long partnerId,

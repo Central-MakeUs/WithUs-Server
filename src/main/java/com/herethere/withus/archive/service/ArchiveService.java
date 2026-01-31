@@ -11,9 +11,10 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.herethere.withus.archive.dto.internal.ArchiveDayDto;
+import com.herethere.withus.archive.dto.internal.ArchiveDayView;
 import com.herethere.withus.archive.dto.response.ArchiveDateResponse;
 import com.herethere.withus.archive.dto.response.ArchiveListResponse;
+import com.herethere.withus.archive.enums.ArchiveType;
 import com.herethere.withus.archive.repository.ArchiveRepository;
 import com.herethere.withus.common.dto.internal.DateCursor;
 import com.herethere.withus.common.util.CursorCodec;
@@ -69,18 +70,18 @@ public class ArchiveService {
 		LocalDate nextCursorDate = targetDates.getLast();
 		String nextCursor = hasNext ? cursorCodec.encode(nextCursorDate) : null;
 
-		List<ArchiveDayDto> archiveDayDtos = archiveRepository.findAllByDates(couple.getId(), user.getId(),
+		List<ArchiveDayView> archiveDayViews = archiveRepository.findAllByDates(couple.getId(), user.getId(),
 			partner.getId(), targetDates);
 
-		Map<LocalDate, List<ArchiveListResponse.ImageInfo>> groupedByDate = archiveDayDtos.stream()
+		Map<LocalDate, List<ArchiveListResponse.ImageInfo>> groupedByDate = archiveDayViews.stream()
 			.collect(Collectors.groupingBy(
-				ArchiveDayDto::date,
+				ArchiveDayView::getDate,
 				LinkedHashMap::new,
 				Collectors.mapping(dto -> new ArchiveListResponse.ImageInfo(
-					dto.archiveType(),
-					dto.sourceId(),
-					s3Service.createThumbnailImageUrl(dto.meImageKey()),
-					s3Service.createThumbnailImageUrl(dto.partnerImageKey())
+					ArchiveType.from(dto.getArchiveType()),
+					dto.getSourceId(),
+					s3Service.createThumbnailImageUrl(dto.getMeImageKey()),
+					s3Service.createThumbnailImageUrl(dto.getPartnerImageKey())
 				), Collectors.toList())
 			));
 

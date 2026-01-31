@@ -49,6 +49,10 @@ public enum ErrorCode {
 	// FOUR_CUT
 	FOUR_CUT_NOT_FOUND(404, "해당 네컷 사진이 존재하지 않습니다."),
 
+	// ARCHIVE
+	INVALID_ARCHIVE_TYPE(500, "아카이브 타입이 올바르지 않습니다."),
+	ARCHIVE_TYPE_NULL(500, "아카이브 타입이 null 입니다."),
+
 	// INVITATION_CODE
 	CODE_GENERATE_FAILED(503, "중복으로 인해 초대 코드 생성을 실패했습니다."),
 	CODE_NOT_FOUND(404, "초대 코드를 찾을 수 없습니다."),
@@ -74,6 +78,7 @@ public enum ErrorCode {
 	NEED_IMAGE_KEY(400, "이미지 키가 존재하지 않습니다."),
 	WRONG_IMAGE_FORMAT(400, "이미지가 형식에 맞지 않습니다."),
 	WRONG_IMAGE_KEY(403, "잘못된 이미지 키입니다.");
+
 
 	private final int status;
 	private final String message;
