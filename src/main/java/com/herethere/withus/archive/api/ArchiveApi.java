@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.herethere.withus.archive.dto.response.ArchiveDateResponse;
 import com.herethere.withus.archive.dto.response.ArchiveListResponse;
+import com.herethere.withus.archive.enums.ArchiveType;
 import com.herethere.withus.common.apiresponse.ApiResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -58,9 +59,12 @@ public interface ArchiveApi {
 			우리 커플의 보관 사진을 특정 날짜 기준으로 전체 조회합니다.
 			- 날짜는 YYYY-MM-DD 형식입니다.
 			- 해당 날짜에 촬영된 모든 보관 사진을 반환합니다.
-			- `/me/couple/archives` 응답의 date로 요청을 합니다.
-			- 만약 해당 날짜의 사진이 하나도 없다면, 에러를 보냅니다.
-			- 사진을 보내지 않았다면 해당 사람의 imageInfo는 null입니다.
+			- `/me/couple/archives` 응답의 date, 엔티티 id, ArchiveType으로 요청을 합니다.
+			- 사진을 보내지 않았다면 해당 사람 imageInfo의 answerImageUrl은 null입니다.
+			- archiveType과 id를 합쳐서 사용자가 어떤 사진을 선택했는지를 식별하고, 해당 사진을 selected = true로 응답합니다.
+			- 리스트 중에 selected: true인 항목이 있으면 해당 위치로 스크롤되어 있는 상태로 유저에게 보여줘야 합니다.
+			- 만약 둘 중 하나라도 보내지 않았거나, selected 된 사진이 없다면, 모든 리스트의 selected = false가 되고, 그 땐 제일 앞의 항목을 보여줘야 합니다.
+			- selected = true는 하나 뿐이거나, 0개 입니다(선택 되지 않았을 때).
 			"""
 	)
 	@GetMapping("/me/couple/archives/date")
@@ -71,6 +75,12 @@ public interface ArchiveApi {
 			required = true
 		)
 		@RequestParam
-		LocalDate date
+		LocalDate date,
+
+		@Parameter(description = "클릭한 사진의 고유 ID", example = "101")
+		@RequestParam(required = false) Long targetId,
+
+		@Parameter(description = "클릭한 사진의 타입 (QUESTION, KEYWORD)", example = "QUESTION")
+		@RequestParam(required = false) ArchiveType targetType
 	);
 }

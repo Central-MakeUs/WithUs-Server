@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.herethere.withus.archive.api.ArchiveApi;
 import com.herethere.withus.archive.dto.response.ArchiveDateResponse;
 import com.herethere.withus.archive.dto.response.ArchiveListResponse;
+import com.herethere.withus.archive.enums.ArchiveType;
 import com.herethere.withus.archive.service.ArchiveService;
 import com.herethere.withus.common.apiresponse.ApiResponse;
 
@@ -26,8 +27,9 @@ public class ArchiveController implements ArchiveApi {
 	}
 
 	@Override
-	public ResponseEntity<ApiResponse<ArchiveDateResponse>> getArchiveByDate(LocalDate date) {
-		ArchiveDateResponse response = archiveService.getArchiveByDate(date);
+	public ResponseEntity<ApiResponse<ArchiveDateResponse>> getArchiveByDate(LocalDate date, Long targetId,
+		ArchiveType targetType) {
+		ArchiveDateResponse response = archiveService.getArchiveByDate(date, targetId, targetType);
 		return ResponseEntity.ok(ApiResponse.success(response));
 	}
 }
