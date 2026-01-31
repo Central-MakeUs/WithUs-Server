@@ -2,18 +2,14 @@ package com.herethere.withus.archive.repository;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.herethere.withus.archive.dto.internal.ArchiveDayView;
-import com.herethere.withus.archive.dto.internal.QuestionPictureDto;
-import com.herethere.withus.keyword.domain.KeywordRecord;
-import com.herethere.withus.question.domain.CoupleQuestion;
+import com.herethere.withus.archive.dto.internal.ArchiveDetailView;
 import com.herethere.withus.question.domain.QuestionPicture;
-import com.herethere.withus.user.domain.User;
 
 public interface ArchiveRepository extends JpaRepository<QuestionPicture, Long> {
 
@@ -89,33 +85,47 @@ public interface ArchiveRepository extends JpaRepository<QuestionPicture, Long> 
 		@Param("targetDates") List<LocalDate> targetDates
 	);
 
-	@Query("""
-			SELECT new com.herethere.withus.archive.dto.internal.QuestionPictureDto(
-				qp.imageKey,
-				qp.createdAt
-			)
-			FROM QuestionPicture qp
-			JOIN qp.user u
-			JOIN qp.coupleQuestion cq
-			WHERE cq.id = :coupleQuestionId
-			  AND u.id = :userId
-		""")
-	Optional<QuestionPictureDto> findQuestionPictureByCoupleQuestionAndUser(
-		@Param("coupleQuestionId") Long coupleQuestionId,
-		@Param("userId") Long userId
-	);
-
-	@Query("""
-			SELECT kr
-			FROM KeywordRecord kr
-			JOIN kr.coupleKeyword ck
-			WHERE ck.couple.id = :coupleId
-			  AND kr.date = :date
-		""")
-	List<KeywordRecord> findKeywordRecordsByCoupleAndDate(
+	@Query(value = """
+		SELECT * FROM (
+		      -- 1. 질문 섹션: 한 명이라도 올렸으면 행이 생성됨
+		      SELECT
+		          'QUESTION' AS archiveType,
+		          cq.id AS sourceId,
+		          q.content AS content,
+		          MAX(CASE WHEN qp.user_id = :meId THEN qp.image_key END) AS meImageKey,
+		          MAX(CASE WHEN qp.user_id = :meId THEN qp.created_at END) AS meAnsweredAt,
+		          MAX(CASE WHEN qp.user_id = :partnerId THEN qp.image_key END) AS partnerImageKey,
+		          MAX(CASE WHEN qp.user_id = :partnerId THEN qp.created_at END) AS partnerAnsweredAt,
+		          1 AS sortOrder
+		      FROM couple_question cq
+		      JOIN question q ON cq.question_id = q.id
+		      INNER JOIN question_picture qp ON qp.couple_question_id = cq.id
+		      WHERE cq.couple_id = :coupleId AND cq.date = :date
+		      GROUP BY cq.id, q.content
+		    UNION ALL
+		
+		    -- 2. 키워드 섹션
+		    SELECT 
+		        'KEYWORD' AS archiveType,
+		        ck.id AS sourceId,
+		        k.content AS content,
+		        MAX(CASE WHEN kr.user_id = :meId THEN kr.image_key END) AS meImageKey,
+		        MAX(CASE WHEN kr.user_id = :meId THEN kr.created_at END) AS meAnsweredAt,
+		        MAX(CASE WHEN kr.user_id = :partnerId THEN kr.image_key END) AS partnerImageKey,
+		        MAX(CASE WHEN kr.user_id = :partnerId THEN kr.created_at END) AS partnerAnsweredAt,
+		        2 AS sortOrder
+		    FROM couple_keyword ck
+		    INNER JOIN keyword k ON ck.keyword_id = k.id
+		    INNER JOIN keyword_record kr ON kr.couple_keyword_id = ck.id AND kr.date = :date
+		    WHERE ck.couple_id = :coupleId
+		    GROUP BY ck.id, k.content
+		) AS detail
+		ORDER BY sortOrder ASC, content ASC
+		""", nativeQuery = true)
+	List<ArchiveDetailView> findDetailByDate(
 		@Param("coupleId") Long coupleId,
+		@Param("meId") Long meId,
+		@Param("partnerId") Long partnerId,
 		@Param("date") LocalDate date
 	);
-
-	Optional<QuestionPicture> findByCoupleQuestionAndUser(CoupleQuestion coupleQuestion, User user);
 }
