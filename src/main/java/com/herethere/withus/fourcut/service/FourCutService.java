@@ -36,7 +36,7 @@ public class FourCutService {
 
 	@Transactional(readOnly = true)
 	public FourCutCursorResponse getFourCutsByCursor(int size, String cursor) {
-		CreatedAtIdCursor payload = cursor == null ? null : cursorCodec.decode(cursor, CreatedAtIdCursor.class);
+		CreatedAtIdCursor payload = cursorCodec.decode(cursor, CreatedAtIdCursor.class);
 		LocalDateTime createdAtCursor = payload == null ? null : payload.createdAt();
 		Long idCursor = payload == null ? null : payload.id();
 

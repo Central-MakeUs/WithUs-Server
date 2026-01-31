@@ -45,7 +45,7 @@ public class ArchiveService {
 
 	@Transactional(readOnly = true)
 	public ArchiveListResponse getArchivesByCursor(String cursor, int size) {
-		DateCursor dateCursor = cursor == null ? null : cursorCodec.decode(cursor, DateCursor.class);
+		DateCursor dateCursor = cursorCodec.decode(cursor, DateCursor.class);
 		LocalDate date = dateCursor == null ? null : dateCursor.date();
 		User user = userContextService.getCoupledUser();
 		Couple couple = user.getCouple();
