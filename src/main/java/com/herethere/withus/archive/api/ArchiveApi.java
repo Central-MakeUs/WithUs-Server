@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.herethere.withus.archive.dto.response.ArchiveDateResponse;
 import com.herethere.withus.archive.dto.response.ArchiveListResponse;
+import com.herethere.withus.archive.dto.response.ArchiveQuestionListResponse;
 import com.herethere.withus.archive.enums.ArchiveType;
 import com.herethere.withus.common.apiresponse.ApiResponse;
 
@@ -82,5 +83,33 @@ public interface ArchiveApi {
 
 		@Parameter(description = "클릭한 사진의 타입 (QUESTION, KEYWORD)", example = "QUESTION")
 		@RequestParam(required = false) ArchiveType targetType
+	);
+
+	@Operation(
+		summary = "보관 질문 조회",
+		description = """
+			우리 커플의 보관 질문을 전체 조회합니다.
+			- 커서 기반 페이지네이션을 사용합니다.
+			- 응답에서 받은 nextCursor 값을 그대로 cursor에 넣어 요청하면 됩니다.
+			- 커서는 받은 질문의 number를 기준으로 생성됩니다.
+			"""
+	)
+	@GetMapping("/me/couple/archives/questions")
+	ResponseEntity<ApiResponse<ArchiveQuestionListResponse>> getArchiveQuestions(
+		@Parameter(
+			description = "한 번에 조회할 질문 개수 (기본값: 20, 최소 1, 최대 50)",
+			example = "20"
+		)
+		@RequestParam(defaultValue = "20")
+		@Min(1)
+		@Max(50)
+		int size,
+
+		@Parameter(
+			description = "다음 페이지 조회를 위한 커서 값 (첫 페이지 조회 시 생략)",
+			example = "eyJjcmVhdGVkQXQiOiIyMDI2LTAxLTIzVDAxOjExOjUyIiwiaWQiOjExOX0="
+		)
+		@RequestParam(required = false)
+		String cursor
 	);
 }
