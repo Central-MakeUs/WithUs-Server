@@ -64,12 +64,8 @@ public class ArchiveService {
 
 		List<ArchiveListResponse.ArchiveInfo> archiveInfos = images.stream().map(
 			i -> {
-				String meImageUrl = i.meImageKey() == null
-					? null : s3Service.createThumbnailImageUrl(i.meImageKey());
-
-				String partnerImageUrl = i.partnerImageKey() == null
-					? null : s3Service.createThumbnailImageUrl(i.partnerImageKey());
-
+				String meImageUrl = s3Service.createThumbnailImageUrl(i.meImageKey());
+				String partnerImageUrl = s3Service.createThumbnailImageUrl(i.partnerImageKey());
 				return new ArchiveListResponse.ArchiveInfo(i.date(), meImageUrl, partnerImageUrl);
 			}
 		).toList();
