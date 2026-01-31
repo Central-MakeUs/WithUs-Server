@@ -29,7 +29,8 @@ public interface ArchiveApi {
 			- 응답에서 받은 nextCursor 값을 그대로 cursor에 넣어 요청하면 됩니다.
 			- 커서는 date를 기반으로 생성됩니다.
 			- 상세 정보를 요청할 때는, date를 가지고 요청하면 됩니다.
-			- 둘 다 null인 경우는 존재하지 않고, 하나만 null인 경우에는 프론트에서 해당 사진만 보여줍니다.
+			- ArchiveInfo의 imageUrl이 둘 다 null인 경우는 존재하지 않고, 하나만 null인 경우에는 프론트에서 해당 사진만 보여줍니다.
+			- size는 칸의 개수가 아니라 날짜의 개수를 의미합니다. size가 20이면, 20일 치의 이미지를 가져옵니다.
 			""")
 	@GetMapping("/me/couple/archives")
 	ResponseEntity<ApiResponse<ArchiveListResponse>> getArchivesByCursor(
@@ -39,7 +40,7 @@ public interface ArchiveApi {
 		)
 		@RequestParam(defaultValue = "20")
 		@Min(1)
-		@Max(50)
+		@Max(30)
 		int size,
 
 		@Parameter(
