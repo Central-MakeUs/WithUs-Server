@@ -38,7 +38,7 @@ public enum ErrorCode {
 
 	// QUESTION
 	QUESTION_NOT_FOUND(404, "해당 질문이 존재하지 않습니다."),
-	COUPLE_QUESTION_NOT_FOUND(404, "해당 커플의 질문이 아직 존재하지 않습니다."),
+	COUPLE_QUESTION_NOT_FOUND(404, "커플의 해당 질문이 존재하지 않습니다."),
 	PICTURE_ALREADY_UPLOADED(409, "이미 사진을 업로드 했습니다."),
 	NOT_TODAY_QUESTION(400, "지난 질문에는 사진을 추가할 수 없습니다."),
 

@@ -1,6 +1,10 @@
 package com.herethere.withus.archive.service;
 
+import static com.herethere.withus.common.exception.ErrorCode.*;
+
+import java.sql.Date;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -18,16 +22,20 @@ import com.herethere.withus.archive.dto.internal.ArchiveDayView;
 import com.herethere.withus.archive.dto.internal.ArchiveDetailView;
 import com.herethere.withus.archive.dto.response.ArchiveDateResponse;
 import com.herethere.withus.archive.dto.response.ArchiveListResponse;
+import com.herethere.withus.archive.dto.response.ArchiveQuestionDetailResponse;
 import com.herethere.withus.archive.dto.response.ArchiveQuestionListResponse;
 import com.herethere.withus.archive.enums.ArchiveType;
 import com.herethere.withus.archive.repository.ArchiveRepository;
 import com.herethere.withus.common.dto.internal.DateCursor;
 import com.herethere.withus.common.dto.internal.NumberCursor;
+import com.herethere.withus.common.exception.NotFoundException;
 import com.herethere.withus.common.util.CursorCodec;
 import com.herethere.withus.couple.domain.Couple;
 import com.herethere.withus.question.domain.CoupleQuestion;
 import com.herethere.withus.question.domain.Question;
+import com.herethere.withus.question.domain.QuestionPicture;
 import com.herethere.withus.question.repository.CoupleQuestionRepository;
+import com.herethere.withus.question.repository.QuestionPictureRepository;
 import com.herethere.withus.s3.service.S3Service;
 import com.herethere.withus.user.domain.User;
 import com.herethere.withus.user.service.UserContextService;
@@ -41,6 +49,7 @@ public class ArchiveService {
 	private final UserContextService userContextService;
 	private final ArchiveRepository archiveRepository;
 	private final CoupleQuestionRepository coupleQuestionRepository;
+	private final QuestionPictureRepository questionPictureRepository;
 	private final S3Service s3Service;
 	private final CursorCodec cursorCodec;
 
@@ -55,9 +64,9 @@ public class ArchiveService {
 
 		LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
 
-		List<java.sql.Date> dateResults = archiveRepository.findTargetDates(couple.getId(), lastDate, today, size + 1);
+		List<Date> dateResults = archiveRepository.findTargetDates(couple.getId(), lastDate, today, size + 1);
 		List<LocalDate> targetDates = dateResults.stream()
-			.map(java.sql.Date::toLocalDate)
+			.map(Date::toLocalDate)
 			.toList();
 
 		boolean hasNext = targetDates.size() > size;
@@ -149,6 +158,50 @@ public class ArchiveService {
 		}).toList();
 
 		return new ArchiveQuestionListResponse(questionInfos, hasNext, nextCursor);
+	}
+
+	@Transactional(readOnly = true)
+	public ArchiveQuestionDetailResponse getDetailArchiveQuestion(Long coupleQuestionId) {
+		User user = userContextService.getCoupledUser();
+		Couple couple = user.getCouple();
+		User partner = couple.getPartner(user.getId());
+
+		CoupleQuestion coupleQuestion = coupleQuestionRepository.findById(coupleQuestionId).orElseThrow(
+			() -> new NotFoundException(COUPLE_QUESTION_NOT_FOUND));
+
+		if (!coupleQuestion.getCouple().getId().equals(couple.getId())) {
+			throw new NotFoundException(COUPLE_QUESTION_NOT_FOUND);
+		}
+
+		String myProfileUrl = s3Service.createThumbnailImageUrl(user.getProfileImageKey());
+		String partnerProfileUrl = s3Service.createThumbnailImageUrl(partner.getProfileImageKey());
+
+		QuestionPicture myQuestionPicture = questionPictureRepository.findByUserAndCoupleQuestion(user, coupleQuestion)
+			.orElse(null);
+		QuestionPicture partnerQuestionPicture = questionPictureRepository.findByUserAndCoupleQuestion(partner,
+			coupleQuestion).orElse(null);
+
+		ArchiveQuestionDetailResponse.ImageInfo myInfo = createImageInfo(user, myQuestionPicture);
+		ArchiveQuestionDetailResponse.ImageInfo partnerInfo = createImageInfo(partner, partnerQuestionPicture);
+
+		Question question = coupleQuestion.getQuestion();
+
+		return new ArchiveQuestionDetailResponse(coupleQuestionId, question.getQuestionNumber(), question.getContent(),
+			myInfo, partnerInfo);
+	}
+
+	private ArchiveQuestionDetailResponse.ImageInfo createImageInfo(User user, QuestionPicture picture) {
+		String profileUrl = s3Service.createThumbnailImageUrl(user.getProfileImageKey());
+		String imageUrl = (picture != null) ? s3Service.createOriginImageUrl(picture.getImageKey()) : null;
+		LocalDateTime createdAt = (picture != null) ? picture.getCreatedAt() : null;
+
+		return new ArchiveQuestionDetailResponse.ImageInfo(
+			user.getId(),
+			user.getNickname(),
+			profileUrl,
+			imageUrl,
+			createdAt
+		);
 	}
 }
 
