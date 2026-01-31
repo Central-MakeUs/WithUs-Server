@@ -35,7 +35,7 @@ public interface ArchiveRepository extends JpaRepository<QuestionPicture, Long> 
 		ORDER BY all_dates.date DESC
 		LIMIT :size
 		""", nativeQuery = true)
-	List<LocalDate> findTargetDates(
+	List<java.sql.Date> findTargetDates(
 		@Param("coupleId") Long coupleId,
 		@Param("lastDate") LocalDate lastDate,
 		@Param("today") LocalDate today,

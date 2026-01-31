@@ -54,7 +54,10 @@ public class ArchiveService {
 
 		LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
 
-		List<LocalDate> targetDates = archiveRepository.findTargetDates(couple.getId(), lastDate, today, size + 1);
+		List<java.sql.Date> dateResults = archiveRepository.findTargetDates(couple.getId(), lastDate, today, size + 1);
+		List<LocalDate> targetDates = dateResults.stream()
+			.map(java.sql.Date::toLocalDate)
+			.toList();
 
 		boolean hasNext = targetDates.size() > size;
 
