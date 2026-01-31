@@ -39,3 +39,6 @@ feign:
     config:
       default:
         loggerLevel: FULL
+
+server:
+  forward-headers-strategy: framework
