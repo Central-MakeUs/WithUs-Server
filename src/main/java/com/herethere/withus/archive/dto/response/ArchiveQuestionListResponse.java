@@ -19,7 +19,7 @@ public record ArchiveQuestionListResponse(
 	@Schema(description = "질문 정보")
 	public record QuestionInfo(
 		@Schema(description = "couple-question이 연결된 id 값입니다. 추후 상세 조회 때 사용합니다.", example = "12")
-		Long id,
+		Long coupleQuestionId,
 
 		@Schema(description = "번호")
 		Long questionNumber,
