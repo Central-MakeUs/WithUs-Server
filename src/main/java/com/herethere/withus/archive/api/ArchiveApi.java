@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.herethere.withus.archive.dto.response.ArchiveCalendarResponse;
 import com.herethere.withus.archive.dto.response.ArchiveDateResponse;
 import com.herethere.withus.archive.dto.response.ArchiveListResponse;
 import com.herethere.withus.archive.dto.response.ArchiveQuestionDetailResponse;
@@ -133,4 +134,39 @@ public interface ArchiveApi {
 		@PathVariable
 		Long coupleQuestionId
 	);
+
+	@Operation(
+		summary = "보관 캘린더 월 단위 조회",
+		description = """
+		우리 커플의 보관 사진을 월 단위 캘린더 형태로 조회합니다.
+		- year, month 기준으로 해당 월의 사진이 있는 날짜를 반환합니다.
+		- 보관 데이터가 없는 날짜는 포함되지 않습니다. (모든 날짜가 있는 게 더 편하면 수정 가능합니다.)
+		- 각 날짜마다 나(me) / 상대방(partner)의 업로드 사진 URL 을 제공합니다.
+		- 질문 사진 + 키워드 사진을 통합한 기준입니다.
+		- 대표 사진 우선순위는 질문 사진 > 키워드 사진입니다.
+		"""
+	)
+	@GetMapping("/me/couple/archives/calendar")
+	ResponseEntity<ApiResponse<ArchiveCalendarResponse>> getArchiveCalendar(
+		@Parameter(
+			description = "조회할 연도",
+			example = "2026",
+			required = true
+		)
+		@RequestParam
+		@Min(2000)
+		@Max(2100)
+		int year,
+
+		@Parameter(
+			description = "조회할 월 (1 ~ 12)",
+			example = "1",
+			required = true
+		)
+		@RequestParam
+		@Min(1)
+		@Max(12)
+		int month
+	);
+
 }

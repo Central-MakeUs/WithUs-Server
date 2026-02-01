@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.herethere.withus.archive.api.ArchiveApi;
+import com.herethere.withus.archive.dto.response.ArchiveCalendarResponse;
 import com.herethere.withus.archive.dto.response.ArchiveDateResponse;
 import com.herethere.withus.archive.dto.response.ArchiveListResponse;
 import com.herethere.withus.archive.dto.response.ArchiveQuestionDetailResponse;
@@ -44,6 +45,12 @@ public class ArchiveController implements ArchiveApi {
 	@Override
 	public ResponseEntity<ApiResponse<ArchiveQuestionDetailResponse>> getDetailArchiveQuestion(Long coupleQuestionId) {
 		ArchiveQuestionDetailResponse response = archiveService.getDetailArchiveQuestion(coupleQuestionId);
+		return ResponseEntity.ok(ApiResponse.success(response));
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<ArchiveCalendarResponse>> getArchiveCalendar(int year, int month) {
+		ArchiveCalendarResponse response = archiveService.getArchiveCalendar(year, month);
 		return ResponseEntity.ok(ApiResponse.success(response));
 	}
 }
