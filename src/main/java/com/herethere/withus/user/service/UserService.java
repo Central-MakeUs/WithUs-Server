@@ -52,7 +52,8 @@ public class UserService {
 	@Transactional(readOnly = true)
 	public UserUpdateResponse getUserProfile() {
 		User user = userContextService.getInitializedUser();
-		return new UserUpdateResponse(user.getId(), user.getNickname(), user.getBirthday(), user.getProfileImageKey());
+		return new UserUpdateResponse(user.getId(), user.getNickname(), user.getBirthday(),
+			s3Service.createOriginImageUrl(user.getProfileImageKey()));
 	}
 
 	@Transactional
