@@ -7,8 +7,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.herethere.withus.archive.dto.internal.ArchiveDayView;
-import com.herethere.withus.archive.dto.internal.ArchiveDetailView;
+import com.herethere.withus.archive.dto.internal.ArchiveDayRow;
+import com.herethere.withus.archive.dto.internal.ArchiveDetailRow;
 import com.herethere.withus.archive.dto.internal.DailyArchiveRow;
 import com.herethere.withus.question.domain.QuestionPicture;
 
@@ -44,8 +44,13 @@ public interface ArchiveRepository extends JpaRepository<QuestionPicture, Long> 
 	);
 
 	@Query(value = """
-		SELECT * FROM (
-		    -- 1. 질문 사진 상세 (sortOrder 1, 키워드가 아니므로 content는 NULL)
+			SELECT 
+				date,
+				archiveType,
+				sourceId,
+				meImageKey,
+				partnerImageKey 
+			FROM (
 		    SELECT 
 		        cq.date AS date,
 		        'QUESTION' AS archiveType,
@@ -79,7 +84,7 @@ public interface ArchiveRepository extends JpaRepository<QuestionPicture, Long> 
 		-- 정렬: 1순위 날짜(내림차순), 2순위 타입(질문 우선), 3순위 키워드 내용(오름차순)
 		ORDER BY date DESC, sortOrder ASC, content ASC
 		""", nativeQuery = true)
-	List<ArchiveDayView> findAllByDates(
+	List<ArchiveDayRow> findAllByDates(
 		@Param("coupleId") Long coupleId,
 		@Param("meId") Long meId,
 		@Param("partnerId") Long partnerId,
@@ -87,7 +92,15 @@ public interface ArchiveRepository extends JpaRepository<QuestionPicture, Long> 
 	);
 
 	@Query(value = """
-		SELECT * FROM (
+		SELECT
+		  archiveType,
+		  sourceId,
+		  content,
+		  meImageKey,
+		  meAnsweredAt,
+		  partnerImageKey,
+		  partnerAnsweredAt
+		  FROM (
 		      -- 1. 질문 섹션: 한 명이라도 올렸으면 행이 생성됨
 		      SELECT
 		          'QUESTION' AS archiveType,
@@ -123,7 +136,7 @@ public interface ArchiveRepository extends JpaRepository<QuestionPicture, Long> 
 		) AS detail
 		ORDER BY sortOrder ASC, content ASC
 		""", nativeQuery = true)
-	List<ArchiveDetailView> findDetailByDate(
+	List<ArchiveDetailRow> findDetailByDate(
 		@Param("coupleId") Long coupleId,
 		@Param("meId") Long meId,
 		@Param("partnerId") Long partnerId,
@@ -187,6 +200,5 @@ public interface ArchiveRepository extends JpaRepository<QuestionPicture, Long> 
 		@Param("endDate") LocalDate endDate,
 		@Param("today") LocalDate today
 	);
-
 
 }

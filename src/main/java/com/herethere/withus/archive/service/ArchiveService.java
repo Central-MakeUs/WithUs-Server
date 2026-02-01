@@ -19,8 +19,8 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.herethere.withus.archive.dto.internal.ArchiveDayView;
-import com.herethere.withus.archive.dto.internal.ArchiveDetailView;
+import com.herethere.withus.archive.dto.internal.ArchiveDayRow;
+import com.herethere.withus.archive.dto.internal.ArchiveDetailRow;
 import com.herethere.withus.archive.dto.internal.DailyArchiveRow;
 import com.herethere.withus.archive.dto.response.ArchiveCalendarResponse;
 import com.herethere.withus.archive.dto.response.ArchiveDateResponse;
@@ -84,18 +84,18 @@ public class ArchiveService {
 		LocalDate nextCursorDate = targetDates.getLast();
 		String nextCursor = hasNext ? cursorCodec.encode(nextCursorDate) : null;
 
-		List<ArchiveDayView> archiveDayViews = archiveRepository.findAllByDates(couple.getId(), user.getId(),
+		List<ArchiveDayRow> archiveDayRows = archiveRepository.findAllByDates(couple.getId(), user.getId(),
 			partner.getId(), targetDates);
 
-		Map<LocalDate, List<ArchiveListResponse.ImageInfo>> groupedByDate = archiveDayViews.stream()
+		Map<LocalDate, List<ArchiveListResponse.ImageInfo>> groupedByDate = archiveDayRows.stream()
 			.collect(Collectors.groupingBy(
-				ArchiveDayView::getDate,
+				ArchiveDayRow::date,
 				LinkedHashMap::new,
 				Collectors.mapping(dto -> new ArchiveListResponse.ImageInfo(
-					ArchiveType.from(dto.getArchiveType()),
-					dto.getSourceId(),
-					s3Service.createThumbnailImageUrl(dto.getMeImageKey()),
-					s3Service.createThumbnailImageUrl(dto.getPartnerImageKey())
+					ArchiveType.from(dto.archiveType()),
+					dto.sourceId(),
+					s3Service.createThumbnailImageUrl(dto.meImageKey()),
+					s3Service.createThumbnailImageUrl(dto.partnerImageKey())
 				), Collectors.toList())
 			));
 
@@ -116,20 +116,20 @@ public class ArchiveService {
 		String partnerProfileUrl = partner.getProfileImageKey() == null ? null :
 			s3Service.createThumbnailImageUrl(partner.getProfileImageKey());
 
-		List<ArchiveDetailView> archiveDetailViews = archiveRepository.findDetailByDate(couple.getId(), user.getId(),
+		List<ArchiveDetailRow> archiveDetailRows = archiveRepository.findDetailByDate(couple.getId(), user.getId(),
 			partner.getId(), date);
 
-		List<ArchiveDateResponse.ArchiveInfo> archiveInfos = archiveDetailViews.stream().map(v -> {
-			String meArchiveImageUrl = s3Service.createOriginImageUrl(v.getMeImageKey());
-			String partnerArchiveImageUrl = s3Service.createOriginImageUrl(v.getPartnerImageKey());
+		List<ArchiveDateResponse.ArchiveInfo> archiveInfos = archiveDetailRows.stream().map(v -> {
+			String meArchiveImageUrl = s3Service.createOriginImageUrl(v.meImageKey());
+			String partnerArchiveImageUrl = s3Service.createOriginImageUrl(v.partnerImageKey());
 			ArchiveDateResponse.ImageInfo myInfo = new ArchiveDateResponse.ImageInfo(user.getId(), user.getNickname(),
-				myProfileUrl, meArchiveImageUrl, v.getMeAnsweredAt());
+				myProfileUrl, meArchiveImageUrl, v.meAnsweredAt());
 			ArchiveDateResponse.ImageInfo partnerInfo = new ArchiveDateResponse.ImageInfo(partner.getId(),
-				partner.getNickname(), partnerProfileUrl, partnerArchiveImageUrl, v.getPartnerAnsweredAt());
-			boolean selected = Objects.equals(v.getSourceId(), targetId)
-				&& Objects.equals(ArchiveType.valueOf(v.getArchiveType()), targetType);
-			return new ArchiveDateResponse.ArchiveInfo(ArchiveType.from(v.getArchiveType()), v.getSourceId(),
-				v.getContent(), myInfo, partnerInfo, selected);
+				partner.getNickname(), partnerProfileUrl, partnerArchiveImageUrl, v.partnerAnsweredAt());
+			boolean selected = Objects.equals(v.sourceId(), targetId)
+				&& Objects.equals(ArchiveType.valueOf(v.archiveType()), targetType);
+			return new ArchiveDateResponse.ArchiveInfo(ArchiveType.from(v.archiveType()), v.sourceId(),
+				v.content(), myInfo, partnerInfo, selected);
 		}).toList();
 
 		return new ArchiveDateResponse(date, archiveInfos);
