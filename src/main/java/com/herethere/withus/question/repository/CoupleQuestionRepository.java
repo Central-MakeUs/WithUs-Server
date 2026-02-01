@@ -24,12 +24,14 @@ public interface CoupleQuestionRepository extends JpaRepository<CoupleQuestion, 
 		SELECT cq FROM CoupleQuestion cq
 		JOIN FETCH cq.question q
 		WHERE cq.couple.id = :coupleId
+		AND cq.date < :today
 		AND (:lastNumber IS NULL OR q.questionNumber > :lastNumber)
 		ORDER BY q.questionNumber ASC
 		""")
 	Slice<CoupleQuestion> findNextQuestions(
 		@Param("coupleId") Long coupleId,
 		@Param("lastNumber") Long lastNumber,
+		@Param("today") LocalDate today,
 		Pageable pageable
 	);
 }

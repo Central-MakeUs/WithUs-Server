@@ -28,6 +28,7 @@ import com.herethere.withus.archive.enums.ArchiveType;
 import com.herethere.withus.archive.repository.ArchiveRepository;
 import com.herethere.withus.common.dto.internal.DateCursor;
 import com.herethere.withus.common.dto.internal.NumberCursor;
+import com.herethere.withus.common.exception.ForbiddenException;
 import com.herethere.withus.common.exception.NotFoundException;
 import com.herethere.withus.common.util.CursorCodec;
 import com.herethere.withus.couple.domain.Couple;
@@ -139,8 +140,10 @@ public class ArchiveService {
 		User user = userContextService.getCoupledUser();
 		Couple couple = user.getCouple();
 
+		LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
 		Pageable pageable = PageRequest.of(0, size);
-		Slice<CoupleQuestion> result = coupleQuestionRepository.findNextQuestions(couple.getId(), number, pageable);
+		Slice<CoupleQuestion> result = coupleQuestionRepository.findNextQuestions(couple.getId(), number, today,
+			pageable);
 
 		boolean hasNext = result.hasNext();
 		List<CoupleQuestion> coupleQuestions = result.getContent();
@@ -171,6 +174,11 @@ public class ArchiveService {
 
 		if (!coupleQuestion.getCouple().getId().equals(couple.getId())) {
 			throw new NotFoundException(COUPLE_QUESTION_NOT_FOUND);
+		}
+
+		LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
+		if (!coupleQuestion.getDate().isBefore(today)) {
+			throw new ForbiddenException(CANNOT_VIEW_TODAY_QUESTION);
 		}
 
 		String myProfileUrl = s3Service.createThumbnailImageUrl(user.getProfileImageKey());
