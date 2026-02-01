@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.herethere.withus.archive.dto.internal.ArchiveDayView;
 import com.herethere.withus.archive.dto.internal.ArchiveDetailView;
-import com.herethere.withus.archive.dto.internal.DailyArchiveRow;
+import com.herethere.withus.archive.dto.internal.DailyArchiveView;
 import com.herethere.withus.archive.dto.response.ArchiveCalendarResponse;
 import com.herethere.withus.archive.dto.response.ArchiveDateResponse;
 import com.herethere.withus.archive.dto.response.ArchiveListResponse;
@@ -212,14 +212,14 @@ public class ArchiveService {
 		LocalDate endDate = yearMonth.atEndOfMonth();
 		LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
 
-		List<DailyArchiveRow> dailyArchiveRows = archiveRepository.findDailyArchives(couple.getId(), user.getId(),
+		List<DailyArchiveView> dailyArchiveRows = archiveRepository.findDailyArchives(couple.getId(), user.getId(),
 			partner.getId(), startDate, endDate, today);
 
 		List<ArchiveCalendarResponse.ArchiveDay> archiveDays = dailyArchiveRows.stream().map(r ->
 				new ArchiveCalendarResponse.ArchiveDay(
-					r.archiveDate(),
-					s3Service.createThumbnailImageUrl(r.meImageKey()),
-					s3Service.createThumbnailImageUrl(r.partnerImageKey())))
+					r.getArchiveDate(),
+					s3Service.createThumbnailImageUrl(r.getMeImageKey()),
+					s3Service.createThumbnailImageUrl(r.getPartnerImageKey())))
 			.toList();
 		return new ArchiveCalendarResponse(year, month, archiveDays);
 	}

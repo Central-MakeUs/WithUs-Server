@@ -9,7 +9,7 @@ import org.springframework.data.repository.query.Param;
 
 import com.herethere.withus.archive.dto.internal.ArchiveDayView;
 import com.herethere.withus.archive.dto.internal.ArchiveDetailView;
-import com.herethere.withus.archive.dto.internal.DailyArchiveRow;
+import com.herethere.withus.archive.dto.internal.DailyArchiveView;
 import com.herethere.withus.question.domain.QuestionPicture;
 
 public interface ArchiveRepository extends JpaRepository<QuestionPicture, Long> {
@@ -192,7 +192,7 @@ public interface ArchiveRepository extends JpaRepository<QuestionPicture, Long> 
 		WHERE rn = 1
 		ORDER BY archive_date DESC;
 		""", nativeQuery = true)
-	List<DailyArchiveRow> findDailyArchives(
+	List<DailyArchiveView> findDailyArchives(
 		@Param("coupleId") Long coupleId,
 		@Param("meId") Long meId,
 		@Param("partnerId") Long partnerId,
