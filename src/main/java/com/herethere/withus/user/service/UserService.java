@@ -104,7 +104,8 @@ public class UserService {
 
 		user.completeOnboarding(request.nickname(), request.birthday(), finalImageKey);
 
-		return new UserOnboardingResponse(user.getId(), user.getNickname(), user.getProfileImageKey());
+		return new UserOnboardingResponse(user.getId(), user.getNickname(),
+			s3Service.createOriginImageUrl(user.getProfileImageKey()));
 	}
 
 	private InviteCode createNewInviteCode(User user) {
