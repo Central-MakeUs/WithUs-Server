@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 
 import com.herethere.withus.archive.dto.internal.ArchiveDayView;
 import com.herethere.withus.archive.dto.internal.ArchiveDetailView;
+import com.herethere.withus.archive.dto.internal.DailyArchiveView;
 import com.herethere.withus.question.domain.QuestionPicture;
 
 public interface ArchiveRepository extends JpaRepository<QuestionPicture, Long> {
@@ -43,8 +44,13 @@ public interface ArchiveRepository extends JpaRepository<QuestionPicture, Long> 
 	);
 
 	@Query(value = """
-		SELECT * FROM (
-		    -- 1. 질문 사진 상세 (sortOrder 1, 키워드가 아니므로 content는 NULL)
+			SELECT 
+				date,
+				archiveType,
+				sourceId,
+				meImageKey,
+				partnerImageKey 
+			FROM (
 		    SELECT 
 		        cq.date AS date,
 		        'QUESTION' AS archiveType,
@@ -86,7 +92,15 @@ public interface ArchiveRepository extends JpaRepository<QuestionPicture, Long> 
 	);
 
 	@Query(value = """
-		SELECT * FROM (
+		SELECT
+		  archiveType,
+		  sourceId,
+		  content,
+		  meImageKey,
+		  meAnsweredAt,
+		  partnerImageKey,
+		  partnerAnsweredAt
+		  FROM (
 		      -- 1. 질문 섹션: 한 명이라도 올렸으면 행이 생성됨
 		      SELECT
 		          'QUESTION' AS archiveType,
@@ -127,5 +141,63 @@ public interface ArchiveRepository extends JpaRepository<QuestionPicture, Long> 
 		@Param("meId") Long meId,
 		@Param("partnerId") Long partnerId,
 		@Param("date") LocalDate date
+	);
+
+	@Query(value = """
+		SELECT
+		    archive_date      AS archiveDate,
+		    me_image_key      AS meImageKey,
+		    partner_image_key AS partnerImageKey
+		FROM (
+		    SELECT
+		        t.*,
+		        ROW_NUMBER() OVER (
+		            PARTITION BY archive_date
+		            ORDER BY priority ASC, keyword_content ASC
+		        ) AS rn
+		    FROM (
+		        -- 질문
+		        SELECT
+		            cq.date AS archive_date,
+		            MAX(CASE WHEN qp.user_id = :meId THEN qp.image_key END) AS me_image_key,
+		            MAX(CASE WHEN qp.user_id = :partnerId THEN qp.image_key END) AS partner_image_key,
+		            1 AS priority,
+		            NULL AS keyword_content
+		        FROM couple_question cq
+		        JOIN question_picture qp
+		            ON qp.couple_question_id = cq.id
+		        WHERE cq.couple_id = :coupleId
+		          AND cq.date BETWEEN :startDate AND :endDate
+		          AND cq.date < :today
+		        GROUP BY cq.id, cq.date
+		
+		        UNION ALL
+		
+		        -- 키워드
+		        SELECT
+		            kr.date AS archive_date,
+		            MAX(CASE WHEN kr.user_id = :meId THEN kr.image_key END) AS me_image_key,
+		            MAX(CASE WHEN kr.user_id = :partnerId THEN kr.image_key END) AS partner_image_key,
+		            2 AS priority,
+		            k.content AS keyword_content
+		        FROM keyword_record kr
+		        JOIN couple_keyword ck ON kr.couple_keyword_id = ck.id
+		        JOIN keyword k ON ck.keyword_id = k.id
+		        WHERE ck.couple_id = :coupleId
+		          AND kr.date BETWEEN :startDate AND :endDate
+		          AND kr.date < :today
+		        GROUP BY kr.id, kr.date, k.content
+		    ) t
+		) final_t
+		WHERE rn = 1
+		ORDER BY archive_date DESC;
+		""", nativeQuery = true)
+	List<DailyArchiveView> findDailyArchives(
+		@Param("coupleId") Long coupleId,
+		@Param("meId") Long meId,
+		@Param("partnerId") Long partnerId,
+		@Param("startDate") LocalDate startDate,
+		@Param("endDate") LocalDate endDate,
+		@Param("today") LocalDate today
 	);
 }

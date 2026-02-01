@@ -4,11 +4,15 @@ import java.time.LocalDate;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.herethere.withus.archive.dto.response.ArchiveCalendarResponse;
 import com.herethere.withus.archive.dto.response.ArchiveDateResponse;
 import com.herethere.withus.archive.dto.response.ArchiveListResponse;
+import com.herethere.withus.archive.dto.response.ArchiveQuestionDetailResponse;
+import com.herethere.withus.archive.dto.response.ArchiveQuestionListResponse;
 import com.herethere.withus.archive.enums.ArchiveType;
 import com.herethere.withus.common.apiresponse.ApiResponse;
 
@@ -25,7 +29,7 @@ public interface ArchiveApi {
 	@Operation(
 		summary = "보관 사진 최신순 조회",
 		description = """
-			커플의 보관 사진을 최신순으로 조회합니다.
+			커플의 보관 사진을 최신순으로 조회합니다. - 최신순 목록 조회에 사용합니다.
 			- 커서 기반 페이지네이션을 사용합니다.
 			- 응답에서 받은 nextCursor 값을 그대로 cursor에 넣어 요청하면 됩니다.
 			- 커서는 date를 기반으로 생성됩니다.
@@ -57,13 +61,14 @@ public interface ArchiveApi {
 		summary = "보관 사진 날짜 기준 조회",
 		description = """
 			우리 커플의 보관 사진을 특정 날짜 기준으로 전체 조회합니다.
+			최신순 목록 조회에서 특정 사진을 클릭했을 때나, 캘린더에서 특정 날짜를 클릭했을 때, 상세 조회시 사용합니다.
 			- 날짜는 YYYY-MM-DD 형식입니다.
 			- 해당 날짜에 촬영된 모든 보관 사진을 반환합니다.
 			- `/me/couple/archives` 응답의 date, 엔티티 id, ArchiveType으로 요청을 합니다.
 			- 사진을 보내지 않았다면 해당 사람 imageInfo의 answerImageUrl은 null입니다.
 			- archiveType과 id를 합쳐서 사용자가 어떤 사진을 선택했는지를 식별하고, 해당 사진을 selected = true로 응답합니다.
 			- 리스트 중에 selected: true인 항목이 있으면 해당 위치로 스크롤되어 있는 상태로 유저에게 보여줘야 합니다.
-			- 만약 둘 중 하나라도 보내지 않았거나, selected 된 사진이 없다면, 모든 리스트의 selected = false가 되고, 그 땐 제일 앞의 항목을 보여줘야 합니다.
+			- 만약 archiveType과 id 중 하나라도 보내지 않았거나, selected 된 사진이 없다면, 모든 리스트의 selected = false가 되고, 그 땐 제일 앞의 항목을 보여줘야 합니다.
 			- selected = true는 하나 뿐이거나, 0개 입니다(선택 되지 않았을 때).
 			"""
 	)
@@ -83,4 +88,86 @@ public interface ArchiveApi {
 		@Parameter(description = "클릭한 사진의 타입 (QUESTION, KEYWORD)", example = "QUESTION")
 		@RequestParam(required = false) ArchiveType targetType
 	);
+
+	@Operation(
+		summary = "보관 질문 조회",
+		description = """
+			우리 커플의 보관 질문을 전체 조회합니다. - 질문 목록 조회에 사용합니다.
+			- 커서 기반 페이지네이션을 사용합니다.
+			- 응답에서 받은 nextCursor 값을 그대로 cursor에 넣어 요청하면 됩니다.
+			- 커서는 받은 질문의 number를 기준으로 생성됩니다.
+			"""
+	)
+	@GetMapping("/me/couple/archives/questions")
+	ResponseEntity<ApiResponse<ArchiveQuestionListResponse>> getArchiveQuestions(
+		@Parameter(
+			description = "한 번에 조회할 질문 개수 (기본값: 20, 최소 1, 최대 50)",
+			example = "20"
+		)
+		@RequestParam(defaultValue = "20")
+		@Min(1)
+		@Max(50)
+		int size,
+
+		@Parameter(
+			description = "다음 페이지 조회를 위한 커서 값 (첫 페이지 조회 시 생략)",
+			example = "eyJjcmVhdGVkQXQiOiIyMDI2LTAxLTIzVDAxOjExOjUyIiwiaWQiOjExOX0="
+		)
+		@RequestParam(required = false)
+		String cursor
+	);
+
+	@Operation(
+		summary = "보관 질문 상세 조회",
+		description = """
+			우리 커플의 보관 질문을 상세 조회합니다. - 질문 목록 조회에서 상세 조회할 때 사용합니다.
+			- `/api/me/couple/archives/questions`의 응답의 id를 path에 넣어서 요청합니다.
+			- 둘 모두의 사진이 존재하지 않는 경우가 있을 수 있습니다. (추후 사진 삭제 시)
+			- 둘 모두의 사진이 없을 경우엔, 삭제된 사진이라는 메시지를 띄워줘야 합니다.
+			"""
+	)
+	@GetMapping("/me/couple/archives/questions/{coupleQuestionId}")
+	ResponseEntity<ApiResponse<ArchiveQuestionDetailResponse>> getDetailArchiveQuestion(
+		@Parameter(
+			description = "couple-question id",
+			example = "11"
+		)
+		@PathVariable
+		Long coupleQuestionId
+	);
+
+	@Operation(
+		summary = "보관 캘린더 월 단위 조회",
+		description = """
+		우리 커플의 보관 사진을 월 단위 캘린더 형태로 조회합니다. - 캘린더 섬네일 목록 조회시 사용합니다.
+		- year, month 기준으로 해당 월의 사진이 있는 날짜를 반환합니다.
+		- 보관 데이터가 없는 날짜는 포함되지 않습니다. (모든 날짜가 있는 게 더 편하면 수정 가능합니다.)
+		- 각 날짜마다 나(me) / 상대방(partner)의 업로드 사진 URL 을 제공합니다.
+		- 질문 사진 + 키워드 사진을 통합한 기준입니다.
+		- 대표 사진 우선순위는 질문 사진 > 키워드 사진입니다.
+		"""
+	)
+	@GetMapping("/me/couple/archives/calendar")
+	ResponseEntity<ApiResponse<ArchiveCalendarResponse>> getArchiveCalendar(
+		@Parameter(
+			description = "조회할 연도",
+			example = "2026",
+			required = true
+		)
+		@RequestParam
+		@Min(2000)
+		@Max(2100)
+		int year,
+
+		@Parameter(
+			description = "조회할 월 (1 ~ 12)",
+			example = "1",
+			required = true
+		)
+		@RequestParam
+		@Min(1)
+		@Max(12)
+		int month
+	);
+
 }

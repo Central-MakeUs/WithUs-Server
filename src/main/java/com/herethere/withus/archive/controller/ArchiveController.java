@@ -6,8 +6,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.herethere.withus.archive.api.ArchiveApi;
+import com.herethere.withus.archive.dto.response.ArchiveCalendarResponse;
 import com.herethere.withus.archive.dto.response.ArchiveDateResponse;
 import com.herethere.withus.archive.dto.response.ArchiveListResponse;
+import com.herethere.withus.archive.dto.response.ArchiveQuestionDetailResponse;
+import com.herethere.withus.archive.dto.response.ArchiveQuestionListResponse;
 import com.herethere.withus.archive.enums.ArchiveType;
 import com.herethere.withus.archive.service.ArchiveService;
 import com.herethere.withus.common.apiresponse.ApiResponse;
@@ -30,6 +33,24 @@ public class ArchiveController implements ArchiveApi {
 	public ResponseEntity<ApiResponse<ArchiveDateResponse>> getArchiveByDate(LocalDate date, Long targetId,
 		ArchiveType targetType) {
 		ArchiveDateResponse response = archiveService.getArchiveByDate(date, targetId, targetType);
+		return ResponseEntity.ok(ApiResponse.success(response));
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<ArchiveQuestionListResponse>> getArchiveQuestions(int size, String cursor) {
+		ArchiveQuestionListResponse response = archiveService.getArchiveQuestions(size, cursor);
+		return ResponseEntity.ok(ApiResponse.success(response));
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<ArchiveQuestionDetailResponse>> getDetailArchiveQuestion(Long coupleQuestionId) {
+		ArchiveQuestionDetailResponse response = archiveService.getDetailArchiveQuestion(coupleQuestionId);
+		return ResponseEntity.ok(ApiResponse.success(response));
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<ArchiveCalendarResponse>> getArchiveCalendar(int year, int month) {
+		ArchiveCalendarResponse response = archiveService.getArchiveCalendar(year, month);
 		return ResponseEntity.ok(ApiResponse.success(response));
 	}
 }
