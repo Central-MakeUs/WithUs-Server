@@ -15,10 +15,10 @@ public record ArchiveCalendarResponse(
 	int month,
 
 	@Schema(description = "날짜별 캘린더 데이터")
-	List<ArchiveCalendarDay> days
+	List<ArchiveDay> days
 ) {
 	@Schema(description = "캘린더 날짜 단위 정보")
-	public record ArchiveCalendarDay(
+	public record ArchiveDay(
 
 		@Schema(description = "날짜 (YYYY-MM-DD)", example = "2026-01-23")
 		LocalDate date,

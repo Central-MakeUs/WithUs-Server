@@ -5,6 +5,7 @@ import static com.herethere.withus.common.exception.ErrorCode.*;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.time.ZoneId;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -20,6 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.herethere.withus.archive.dto.internal.ArchiveDayView;
 import com.herethere.withus.archive.dto.internal.ArchiveDetailView;
+import com.herethere.withus.archive.dto.internal.DailyArchiveRow;
+import com.herethere.withus.archive.dto.response.ArchiveCalendarResponse;
 import com.herethere.withus.archive.dto.response.ArchiveDateResponse;
 import com.herethere.withus.archive.dto.response.ArchiveListResponse;
 import com.herethere.withus.archive.dto.response.ArchiveQuestionDetailResponse;
@@ -196,6 +199,29 @@ public class ArchiveService {
 
 		return new ArchiveQuestionDetailResponse(coupleQuestionId, question.getQuestionNumber(), question.getContent(),
 			myInfo, partnerInfo);
+	}
+
+	@Transactional(readOnly = true)
+	public ArchiveCalendarResponse getArchiveCalendar(int year, int month) {
+		User user = userContextService.getCoupledUser();
+		Couple couple = user.getCouple();
+		User partner = couple.getPartner(user.getId());
+
+		YearMonth yearMonth = YearMonth.of(year, month);
+		LocalDate startDate = yearMonth.atDay(1);
+		LocalDate endDate = yearMonth.atEndOfMonth();
+		LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
+
+		List<DailyArchiveRow> dailyArchiveRows = archiveRepository.findDailyArchives(couple.getId(), user.getId(),
+			partner.getId(), startDate, endDate, today);
+
+		List<ArchiveCalendarResponse.ArchiveDay> archiveDays = dailyArchiveRows.stream().map(r ->
+				new ArchiveCalendarResponse.ArchiveDay(
+					r.archiveDate(),
+					s3Service.createThumbnailImageUrl(r.meImageKey()),
+					s3Service.createThumbnailImageUrl(r.partnerImageKey())))
+			.toList();
+		return new ArchiveCalendarResponse(year, month, archiveDays);
 	}
 
 	private ArchiveQuestionDetailResponse.ImageInfo createImageInfo(User user, QuestionPicture picture) {
