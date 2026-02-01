@@ -42,8 +42,11 @@ public class UserService {
 	@Transactional
 	public UserUpdateResponse updateUserProfile(UserUpdateRequest userUpdateRequest) {
 		User user = userContextService.getInitializedUser();
-		user.updateProfile(userUpdateRequest.nickname(), userUpdateRequest.birthday(), userUpdateRequest.imageKey());
-		return new UserUpdateResponse(user.getId(), user.getNickname(), user.getBirthday(), user.getProfileImageKey());
+		String newImageKey = s3Service.processImagePublish(userUpdateRequest.imageKey(), user.getId(),
+			ImageType.PROFILE);
+		user.updateProfile(userUpdateRequest.nickname(), userUpdateRequest.birthday(), newImageKey);
+		return new UserUpdateResponse(user.getId(), user.getNickname(), user.getBirthday(),
+			s3Service.createOriginImageUrl(newImageKey));
 	}
 
 	@Transactional(readOnly = true)
