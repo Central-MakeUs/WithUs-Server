@@ -44,8 +44,13 @@ public interface ArchiveRepository extends JpaRepository<QuestionPicture, Long> 
 	);
 
 	@Query(value = """
-		SELECT * FROM (
-		    -- 1. 질문 사진 상세 (sortOrder 1, 키워드가 아니므로 content는 NULL)
+			SELECT 
+				date,
+				archiveType,
+				sourceId,
+				meImageKey,
+				partnerImageKey 
+			FROM (
 		    SELECT 
 		        cq.date AS date,
 		        'QUESTION' AS archiveType,
@@ -87,7 +92,15 @@ public interface ArchiveRepository extends JpaRepository<QuestionPicture, Long> 
 	);
 
 	@Query(value = """
-		SELECT * FROM (
+		SELECT
+		  archiveType,
+		  sourceId,
+		  content,
+		  meImageKey,
+		  meAnsweredAt,
+		  partnerImageKey,
+		  partnerAnsweredAt
+		  FROM (
 		      -- 1. 질문 섹션: 한 명이라도 올렸으면 행이 생성됨
 		      SELECT
 		          'QUESTION' AS archiveType,
@@ -187,6 +200,4 @@ public interface ArchiveRepository extends JpaRepository<QuestionPicture, Long> 
 		@Param("endDate") LocalDate endDate,
 		@Param("today") LocalDate today
 	);
-
-
 }
