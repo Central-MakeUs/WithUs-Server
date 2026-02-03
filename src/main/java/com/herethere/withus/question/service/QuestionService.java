@@ -97,14 +97,14 @@ public class QuestionService {
 
 		questionPictureRepository.save(questionPicture);
 
-		eventPublisher.publishEvent(FcmNotificationEvent.createUploadEvent(user, couple.getPartner(user.getId())));
+		eventPublisher.publishEvent(FcmNotificationEvent.createUploadEvent(user, couple.getPartner(user)));
 	}
 
 	@Transactional(readOnly = true)
 	public TodayQuestionResponse getTodayQuestion() {
 		User me = appContextService.getInitializedUser();
 		Couple couple = appContextService.getActiveCoupleRequired(me);
-		User partner = couple.getPartner(me.getId());
+		User partner = couple.getPartner(me);
 
 		Optional<CoupleQuestion> latestCoupleQuestion = coupleQuestionRepository.findTopByCoupleOrderByCreatedAtDesc(
 			couple);

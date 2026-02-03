@@ -64,7 +64,7 @@ public class ArchiveService {
 
 		User user = appContextService.getInitializedUser();
 		Couple couple = appContextService.getActiveCoupleRequired(user);
-		User partner = couple.getPartner(user.getId());
+		User partner = couple.getPartner(user);
 
 		LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
 
@@ -110,7 +110,7 @@ public class ArchiveService {
 	public ArchiveDateResponse getArchiveByDate(LocalDate date, Long targetId, ArchiveType targetType) {
 		User user = appContextService.getInitializedUser();
 		Couple couple = appContextService.getActiveCoupleRequired(user);
-		User partner = couple.getPartner(user.getId());
+		User partner = couple.getPartner(user);
 		String myProfileUrl =
 			user.getProfileImageKey() == null ? null : s3Service.createThumbnailImageUrl(user.getProfileImageKey());
 		String partnerProfileUrl = partner.getProfileImageKey() == null ? null :
@@ -170,7 +170,7 @@ public class ArchiveService {
 	public ArchiveQuestionDetailResponse getDetailArchiveQuestion(Long coupleQuestionId) {
 		User user = appContextService.getInitializedUser();
 		Couple couple = appContextService.getActiveCoupleRequired(user);
-		User partner = couple.getPartner(user.getId());
+		User partner = couple.getPartner(user);
 
 		CoupleQuestion coupleQuestion = coupleQuestionRepository.findById(coupleQuestionId).orElseThrow(
 			() -> new NotFoundException(COUPLE_QUESTION_NOT_FOUND));
@@ -205,7 +205,7 @@ public class ArchiveService {
 	public ArchiveCalendarResponse getArchiveCalendar(int year, int month) {
 		User user = appContextService.getInitializedUser();
 		Couple couple = appContextService.getActiveCoupleRequired(user);
-		User partner = couple.getPartner(user.getId());
+		User partner = couple.getPartner(user);
 
 		YearMonth yearMonth = YearMonth.of(year, month);
 		LocalDate startDate = yearMonth.atDay(1);

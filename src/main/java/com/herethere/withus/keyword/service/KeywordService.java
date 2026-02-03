@@ -76,7 +76,7 @@ public class KeywordService {
 	public TodayKeywordResponse getTodayCoupleKeyword(Long coupleKeywordId) {
 		User me = appContextService.getInitializedUser();
 		Couple couple = appContextService.getActiveCoupleRequired(me);
-		User partner = couple.getPartner(me.getId());
+		User partner = couple.getPartner(me);
 		LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
 
 		CoupleKeyword coupleKeyword = coupleKeywordRepository.findById(coupleKeywordId).orElseThrow(
@@ -134,7 +134,7 @@ public class KeywordService {
 			.build();
 		keywordRecordRepository.save(keywordRecord);
 
-		eventPublisher.publishEvent(FcmNotificationEvent.createUploadEvent(user, couple.getPartner(user.getId())));
+		eventPublisher.publishEvent(FcmNotificationEvent.createUploadEvent(user, couple.getPartner(user)));
 	}
 
 	public Set<Keyword> getChosenKeywords(List<Long> defaultKeywordIds, List<String> customKeywords) {

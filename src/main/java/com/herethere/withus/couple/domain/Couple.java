@@ -91,8 +91,8 @@ public class Couple extends BaseEntity {
 			.build();
 	}
 
-	public User getPartner(Long userId) {
-		return userA.getId().equals(userId) ? userB : userA;
+	public User getPartner(User user) {
+		return userA.getId().equals(user.getId()) ? userB : userA;
 	}
 
 	public long updateToNextQuestion(LocalDate date) {
