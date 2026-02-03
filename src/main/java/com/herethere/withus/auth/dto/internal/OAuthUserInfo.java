@@ -1,3 +1,3 @@
 package com.herethere.withus.auth.dto.internal;
 
-public record OAuthUserInfo(String oauthUserId) {}
+public record OAuthUserInfo(String oauthUserId, String refreshToken) {}
