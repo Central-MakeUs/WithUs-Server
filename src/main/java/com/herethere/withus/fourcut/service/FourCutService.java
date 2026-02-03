@@ -22,7 +22,7 @@ import com.herethere.withus.fourcut.repository.FourCutRepository;
 import com.herethere.withus.s3.domain.ImageType;
 import com.herethere.withus.s3.service.S3Service;
 import com.herethere.withus.user.domain.User;
-import com.herethere.withus.user.service.UserContextService;
+import com.herethere.withus.user.service.AppContextService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -30,8 +30,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class FourCutService {
 	private final FourCutRepository fourCutRepository;
-	private final UserContextService userContextService;
 	private final S3Service s3Service;
+	private final AppContextService appContextService;
 	private final CursorCodec cursorCodec;
 
 	@Transactional(readOnly = true)
@@ -40,8 +40,8 @@ public class FourCutService {
 		LocalDateTime createdAtCursor = payload == null ? null : payload.createdAt();
 		Long idCursor = payload == null ? null : payload.id();
 
-		User user = userContextService.getCoupledUser();
-		Couple couple = user.getCouple();
+		User user = appContextService.getCoupledUser();
+		Couple couple = appContextService.getCouple(user);
 		Pageable pageable = PageRequest.of(0, size + 1);
 
 		// 조회
@@ -68,8 +68,8 @@ public class FourCutService {
 
 	@Transactional
 	public void uploadFourCutImage(FourCutUploadRequest fourCutUploadRequest) {
-		User user = userContextService.getCoupledUser();
-		Couple couple = user.getCouple();
+		User user = appContextService.getCoupledUser();
+		Couple couple = appContextService.getCouple(user);
 		String imageKey = fourCutUploadRequest.imageKey();
 
 		String finalImageKey = s3Service.processImagePublish(imageKey, user.getId(), ImageType.MEMORY);
@@ -84,8 +84,8 @@ public class FourCutService {
 
 	@Transactional
 	public void deleteFourCut(Long fourCutId) {
-		User user = userContextService.getCoupledUser();
-		Couple couple = user.getCouple();
+		User user = appContextService.getCoupledUser();
+		Couple couple = appContextService.getCouple(user);
 		FourCut fourCut = fourCutRepository.findById(fourCutId)
 			.orElseThrow(() -> new NotFoundException(FOUR_CUT_NOT_FOUND));
 

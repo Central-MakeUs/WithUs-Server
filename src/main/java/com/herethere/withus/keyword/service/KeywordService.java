@@ -32,7 +32,7 @@ import com.herethere.withus.notification.dto.internal.FcmNotificationEvent;
 import com.herethere.withus.s3.domain.ImageType;
 import com.herethere.withus.s3.service.S3Service;
 import com.herethere.withus.user.domain.User;
-import com.herethere.withus.user.service.UserContextService;
+import com.herethere.withus.user.service.AppContextService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -43,7 +43,7 @@ public class KeywordService {
 	private final CoupleKeywordRepository coupleKeywordRepository;
 	private final KeywordRecordRepository keywordRecordRepository;
 	private final S3Service s3Service;
-	private final UserContextService userContextService;
+	private final AppContextService appContextService;
 	private final ApplicationEventPublisher eventPublisher;
 
 	@Transactional(readOnly = true)
@@ -58,8 +58,8 @@ public class KeywordService {
 
 	@Transactional(readOnly = true)
 	public CoupleKeywordsResponse getCoupleKeywords() {
-		User user = userContextService.getCoupledUser();
-		Couple couple = user.getCouple();
+		User user = appContextService.getCoupledUser();
+		Couple couple = appContextService.getCouple(user);
 
 		List<CoupleKeyword> coupleKeywords = coupleKeywordRepository.findAllByCoupleAndStatus(couple,
 			CoupleKeywordStatus.ACTIVE);
@@ -74,8 +74,8 @@ public class KeywordService {
 
 	@Transactional(readOnly = true)
 	public TodayKeywordResponse getTodayCoupleKeyword(Long coupleKeywordId) {
-		User me = userContextService.getCoupledUser();
-		Couple couple = me.getCouple();
+		User me = appContextService.getCoupledUser();
+		Couple couple = appContextService.getCouple(me);
 		User partner = couple.getPartner(me.getId());
 		LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
 
@@ -105,8 +105,8 @@ public class KeywordService {
 
 	@Transactional
 	public void uploadTodayCoupleKeywordPicture(Long coupleKeywordId, TodayKeywordImageRequest request) {
-		User user = userContextService.getCoupledUser();
-		Couple couple = user.getCouple();
+		User user = appContextService.getCoupledUser();
+		Couple couple = appContextService.getCouple(user);
 		LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
 
 		CoupleKeyword coupleKeyword = coupleKeywordRepository.findById((coupleKeywordId))
@@ -134,7 +134,7 @@ public class KeywordService {
 			.build();
 		keywordRecordRepository.save(keywordRecord);
 
-		eventPublisher.publishEvent(FcmNotificationEvent.createUploadEvent(user, user.getPartner()));
+		eventPublisher.publishEvent(FcmNotificationEvent.createUploadEvent(user, couple.getPartner(user.getId())));
 	}
 
 	public Set<Keyword> getChosenKeywords(List<Long> defaultKeywordIds, List<String> customKeywords) {

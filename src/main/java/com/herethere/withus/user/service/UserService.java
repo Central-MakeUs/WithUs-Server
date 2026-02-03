@@ -32,7 +32,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserService {
 	private static final SecureRandom secureRandom = new SecureRandom();
-	private final UserContextService userContextService;
+	private final AppContextService appContextService;
 	private final OnboardingManager onboardingManager;
 	private final KeywordService keywordService;
 	private final S3Service s3Service;
@@ -41,7 +41,7 @@ public class UserService {
 
 	@Transactional
 	public UserUpdateResponse updateUserProfile(UserUpdateRequest userUpdateRequest) {
-		User user = userContextService.getInitializedUser();
+		User user = appContextService.getInitializedUser();
 		String newImageKey = s3Service.processImagePublish(userUpdateRequest.imageKey(), user.getId(),
 			ImageType.PROFILE);
 		user.updateProfile(userUpdateRequest.nickname(), userUpdateRequest.birthday(), newImageKey);
@@ -51,15 +51,16 @@ public class UserService {
 
 	@Transactional(readOnly = true)
 	public UserUpdateResponse getUserProfile() {
-		User user = userContextService.getInitializedUser();
+		User user = appContextService.getInitializedUser();
 		return new UserUpdateResponse(user.getId(), user.getNickname(), user.getBirthday(),
 			s3Service.createOriginImageUrl(user.getProfileImageKey()));
 	}
 
 	@Transactional
 	public InvitationCodeResponse generateInvitationCode() {
-		User user = userContextService.getInitializedUser();
-		if (user.getCouple() != null) {
+		User user = appContextService.getInitializedUser();
+
+		if (appContextService.getCouple(user) != null) {
 			throw new ConflictException(COUPLE_ALREADY_EXISTS);
 		}
 
@@ -75,14 +76,14 @@ public class UserService {
 
 	@Transactional(readOnly = true)
 	public OnboardingStatusResponse getOnboardingStatus() {
-		User user = userContextService.getCurrentUser();
+		User user = appContextService.getCurrentUser();
 		return new OnboardingStatusResponse(onboardingManager.getStatus(user));
 	}
 
 	@Transactional(readOnly = true)
 	public void pokeUser(Long userId) {
-		User user = userContextService.getCoupledUser();
-		User partner = user.getPartner();
+		User user = appContextService.getCoupledUser();
+		User partner = appContextService.getCouple(user).getPartner(user.getId());
 
 		if (!partner.getId().equals(userId)) {
 			throw new BadRequestException(NOT_YOUR_PARTNER);
@@ -95,7 +96,7 @@ public class UserService {
 
 	@Transactional
 	public UserOnboardingResponse onboardUser(UserOnboardingRequest request) {
-		User user = userContextService.getCurrentUser();
+		User user = appContextService.getCurrentUser();
 		if (user.isInitialized()) {
 			throw new ConflictException(USER_ALREADY_INITIALIZED); // TODO: 추후 기획에 따라 빠질 수 있음
 		}

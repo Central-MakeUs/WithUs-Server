@@ -1,6 +1,7 @@
 package com.herethere.withus.couple.domain;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 
 import com.herethere.withus.common.baseentity.BaseEntity;
@@ -18,6 +19,7 @@ import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -32,6 +34,16 @@ import lombok.NoArgsConstructor;
 @Table(name = "couple",
 	indexes = {
 		@Index(name = "idx_last_question_date", columnList = "last_question_date")
+	},
+	uniqueConstraints = {
+		@UniqueConstraint(
+			name = "uk_user_a_deleted",
+			columnNames = {"user_a_id", "user_a_deleted_at"}
+		),
+		@UniqueConstraint(
+			name = "uk_user_b_deleted",
+			columnNames = {"user_b_id", "user_b_deleted_at"}
+		)
 	}
 )
 public class Couple extends BaseEntity {
@@ -41,12 +53,18 @@ public class Couple extends BaseEntity {
 	private Long id;
 
 	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_a_id", unique = true, nullable = false)
+	@JoinColumn(name = "user_a_id", nullable = false)
 	private User userA;
 
+	@Column(name = "user_a_deleted_at")
+	private LocalDateTime userADeletedAt;
+
 	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_b_id", unique = true, nullable = false)
+	@JoinColumn(name = "user_b_id", nullable = false)
 	private User userB;
+
+	@Column(name = "user_b_deleted_at")
+	private LocalDateTime userBDeletedAt;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "status", length = 10, nullable = false)
@@ -59,18 +77,13 @@ public class Couple extends BaseEntity {
 	private long lastQuestionIndex;
 
 	public static Couple create(User userA, User userB) {
-		Couple couple = Couple.builder()
+		return Couple.builder()
 			.userA(userA)
 			.userB(userB)
 			.status(CoupleStatus.ACTIVE)
 			.lastQuestionIndex(0L)
 			.lastQuestionDate(LocalDate.now(ZoneId.of("Asia/Seoul")))
 			.build();
-
-		userA.setCoupleAsA(couple);
-		userB.setCoupleAsB(couple);
-
-		return couple;
 	}
 
 	public User getPartner(Long userId) {

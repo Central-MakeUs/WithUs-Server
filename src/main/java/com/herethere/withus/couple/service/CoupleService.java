@@ -28,14 +28,14 @@ import com.herethere.withus.user.domain.InviteCode;
 import com.herethere.withus.user.domain.User;
 import com.herethere.withus.user.repository.InviteCodeRepository;
 import com.herethere.withus.user.repository.UserRepository;
-import com.herethere.withus.user.service.UserContextService;
+import com.herethere.withus.user.service.AppContextService;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class CoupleService {
-	private final UserContextService userContextService;
+	private final AppContextService appContextService;
 	private final KeywordService keywordService;
 	private final CoupleRepository coupleRepository;
 	private final InviteCodeRepository inviteCodeRepository;
@@ -48,13 +48,13 @@ public class CoupleService {
 		InviteCode inviteCode = getInviteCode(request.inviteCode());
 
 		User sender = inviteCode.getUser();
-		User receiver = userContextService.getInitializedUser();
+		User receiver = appContextService.getInitializedUser();
 
 		if (sender.getId().equals(receiver.getId())) {
 			throw new ConflictException(INVITED_SAME_USER);
 		}
 
-		if (sender.getCouple() != null || receiver.getCouple() != null) {
+		if (appContextService.getCouple(sender) != null || appContextService.getCouple(receiver) != null) {
 			throw new ConflictException(COUPLE_ALREADY_EXISTS);
 		}
 
@@ -66,13 +66,13 @@ public class CoupleService {
 		InviteCode inviteCode = getInviteCode(request.inviteCode());
 
 		User sender = inviteCode.getUser();
-		User receiver = userContextService.getInitializedUser();
+		User receiver = appContextService.getInitializedUser();
 
 		if (sender.getId().equals(receiver.getId())) {
 			throw new ConflictException(INVITED_SAME_USER);
 		}
 
-		if (sender.getCouple() != null || receiver.getCouple() != null) {
+		if (appContextService.getCouple(sender) != null || appContextService.getCouple(receiver) != null) {
 			throw new ConflictException(COUPLE_ALREADY_EXISTS);
 		}
 
@@ -86,8 +86,8 @@ public class CoupleService {
 
 	@Transactional
 	public void setCoupleKeywords(SetCoupleKeywordRequest request) {
-		User user = userContextService.getCoupledUser();
-		Couple couple = user.getCouple();
+		User user = appContextService.getCoupledUser();
+		Couple couple = appContextService.getCouple(user);
 
 		validateKeywordSize(request);
 
