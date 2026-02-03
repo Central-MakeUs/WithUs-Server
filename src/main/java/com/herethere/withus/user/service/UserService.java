@@ -60,7 +60,7 @@ public class UserService {
 	public InvitationCodeResponse generateInvitationCode() {
 		User user = appContextService.getInitializedUser();
 
-		if (appContextService.getCouple(user) != null) {
+		if (appContextService.getActiveCoupleRequired(user) != null) {
 			throw new ConflictException(COUPLE_ALREADY_EXISTS);
 		}
 
@@ -83,7 +83,7 @@ public class UserService {
 	@Transactional(readOnly = true)
 	public void pokeUser(Long userId) {
 		User user = appContextService.getCoupledUser();
-		User partner = appContextService.getCouple(user).getPartner(user.getId());
+		User partner = appContextService.getActiveCoupleRequired(user).getPartner(user.getId());
 
 		if (!partner.getId().equals(userId)) {
 			throw new BadRequestException(NOT_YOUR_PARTNER);

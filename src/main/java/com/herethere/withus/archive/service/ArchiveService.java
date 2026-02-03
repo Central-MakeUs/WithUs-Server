@@ -63,7 +63,7 @@ public class ArchiveService {
 		LocalDate lastDate = dateCursor == null ? null : dateCursor.date();
 
 		User user = appContextService.getCoupledUser();
-		Couple couple = appContextService.getCouple(user);
+		Couple couple = appContextService.getActiveCoupleRequired(user);
 		User partner = couple.getPartner(user.getId());
 
 		LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
@@ -109,7 +109,7 @@ public class ArchiveService {
 	@Transactional(readOnly = true)
 	public ArchiveDateResponse getArchiveByDate(LocalDate date, Long targetId, ArchiveType targetType) {
 		User user = appContextService.getCoupledUser();
-		Couple couple = appContextService.getCouple(user);
+		Couple couple = appContextService.getActiveCoupleRequired(user);
 		User partner = couple.getPartner(user.getId());
 		String myProfileUrl =
 			user.getProfileImageKey() == null ? null : s3Service.createThumbnailImageUrl(user.getProfileImageKey());
@@ -141,7 +141,7 @@ public class ArchiveService {
 		Long number = numberCursor == null ? null : numberCursor.number();
 
 		User user = appContextService.getCoupledUser();
-		Couple couple = appContextService.getCouple(user);
+		Couple couple = appContextService.getActiveCoupleRequired(user);
 
 		LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
 		Pageable pageable = PageRequest.of(0, size);
@@ -169,7 +169,7 @@ public class ArchiveService {
 	@Transactional(readOnly = true)
 	public ArchiveQuestionDetailResponse getDetailArchiveQuestion(Long coupleQuestionId) {
 		User user = appContextService.getCoupledUser();
-		Couple couple = appContextService.getCouple(user);
+		Couple couple = appContextService.getActiveCoupleRequired(user);
 		User partner = couple.getPartner(user.getId());
 
 		CoupleQuestion coupleQuestion = coupleQuestionRepository.findById(coupleQuestionId).orElseThrow(
@@ -204,7 +204,7 @@ public class ArchiveService {
 	@Transactional(readOnly = true)
 	public ArchiveCalendarResponse getArchiveCalendar(int year, int month) {
 		User user = appContextService.getCoupledUser();
-		Couple couple = appContextService.getCouple(user);
+		Couple couple = appContextService.getActiveCoupleRequired(user);
 		User partner = couple.getPartner(user.getId());
 
 		YearMonth yearMonth = YearMonth.of(year, month);

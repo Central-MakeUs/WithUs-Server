@@ -54,7 +54,7 @@ public class CoupleService {
 			throw new ConflictException(INVITED_SAME_USER);
 		}
 
-		if (appContextService.getCouple(sender) != null || appContextService.getCouple(receiver) != null) {
+		if (appContextService.getActiveCoupleRequired(sender) != null || appContextService.getActiveCoupleRequired(receiver) != null) {
 			throw new ConflictException(COUPLE_ALREADY_EXISTS);
 		}
 
@@ -72,7 +72,7 @@ public class CoupleService {
 			throw new ConflictException(INVITED_SAME_USER);
 		}
 
-		if (appContextService.getCouple(sender) != null || appContextService.getCouple(receiver) != null) {
+		if (appContextService.getActiveCoupleRequired(sender) != null || appContextService.getActiveCoupleRequired(receiver) != null) {
 			throw new ConflictException(COUPLE_ALREADY_EXISTS);
 		}
 
@@ -87,7 +87,7 @@ public class CoupleService {
 	@Transactional
 	public void setCoupleKeywords(SetCoupleKeywordRequest request) {
 		User user = appContextService.getCoupledUser();
-		Couple couple = appContextService.getCouple(user);
+		Couple couple = appContextService.getActiveCoupleRequired(user);
 
 		validateKeywordSize(request);
 

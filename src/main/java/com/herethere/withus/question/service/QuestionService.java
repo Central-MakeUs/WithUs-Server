@@ -68,7 +68,7 @@ public class QuestionService {
 	@Transactional
 	public void uploadTodayQuestionImage(Long coupleQuestionId, TodayQuestionImageRequest request) {
 		User user = appContextService.getCoupledUser();
-		Couple couple = appContextService.getCouple(user);
+		Couple couple = appContextService.getActiveCoupleRequired(user);
 		CoupleQuestion coupleQuestion = coupleQuestionRepository.findById(coupleQuestionId)
 			.orElseThrow(() -> new NotFoundException(COUPLE_QUESTION_NOT_FOUND));
 
@@ -103,7 +103,7 @@ public class QuestionService {
 	@Transactional(readOnly = true)
 	public TodayQuestionResponse getTodayQuestion() {
 		User me = appContextService.getCoupledUser();
-		Couple couple = appContextService.getCouple(me);
+		Couple couple = appContextService.getActiveCoupleRequired(me);
 		User partner = couple.getPartner(me.getId());
 
 		Optional<CoupleQuestion> latestCoupleQuestion = coupleQuestionRepository.findTopByCoupleOrderByCreatedAtDesc(

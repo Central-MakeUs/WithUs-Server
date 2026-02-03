@@ -41,7 +41,7 @@ public class FourCutService {
 		Long idCursor = payload == null ? null : payload.id();
 
 		User user = appContextService.getCoupledUser();
-		Couple couple = appContextService.getCouple(user);
+		Couple couple = appContextService.getActiveCoupleRequired(user);
 		Pageable pageable = PageRequest.of(0, size + 1);
 
 		// 조회
@@ -69,7 +69,7 @@ public class FourCutService {
 	@Transactional
 	public void uploadFourCutImage(FourCutUploadRequest fourCutUploadRequest) {
 		User user = appContextService.getCoupledUser();
-		Couple couple = appContextService.getCouple(user);
+		Couple couple = appContextService.getActiveCoupleRequired(user);
 		String imageKey = fourCutUploadRequest.imageKey();
 
 		String finalImageKey = s3Service.processImagePublish(imageKey, user.getId(), ImageType.MEMORY);
@@ -85,7 +85,7 @@ public class FourCutService {
 	@Transactional
 	public void deleteFourCut(Long fourCutId) {
 		User user = appContextService.getCoupledUser();
-		Couple couple = appContextService.getCouple(user);
+		Couple couple = appContextService.getActiveCoupleRequired(user);
 		FourCut fourCut = fourCutRepository.findById(fourCutId)
 			.orElseThrow(() -> new NotFoundException(FOUR_CUT_NOT_FOUND));
 

@@ -19,7 +19,7 @@ public class OnboardingManager {
 			return OnboardingStatus.NEED_USER_INITIAL_SETUP;
 		}
 
-		Couple couple = appContextService.getCouple(user);
+		Couple couple = appContextService.getActiveCoupleRequired(user);
 
 		if (couple == null) {
 			return OnboardingStatus.NEED_COUPLE_CONNECT;

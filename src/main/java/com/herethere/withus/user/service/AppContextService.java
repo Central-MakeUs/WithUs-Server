@@ -2,6 +2,8 @@ package com.herethere.withus.user.service;
 
 import static com.herethere.withus.common.exception.ErrorCode.*;
 
+import java.util.Optional;
+
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,9 +46,14 @@ public class AppContextService {
 	}
 
 	@Transactional(readOnly = true)
-	public Couple getCouple(User user) {
+	public Couple getActiveCoupleRequired(User user) {
 		return coupleRepository.findActiveCouple(user).orElseThrow(
 			() -> new NotFoundException(COUPLE_NOT_FOUND)
 		);
+	}
+
+	@Transactional(readOnly = true)
+	public Optional<Couple> findActiveCouple(User user) {
+		return coupleRepository.findActiveCouple(user);
 	}
 }
