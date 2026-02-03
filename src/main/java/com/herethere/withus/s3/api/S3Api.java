@@ -26,7 +26,7 @@ public interface S3Api {
 		
 		**[제약 사항]**
 		- 이미지 형식: 반드시 .jpg
-		- 업로드 용도(imageType): PROFILE(유저 프로필용), MEMORY(질문/키워드 용), FOUR_CUT(네컷 사진 용)
+		- 업로드 용도(imageType): PROFILE(유저 프로필용), ARCHIVE(질문/키워드 용), MEMORY(네컷 사진 등 추억 용)
 		""")
 	@PostMapping("/presigned-url")
 	ResponseEntity<ApiResponse<PresignedUrlResponse>> getPresignedUrl(@Valid @RequestBody PresignedUrlRequest request);
