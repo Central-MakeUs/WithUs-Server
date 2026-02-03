@@ -37,14 +37,6 @@ public class AppContextService {
 		return user;
 	}
 
-	public User getCoupledUser() {
-		User user = getCurrentUser();
-		if (!coupleRepository.existsActiveCouple(user)) {
-			throw new ConflictException(COUPLE_NOT_FOUND);
-		}
-		return user;
-	}
-
 	@Transactional(readOnly = true)
 	public Couple getActiveCoupleRequired(User user) {
 		return coupleRepository.findActiveCouple(user).orElseThrow(

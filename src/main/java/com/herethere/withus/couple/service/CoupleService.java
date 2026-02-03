@@ -88,7 +88,7 @@ public class CoupleService {
 
 	@Transactional
 	public void setCoupleKeywords(SetCoupleKeywordRequest request) {
-		User user = appContextService.getCoupledUser();
+		User user = appContextService.getInitializedUser();
 		Couple couple = appContextService.getActiveCoupleRequired(user);
 
 		validateKeywordSize(request);

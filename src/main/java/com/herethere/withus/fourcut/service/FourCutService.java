@@ -40,7 +40,7 @@ public class FourCutService {
 		LocalDateTime createdAtCursor = payload == null ? null : payload.createdAt();
 		Long idCursor = payload == null ? null : payload.id();
 
-		User user = appContextService.getCoupledUser();
+		User user = appContextService.getInitializedUser();
 		Couple couple = appContextService.getActiveCoupleRequired(user);
 		Pageable pageable = PageRequest.of(0, size + 1);
 
@@ -68,7 +68,7 @@ public class FourCutService {
 
 	@Transactional
 	public void uploadFourCutImage(FourCutUploadRequest fourCutUploadRequest) {
-		User user = appContextService.getCoupledUser();
+		User user = appContextService.getInitializedUser();
 		Couple couple = appContextService.getActiveCoupleRequired(user);
 		String imageKey = fourCutUploadRequest.imageKey();
 
@@ -84,7 +84,7 @@ public class FourCutService {
 
 	@Transactional
 	public void deleteFourCut(Long fourCutId) {
-		User user = appContextService.getCoupledUser();
+		User user = appContextService.getInitializedUser();
 		Couple couple = appContextService.getActiveCoupleRequired(user);
 		FourCut fourCut = fourCutRepository.findById(fourCutId)
 			.orElseThrow(() -> new NotFoundException(FOUR_CUT_NOT_FOUND));

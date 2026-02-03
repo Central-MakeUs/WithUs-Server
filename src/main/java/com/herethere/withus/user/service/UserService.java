@@ -82,7 +82,7 @@ public class UserService {
 
 	@Transactional(readOnly = true)
 	public void pokeUser(Long userId) {
-		User user = appContextService.getCoupledUser();
+		User user = appContextService.getInitializedUser();
 		User partner = appContextService.getActiveCoupleRequired(user).getPartner(user.getId());
 
 		if (!partner.getId().equals(userId)) {
