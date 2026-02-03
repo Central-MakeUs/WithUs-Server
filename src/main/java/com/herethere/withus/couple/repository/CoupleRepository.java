@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.herethere.withus.couple.domain.Couple;
+import com.herethere.withus.user.domain.User;
 
 import jakarta.persistence.LockModeType;
 
@@ -26,4 +27,11 @@ public interface CoupleRepository extends JpaRepository<Couple, Long> {
 	@Lock(LockModeType.PESSIMISTIC_WRITE)
 	@Query("select c from Couple c where c.id = :id")
 	Optional<Couple> findByIdWithLock(@Param("id") Long id);
+
+	@Query("""
+		SELECT c FROM Couple c
+		WHERE (c.userA = :user AND c.userADeletedAt IS NULL)
+		OR (c.userB = :user AND c.userBDeletedAt IS NULL)
+		""")
+	Optional<Couple> findActiveCouple(@Param("user") User user);
 }
