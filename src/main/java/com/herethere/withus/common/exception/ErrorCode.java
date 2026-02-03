@@ -35,6 +35,7 @@ public enum ErrorCode {
 	COUPLE_NOT_FOUND(404, "해당 커플을 찾을 수 없습니다."),
 	COUPLE_NOT_ACTIVE(409, "커플이 해지된 상태입니다."),
 	COUPLE_KEYWORD_NOT_FOUND(404, "커플이 해당 키워드를 선택하지 않았습니다."),
+	COUPLE_ALREADY_TERMINATED(403, "이미 탈퇴한 커플입니다."),
 
 	// QUESTION
 	QUESTION_NOT_FOUND(404, "해당 질문이 존재하지 않습니다."),

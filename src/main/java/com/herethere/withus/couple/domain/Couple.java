@@ -1,10 +1,15 @@
 package com.herethere.withus.couple.domain;
 
+import static com.herethere.withus.common.exception.ErrorCode.*;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
 import com.herethere.withus.common.baseentity.BaseEntity;
+import com.herethere.withus.common.exception.ConflictException;
+import com.herethere.withus.common.exception.ErrorCode;
+import com.herethere.withus.common.exception.NotFoundException;
 import com.herethere.withus.user.domain.User;
 
 import jakarta.persistence.Column;
@@ -97,6 +102,17 @@ public class Couple extends BaseEntity {
 	}
 
 	public void deleteUser(User user) {
+		if (userA.getId().equals(user.getId())) {
+			if (this.userADeletedAt != null) throw new ConflictException(COUPLE_ALREADY_TERMINATED);
+			this.userADeletedAt = LocalDateTime.now();
+			return;
+		}
 
+		if (userB.getId().equals(user.getId())) {
+			if (this.userBDeletedAt != null) throw new ConflictException(COUPLE_ALREADY_TERMINATED);
+			this.userBDeletedAt = LocalDateTime.now();
+			return;
+		}
+		throw new NotFoundException(ErrorCode.USER_NOT_FOUND);
 	}
 }

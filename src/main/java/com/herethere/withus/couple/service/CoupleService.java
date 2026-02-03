@@ -116,6 +116,13 @@ public class CoupleService {
 		}
 	}
 
+	@Transactional
+	public void terminateCouple() {
+		User user = appContextService.getInitializedUser();
+		Couple couple = appContextService.getActiveCoupleRequired(user);
+		couple.deleteUser(user);
+	}
+
 	private InviteCode getInviteCode(String code) {
 		return inviteCodeRepository.findByCode(code).orElseThrow(() -> new NotFoundException(CODE_NOT_FOUND));
 	}
