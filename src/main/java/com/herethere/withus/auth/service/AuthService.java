@@ -31,7 +31,7 @@ public class AuthService {
 	@Transactional
 	public LoginResponse login(LoginRequest request, OAuthProviderType provider) {
 		OAuthClient oauthClient = oauthClientFactory.getOAuthClient(provider);
-		OAuthUserInfo userInfo = oauthClient.getUserInfo(request.oauthToken());
+		OAuthUserInfo userInfo = oauthClient.getUserInfo(request.oauthToken(), request.authorizationCode());
 
 		User user = userRepository.findByProviderAndProviderId(provider, userInfo.oauthUserId())
 			.orElseGet(() -> userRepository.save(
