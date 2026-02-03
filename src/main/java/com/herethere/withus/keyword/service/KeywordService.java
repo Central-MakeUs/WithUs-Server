@@ -137,6 +137,7 @@ public class KeywordService {
 		eventPublisher.publishEvent(FcmNotificationEvent.createUploadEvent(user, couple.getPartner(user)));
 	}
 
+	@Transactional
 	public Set<Keyword> getChosenKeywords(List<Long> defaultKeywordIds, List<String> customKeywords) {
 		Set<Keyword> chosenKeywords = new LinkedHashSet<>();
 		chosenKeywords.addAll(keywordRepository.findAllById(defaultKeywordIds));
