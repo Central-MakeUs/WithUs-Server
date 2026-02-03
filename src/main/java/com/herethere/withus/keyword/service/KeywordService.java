@@ -48,10 +48,9 @@ public class KeywordService {
 
 	@Transactional(readOnly = true)
 	public DefaultKeywordsResponse getDefaultKeywords() {
-		List<Keyword> keywordList = keywordRepository.findAllByIsDefaultTrueOrderByDisplayOrderAsc();
+		List<Keyword> keywordList = keywordRepository.findAllByIsDefaultTrueOrderByContentAsc();
 		List<DefaultKeywordsResponse.KeywordInfo> keywordInfos = keywordList.stream()
 			.map(k -> new DefaultKeywordsResponse.KeywordInfo(k.getId(), k.getContent(), k.getDisplayOrder()))
-			.sorted(Comparator.comparing(DefaultKeywordsResponse.KeywordInfo::displayOrder))
 			.toList();
 		return new DefaultKeywordsResponse(keywordInfos);
 	}
