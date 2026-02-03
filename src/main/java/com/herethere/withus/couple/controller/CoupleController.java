@@ -38,4 +38,10 @@ public class CoupleController implements CoupleApi {
 		coupleService.setCoupleKeywords(setCoupleKeywordRequest);
 		return ResponseEntity.ok(ApiResponse.success());
 	}
+
+	@Override
+	public ResponseEntity<ApiResponse<Void>> terminateCouple() {
+		coupleService.terminateCouple();
+		return ResponseEntity.ok(ApiResponse.success());
+	}
 }

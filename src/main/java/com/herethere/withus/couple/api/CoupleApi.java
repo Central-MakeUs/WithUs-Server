@@ -59,4 +59,16 @@ public interface CoupleApi {
 	ResponseEntity<ApiResponse<Void>> setCoupleKeywords(
 		@Valid @RequestBody SetCoupleKeywordRequest setCoupleKeywordRequest
 	);
+
+	@Operation(
+		summary = "커플 연결 해제",
+		description = """
+          현재 연결된 상대방과의 커플 관계를 해제합니다.
+          - 소프트 딜리트 방식으로 처리되어, 요청한 유저의 연결 상태만 우선적으로 해제됩니다.
+          - 해제 시 해당 유저는 커플 관련 모든 기능을 이용할 수 없게 되고, 상태는 NEED_COUPLE_CONNECT가 됩니다.
+          - 상대방 본인이 해제하기 전까지 기존 데이터를 조회할 수 있고, 기능을 정상적으로 사용할 수 있습니다.
+          """
+	)
+	@PostMapping("/terminate")
+	ResponseEntity<ApiResponse<Void>> terminateCouple();
 }
