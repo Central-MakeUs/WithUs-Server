@@ -60,7 +60,7 @@ public class UserService {
 	public InvitationCodeResponse generateInvitationCode() {
 		User user = appContextService.getInitializedUser();
 
-		if (appContextService.getActiveCoupleRequired(user) != null) {
+		if (appContextService.findActiveCouple(user).isPresent()) {
 			throw new ConflictException(COUPLE_ALREADY_EXISTS);
 		}
 

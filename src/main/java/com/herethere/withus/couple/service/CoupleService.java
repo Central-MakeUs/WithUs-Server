@@ -54,7 +54,8 @@ public class CoupleService {
 			throw new ConflictException(INVITED_SAME_USER);
 		}
 
-		if (appContextService.getActiveCoupleRequired(sender) != null || appContextService.getActiveCoupleRequired(receiver) != null) {
+		if (appContextService.findActiveCouple(sender).isPresent() || appContextService.findActiveCouple(receiver)
+			.isPresent()) {
 			throw new ConflictException(COUPLE_ALREADY_EXISTS);
 		}
 
@@ -72,7 +73,8 @@ public class CoupleService {
 			throw new ConflictException(INVITED_SAME_USER);
 		}
 
-		if (appContextService.getActiveCoupleRequired(sender) != null || appContextService.getActiveCoupleRequired(receiver) != null) {
+		if (appContextService.findActiveCouple(sender).isPresent() || appContextService.findActiveCouple(receiver)
+			.isPresent()) {
 			throw new ConflictException(COUPLE_ALREADY_EXISTS);
 		}
 

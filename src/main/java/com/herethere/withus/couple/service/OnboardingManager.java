@@ -1,5 +1,7 @@
 package com.herethere.withus.couple.service;
 
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 
 import com.herethere.withus.couple.domain.Couple;
@@ -19,11 +21,11 @@ public class OnboardingManager {
 			return OnboardingStatus.NEED_USER_INITIAL_SETUP;
 		}
 
-		Couple couple = appContextService.getActiveCoupleRequired(user);
-
-		if (couple == null) {
+		Optional<Couple> couple = appContextService.findActiveCouple(user);
+		if (couple.isEmpty()) {
 			return OnboardingStatus.NEED_COUPLE_CONNECT;
 		}
+
 		return OnboardingStatus.COMPLETED;
 	}
 }
