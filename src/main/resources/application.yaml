@@ -42,3 +42,11 @@ feign:
 
 server:
   forward-headers-strategy: framework
+
+oauth:
+  apple:
+    app:
+      keyId: ${OAUTH_APPLE_APP_KEYID}
+      teamId: ${OAUTH_APPLE_APP_TEAMID}
+      id: ${OAUTH_APPLE_APP_ID}
+      privateKey: ${OAUTH_APPLE_APP_PRIVATEKEY}

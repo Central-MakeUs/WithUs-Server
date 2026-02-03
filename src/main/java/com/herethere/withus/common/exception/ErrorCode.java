@@ -70,6 +70,8 @@ public enum ErrorCode {
 
 	// AUTH
 	UNAUTHENTICATED_USER(401, "인증되지 않은 사용자입니다."),
+	APPLE_PUBLIC_KEY_ERROR(401, "애플 public Key를 찾을 수 없습니다."),
+	APPLE_TOKEN_VALIDATION_ERROR(401, "애플 로그인에서 해당 토큰을 검증할 수 없습니다."),
 
 	// CURSOR
 	INVALID_CURSOR(400, "잘못된 커서 요청입니다."),

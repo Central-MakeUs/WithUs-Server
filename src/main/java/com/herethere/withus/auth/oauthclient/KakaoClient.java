@@ -14,9 +14,9 @@ public class KakaoClient implements OAuthClient {
 	private final KakaoApiClient kakaoApiClient;
 
 	@Override
-	public OAuthUserInfo getUserInfo(String oauthToken) {
+	public OAuthUserInfo getUserInfo(String oauthToken, String authorizationCode) {
 		oauthToken = "Bearer " + oauthToken;
 		KakaoUserInfo userInfo = kakaoApiClient.getUser(oauthToken);
-		return new OAuthUserInfo(userInfo.id());
+		return new OAuthUserInfo(userInfo.id(), null);
 	}
 }
