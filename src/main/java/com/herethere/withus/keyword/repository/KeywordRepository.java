@@ -9,5 +9,8 @@ import com.herethere.withus.keyword.domain.Keyword;
 
 public interface KeywordRepository extends JpaRepository<Keyword, Long> {
 	Optional<Keyword> findByContent(String content);
+
 	List<Keyword> findAllByIsDefaultTrueOrderByContentAsc();
+
+	List<Keyword> findAllByIsDefaultTrue();
 }

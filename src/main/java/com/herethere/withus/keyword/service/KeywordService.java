@@ -4,9 +4,11 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,7 @@ import com.herethere.withus.couple.repository.CoupleKeywordRepository;
 import com.herethere.withus.keyword.domain.Keyword;
 import com.herethere.withus.keyword.domain.KeywordRecord;
 import com.herethere.withus.keyword.dto.request.TodayKeywordImageRequest;
+import com.herethere.withus.keyword.dto.response.CoupleKeywordEditResponse;
 import com.herethere.withus.keyword.dto.response.CoupleKeywordsResponse;
 import com.herethere.withus.keyword.dto.response.DefaultKeywordsResponse;
 import com.herethere.withus.keyword.dto.response.TodayKeywordResponse;
@@ -53,6 +56,29 @@ public class KeywordService {
 			.map(k -> new DefaultKeywordsResponse.KeywordInfo(k.getId(), k.getContent(), k.getDisplayOrder()))
 			.toList();
 		return new DefaultKeywordsResponse(keywordInfos);
+	}
+
+	@Transactional(readOnly = true)
+	public CoupleKeywordEditResponse getKeywordsForEdit() {
+		User user = appContextService.getInitializedUser();
+		Couple couple = appContextService.getActiveCoupleRequired(user);
+
+		Set<Keyword> selectedKeywords = coupleKeywordRepository.findAllByCoupleAndStatus(couple,
+				CoupleKeywordStatus.ACTIVE).stream()
+			.map(CoupleKeyword::getKeyword)
+			.collect(Collectors.toSet());
+
+		List<Keyword> defaultKeywordList = keywordRepository.findAllByIsDefaultTrue();
+		Set<Keyword> allKeywords = new HashSet<>(defaultKeywordList);
+		allKeywords.addAll(selectedKeywords);
+
+		List<CoupleKeywordEditResponse.KeywordSelection> result = allKeywords.stream()
+			.map(k -> new CoupleKeywordEditResponse.KeywordSelection(k.getId(), k.getContent(),
+				selectedKeywords.contains(k)))
+			.sorted(Comparator.comparing(CoupleKeywordEditResponse.KeywordSelection::content))
+			.toList();
+
+		return new CoupleKeywordEditResponse(result);
 	}
 
 	@Transactional(readOnly = true)
