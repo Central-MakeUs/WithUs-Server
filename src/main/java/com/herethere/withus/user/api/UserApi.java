@@ -67,7 +67,7 @@ public interface UserApi {
 		description = """
 			사용자의 현재 진행 단계를 조회합니다.
 			- 앱 실행 시 혹은 단계 전환 시 호출하여 어떤 화면(프로필 설정, 커플 연결, 메인)을 보여줄지 결정하세요.
-			- 종류: NEED_USER_INITIAL_SETUP, NEED_COUPLE_CONNECT, NEED_COUPLE_INITIAL_SETUP, COMPLETED
+			- 종류: NEED_USER_INITIAL_SETUP, NEED_COUPLE_CONNECT, COMPLETED
 			"""
 	)
 	@PostMapping("/me/status")
