@@ -20,9 +20,7 @@ public interface CoupleRepository extends JpaRepository<Couple, Long> {
 		from Couple c
 		where (c.lastQuestionDate < :today)
 		""")
-	List<Couple> findCouplesToProcess(
-		@Param("today") LocalDate today
-	);
+	List<Couple> findCouplesToProcess(@Param("today") LocalDate today);
 
 	@Lock(LockModeType.PESSIMISTIC_WRITE)
 	@Query("select c from Couple c where c.id = :id")
@@ -34,4 +32,10 @@ public interface CoupleRepository extends JpaRepository<Couple, Long> {
 		OR (c.userB = :user AND c.userBDeletedAt IS NULL)
 		""")
 	Optional<Couple> findActiveCouple(@Param("user") User user);
+
+	@Query("""
+		SELECT COUNT(c) > 0 FROM Couple c
+		WHERE (c.userA = :user AND c.userADeletedAt IS NULL)
+		OR (c.userB = :user AND c.userBDeletedAt IS NULL)""")
+	boolean existsActiveCouple(@Param("user") User user);
 }
