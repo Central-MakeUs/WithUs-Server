@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.herethere.withus.common.apiresponse.ApiResponse;
 import com.herethere.withus.keyword.dto.request.TodayKeywordImageRequest;
+import com.herethere.withus.keyword.dto.response.CoupleKeywordEditResponse;
 import com.herethere.withus.keyword.dto.response.CoupleKeywordsResponse;
 import com.herethere.withus.keyword.dto.response.DefaultKeywordsResponse;
 import com.herethere.withus.keyword.dto.response.TodayKeywordResponse;
@@ -26,8 +27,19 @@ public interface KeywordApi {
 		summary = "전체 기본 키워드 목록 조회",
 		description = "서비스에서 제공하는 기본 키워드 리스트를 조회합니다. 커플 초기 설정 시 선택 목록을 뿌려줄 때 사용합니다."
 	)
-	@GetMapping("/keywords")
+	@GetMapping("/keywords/default")
 	ResponseEntity<ApiResponse<DefaultKeywordsResponse>> getDefaultKeywords();
+
+	@Operation(
+		summary = "수정용 커플 키워드 전체 목록 조회",
+		description = """
+			커플 키워드 수정 시 사용합니다.
+			- 시스템 전체 기본 키워드 리스트와 함께, 우리 커플이 현재 선택했는지 여부(isSelected)를 포함하여 반환합니다.
+			- 또한 사용자가 직접 입력했던 커스텀 키워드 목록도 함께 반환합니다.
+			"""
+	)
+	@GetMapping("/me/couple/keywords/edit")
+	ResponseEntity<ApiResponse<CoupleKeywordEditResponse>> getKeywordsForEdit();
 
 	@Operation(
 		summary = "우리 커플이 설정한 키워드 목록 조회",
