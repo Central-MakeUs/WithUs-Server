@@ -50,11 +50,25 @@ public class AppleClient implements OAuthClient {
 
 			PublicKey publicKey = applePublicKeyGenerator.generatePublicKey(identityTokenHeaderMap, response);
 
-			return Jwts.parserBuilder()
+			Claims claims = Jwts.parserBuilder()
 				.setSigningKey(publicKey)
 				.build()
 				.parseClaimsJws(identityToken)
 				.getBody();
+
+			if (!APPLE_ISSUER.equals(claims.getIssuer())) {
+				throw new AuthException(APPLE_TOKEN_VALIDATION_ERROR);
+			}
+
+			if (!clientId.equals(claims.getAudience())) {
+				throw new AuthException(APPLE_TOKEN_VALIDATION_ERROR);
+			}
+
+			if (claims.getSubject() == null) {
+				throw new AuthException(APPLE_TOKEN_VALIDATION_ERROR);
+			}
+
+			return claims;
 		} catch (ExpiredJwtException e) {
 			throw new AuthException(EXPIRED_JWT_TOKEN);
 		} catch (Exception e) {
