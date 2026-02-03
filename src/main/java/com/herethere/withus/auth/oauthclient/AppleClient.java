@@ -34,7 +34,7 @@ public class AppleClient implements OAuthClient {
 	private final AppleKeyGenerator appleKeyGenerator;
 	private final AppleRefreshTokenRepository appleRefreshTokenRepository;
 	private final ObjectMapper objectMapper;
-	@Value("${oauth.apple.app.clientId}")
+	@Value("${oauth.apple.app.id}")
 	private String clientId;
 
 	@Override
