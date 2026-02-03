@@ -7,12 +7,16 @@ import java.security.PublicKey;
 import java.util.Base64;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.herethere.withus.auth.dto.internal.OAuthUserInfo;
+import com.herethere.withus.auth.dto.request.AppleTokenRequest;
 import com.herethere.withus.auth.dto.response.ApplePublicKeyResponse;
+import com.herethere.withus.auth.dto.response.AppleTokenResponse;
 import com.herethere.withus.auth.externalapi.AppleApiClient;
+import com.herethere.withus.auth.repository.AppleRefreshTokenRepository;
 import com.herethere.withus.common.exception.AuthException;
 
 import io.jsonwebtoken.Claims;
@@ -24,18 +28,29 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AppleClient implements OAuthClient {
 
+	private static final String APPLE_ISSUER = "https://appleid.apple.com";
 	private final AppleApiClient appleApiClient;
 	private final ApplePublicKeyGenerator applePublicKeyGenerator;
+	private final AppleKeyGenerator appleKeyGenerator;
+	private final AppleRefreshTokenRepository appleRefreshTokenRepository;
 	private final ObjectMapper objectMapper;
+	@Value("${oauth.apple.app.clientId}")
+	private String clientId;
 
 	@Override
 	public OAuthUserInfo getUserInfo(String oauthToken, String authorizationCode) {
 		// 토큰 검증 및 정보 jwt에서 정보 추출
 		Claims claims = verifyIdentityToken(oauthToken);
 		String appleUserId = claims.getSubject();
-		// 여기에 authorizationCode 를 사용하여 refresh token 가져오고, db에 저장하는 로직 추가 필요
+		String refreshToken = getAppleRefreshToken(authorizationCode);
+		return new OAuthUserInfo(appleUserId, refreshToken);
+	}
 
-		return new OAuthUserInfo(appleUserId);
+	private String getAppleRefreshToken(String authorizationCode) {
+		String clientSecret = appleKeyGenerator.getClientSecret();
+		AppleTokenResponse response = appleApiClient.findAppleToken(
+			new AppleTokenRequest(clientId, clientSecret, authorizationCode, "authorization_code"));
+		return response.refreshToken();
 	}
 
 	private Claims verifyIdentityToken(String identityToken) {
