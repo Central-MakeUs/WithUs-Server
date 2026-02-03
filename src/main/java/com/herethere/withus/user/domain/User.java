@@ -4,26 +4,20 @@ import java.time.LocalDate;
 
 import com.herethere.withus.auth.domain.OAuthProviderType;
 import com.herethere.withus.common.baseentity.BaseEntity;
-import com.herethere.withus.common.exception.ErrorCode;
-import com.herethere.withus.common.exception.NotFoundException;
-import com.herethere.withus.couple.domain.Couple;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Getter
@@ -36,14 +30,6 @@ public class User extends BaseEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id", nullable = false)
 	private Long id;
-
-	@Setter
-	@OneToOne(mappedBy = "userA", fetch = FetchType.LAZY)
-	private Couple coupleAsA;
-
-	@Setter
-	@OneToOne(mappedBy = "userB", fetch = FetchType.LAZY)
-	private Couple coupleAsB;
 
 	@Column(name = "nickname", length = 50, nullable = false)
 	private String nickname;
@@ -75,17 +61,5 @@ public class User extends BaseEntity {
 		this.birthday = birthday;
 		this.profileImageKey = profileImageKey;
 		isInitialized = true;
-	}
-
-	public Couple getCouple() {
-		return coupleAsA != null ? coupleAsA : coupleAsB;
-	}
-
-	public User getPartner() {
-		Couple couple = getCouple();
-		if (couple == null) {
-			throw new NotFoundException(ErrorCode.COUPLE_NOT_FOUND);
-		}
-		return couple.getUserA().getId().equals(this.id) ? couple.getUserB() : couple.getUserA();
 	}
 }

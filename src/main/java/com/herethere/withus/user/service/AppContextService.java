@@ -2,11 +2,16 @@ package com.herethere.withus.user.service;
 
 import static com.herethere.withus.common.exception.ErrorCode.*;
 
+import java.util.Optional;
+
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.herethere.withus.common.exception.ConflictException;
 import com.herethere.withus.common.exception.NotFoundException;
 import com.herethere.withus.common.security.SecurityUtil;
+import com.herethere.withus.couple.domain.Couple;
+import com.herethere.withus.couple.repository.CoupleRepository;
 import com.herethere.withus.user.domain.User;
 import com.herethere.withus.user.repository.UserRepository;
 
@@ -14,9 +19,10 @@ import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
-public class UserContextService {
+public class AppContextService {
 
 	private final UserRepository userRepository;
+	private final CoupleRepository coupleRepository;
 
 	public User getCurrentUser() {
 		Long userId = SecurityUtil.getCurrentUserId();
@@ -31,11 +37,15 @@ public class UserContextService {
 		return user;
 	}
 
-	public User getCoupledUser() {
-		User user = getCurrentUser();
-		if (user.getCouple() == null) {
-			throw new ConflictException(COUPLE_NOT_FOUND);
-		}
-		return user;
+	@Transactional(readOnly = true)
+	public Couple getActiveCoupleRequired(User user) {
+		return coupleRepository.findActiveCouple(user).orElseThrow(
+			() -> new NotFoundException(COUPLE_NOT_FOUND)
+		);
+	}
+
+	@Transactional(readOnly = true)
+	public Optional<Couple> findActiveCouple(User user) {
+		return coupleRepository.findActiveCouple(user);
 	}
 }

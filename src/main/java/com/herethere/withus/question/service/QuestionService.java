@@ -33,7 +33,7 @@ import com.herethere.withus.question.repository.QuestionRepository;
 import com.herethere.withus.s3.domain.ImageType;
 import com.herethere.withus.s3.service.S3Service;
 import com.herethere.withus.user.domain.User;
-import com.herethere.withus.user.service.UserContextService;
+import com.herethere.withus.user.service.AppContextService;
 
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -46,7 +46,7 @@ public class QuestionService {
 	private final CoupleQuestionRepository coupleQuestionRepository;
 	private final CoupleRepository coupleRepository;
 	private final S3Service s3Service;
-	private final UserContextService userContextService;
+	private final AppContextService appContextService;
 	private final ApplicationEventPublisher eventPublisher;
 
 	private Map<Long, Question> cachedQuestions;
@@ -67,8 +67,8 @@ public class QuestionService {
 
 	@Transactional
 	public void uploadTodayQuestionImage(Long coupleQuestionId, TodayQuestionImageRequest request) {
-		User user = userContextService.getCoupledUser();
-		Couple couple = user.getCouple();
+		User user = appContextService.getInitializedUser();
+		Couple couple = appContextService.getActiveCoupleRequired(user);
 		CoupleQuestion coupleQuestion = coupleQuestionRepository.findById(coupleQuestionId)
 			.orElseThrow(() -> new NotFoundException(COUPLE_QUESTION_NOT_FOUND));
 
@@ -97,14 +97,14 @@ public class QuestionService {
 
 		questionPictureRepository.save(questionPicture);
 
-		eventPublisher.publishEvent(FcmNotificationEvent.createUploadEvent(user, user.getPartner()));
+		eventPublisher.publishEvent(FcmNotificationEvent.createUploadEvent(user, couple.getPartner(user)));
 	}
 
 	@Transactional(readOnly = true)
 	public TodayQuestionResponse getTodayQuestion() {
-		User me = userContextService.getCoupledUser();
-		Couple couple = me.getCouple();
-		User partner = couple.getPartner(me.getId());
+		User me = appContextService.getInitializedUser();
+		Couple couple = appContextService.getActiveCoupleRequired(me);
+		User partner = couple.getPartner(me);
 
 		Optional<CoupleQuestion> latestCoupleQuestion = coupleQuestionRepository.findTopByCoupleOrderByCreatedAtDesc(
 			couple);

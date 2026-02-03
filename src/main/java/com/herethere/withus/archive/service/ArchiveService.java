@@ -42,7 +42,7 @@ import com.herethere.withus.question.repository.CoupleQuestionRepository;
 import com.herethere.withus.question.repository.QuestionPictureRepository;
 import com.herethere.withus.s3.service.S3Service;
 import com.herethere.withus.user.domain.User;
-import com.herethere.withus.user.service.UserContextService;
+import com.herethere.withus.user.service.AppContextService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -50,11 +50,11 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ArchiveService {
 
-	private final UserContextService userContextService;
 	private final ArchiveRepository archiveRepository;
 	private final CoupleQuestionRepository coupleQuestionRepository;
 	private final QuestionPictureRepository questionPictureRepository;
 	private final S3Service s3Service;
+	private final AppContextService appContextService;
 	private final CursorCodec cursorCodec;
 
 	@Transactional(readOnly = true)
@@ -62,9 +62,9 @@ public class ArchiveService {
 		DateCursor dateCursor = cursorCodec.decode(cursor, DateCursor.class);
 		LocalDate lastDate = dateCursor == null ? null : dateCursor.date();
 
-		User user = userContextService.getCoupledUser();
-		Couple couple = user.getCouple();
-		User partner = couple.getPartner(user.getId());
+		User user = appContextService.getInitializedUser();
+		Couple couple = appContextService.getActiveCoupleRequired(user);
+		User partner = couple.getPartner(user);
 
 		LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
 
@@ -108,9 +108,9 @@ public class ArchiveService {
 
 	@Transactional(readOnly = true)
 	public ArchiveDateResponse getArchiveByDate(LocalDate date, Long targetId, ArchiveType targetType) {
-		User user = userContextService.getCoupledUser();
-		Couple couple = user.getCouple();
-		User partner = couple.getPartner(user.getId());
+		User user = appContextService.getInitializedUser();
+		Couple couple = appContextService.getActiveCoupleRequired(user);
+		User partner = couple.getPartner(user);
 		String myProfileUrl =
 			user.getProfileImageKey() == null ? null : s3Service.createThumbnailImageUrl(user.getProfileImageKey());
 		String partnerProfileUrl = partner.getProfileImageKey() == null ? null :
@@ -140,8 +140,8 @@ public class ArchiveService {
 		NumberCursor numberCursor = cursorCodec.decode(cursor, NumberCursor.class);
 		Long number = numberCursor == null ? null : numberCursor.number();
 
-		User user = userContextService.getCoupledUser();
-		Couple couple = user.getCouple();
+		User user = appContextService.getInitializedUser();
+		Couple couple = appContextService.getActiveCoupleRequired(user);
 
 		LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
 		Pageable pageable = PageRequest.of(0, size);
@@ -168,9 +168,9 @@ public class ArchiveService {
 
 	@Transactional(readOnly = true)
 	public ArchiveQuestionDetailResponse getDetailArchiveQuestion(Long coupleQuestionId) {
-		User user = userContextService.getCoupledUser();
-		Couple couple = user.getCouple();
-		User partner = couple.getPartner(user.getId());
+		User user = appContextService.getInitializedUser();
+		Couple couple = appContextService.getActiveCoupleRequired(user);
+		User partner = couple.getPartner(user);
 
 		CoupleQuestion coupleQuestion = coupleQuestionRepository.findById(coupleQuestionId).orElseThrow(
 			() -> new NotFoundException(COUPLE_QUESTION_NOT_FOUND));
@@ -203,9 +203,9 @@ public class ArchiveService {
 
 	@Transactional(readOnly = true)
 	public ArchiveCalendarResponse getArchiveCalendar(int year, int month) {
-		User user = userContextService.getCoupledUser();
-		Couple couple = user.getCouple();
-		User partner = couple.getPartner(user.getId());
+		User user = appContextService.getInitializedUser();
+		Couple couple = appContextService.getActiveCoupleRequired(user);
+		User partner = couple.getPartner(user);
 
 		YearMonth yearMonth = YearMonth.of(year, month);
 		LocalDate startDate = yearMonth.atDay(1);
