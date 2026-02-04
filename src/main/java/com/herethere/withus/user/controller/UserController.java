@@ -55,4 +55,10 @@ public class UserController implements UserApi {
 		UserOnboardingResponse response = userService.onboardUser(userOnboardingRequest);
 		return ResponseEntity.ok(ApiResponse.success(response));
 	}
+
+	@Override
+	public ResponseEntity<ApiResponse<Void>> withdrawUser() {
+		userService.withdrawUser();
+		return ResponseEntity.ok(ApiResponse.success());
+	}
 }

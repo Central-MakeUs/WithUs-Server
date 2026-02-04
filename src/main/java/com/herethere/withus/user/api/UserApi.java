@@ -1,6 +1,7 @@
 package com.herethere.withus.user.api;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -100,4 +101,19 @@ public interface UserApi {
 	ResponseEntity<ApiResponse<UserOnboardingResponse>> onboardUser(
 		@Valid @RequestBody UserOnboardingRequest userOnboardingRequest
 	);
+
+	@Operation(
+		summary = "회원 탈퇴 API",
+		description = """
+		현재 로그인한 사용자의 계정을 탈퇴 처리합니다.
+		- OAuth 로그인 사용자의 경우, 외부 인증 서버와의 연결을 함께 해제합니다.
+		  - **KAKAO**: 카카오 계정과의 연결을 해제(unlink)합니다.
+		  - **APPLE**: 애플 계정의 refresh token을 revoke 처리합니다.
+		- 외부 인증 서버와의 연결 해제에 실패할 경우, **회원 탈퇴는 처리되지 않습니다.**
+		- 회원 탈퇴는 **Soft Delete 방식**으로 처리되며, 탈퇴 이후 해당 계정으로는 더 이상 서비스 이용이 불가능합니다.
+		- 탈퇴 완료 후, 동일한 OAuth 계정으로 재로그인 시 **신규 회원 가입 플로우**가 진행됩니다.
+		"""
+	)
+	@DeleteMapping("/users/me")
+	ResponseEntity<ApiResponse<Void>> withdrawUser();
 }
