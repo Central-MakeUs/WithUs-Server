@@ -48,7 +48,7 @@ public class CoupleService {
 		InviteCode inviteCode = getInviteCode(request.inviteCode());
 
 		User sender = inviteCode.getUser();
-		User receiver = appContextService.getInitializedUser();
+		User receiver = appContextService.getInitializedAndActiveUser();
 
 		if (sender.getId().equals(receiver.getId())) {
 			throw new ConflictException(INVITED_SAME_USER);
@@ -67,7 +67,7 @@ public class CoupleService {
 		InviteCode inviteCode = getInviteCode(request.inviteCode());
 
 		User sender = inviteCode.getUser();
-		User receiver = appContextService.getInitializedUser();
+		User receiver = appContextService.getInitializedAndActiveUser();
 
 		if (sender.getId().equals(receiver.getId())) {
 			throw new ConflictException(INVITED_SAME_USER);
@@ -88,7 +88,7 @@ public class CoupleService {
 
 	@Transactional
 	public void setCoupleKeywords(SetCoupleKeywordRequest request) {
-		User user = appContextService.getInitializedUser();
+		User user = appContextService.getInitializedAndActiveUser();
 		Couple couple = appContextService.getActiveCoupleRequired(user);
 
 		validateKeywordSize(request);
@@ -118,7 +118,7 @@ public class CoupleService {
 
 	@Transactional
 	public void terminateCouple() {
-		User user = appContextService.getInitializedUser();
+		User user = appContextService.getInitializedAndActiveUser();
 		Couple couple = appContextService.getActiveCoupleRequired(user);
 		couple.deleteUser(user);
 	}

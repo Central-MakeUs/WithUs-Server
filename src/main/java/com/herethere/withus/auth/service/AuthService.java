@@ -15,6 +15,7 @@ import com.herethere.withus.common.jwt.dto.JwtPayload;
 import com.herethere.withus.couple.service.OnboardingManager;
 import com.herethere.withus.notification.service.FcmTokenManager;
 import com.herethere.withus.user.domain.User;
+import com.herethere.withus.user.domain.UserStatus;
 import com.herethere.withus.user.repository.UserRepository;
 
 import jakarta.transaction.Transactional;
@@ -43,6 +44,7 @@ public class AuthService {
 					.providerId(userInfo.oauthUserId())
 					.nickname(PREFIX_GUEST + userInfo.oauthUserId())
 					.isInitialized(false)
+					.userStatus(UserStatus.ACTIVE)
 					.build()));
 		// refreshToken 저장
 		if (userInfo.refreshToken() != null) {
@@ -65,6 +67,7 @@ public class AuthService {
 					.provider(OAuthProviderType.KAKAO)
 					.providerId(id)
 					.nickname("tempUser")
+					.userStatus(UserStatus.ACTIVE)
 					.isInitialized(false)
 					.build()));
 

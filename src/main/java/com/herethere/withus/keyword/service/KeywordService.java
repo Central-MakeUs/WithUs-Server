@@ -60,7 +60,7 @@ public class KeywordService {
 
 	@Transactional(readOnly = true)
 	public CoupleKeywordEditResponse getKeywordsForEdit() {
-		User user = appContextService.getInitializedUser();
+		User user = appContextService.getInitializedAndActiveUser();
 		Couple couple = appContextService.getActiveCoupleRequired(user);
 
 		Set<Keyword> selectedKeywords = coupleKeywordRepository.findAllByCoupleAndStatus(couple,
@@ -83,7 +83,7 @@ public class KeywordService {
 
 	@Transactional(readOnly = true)
 	public CoupleKeywordsResponse getCoupleKeywords() {
-		User user = appContextService.getInitializedUser();
+		User user = appContextService.getInitializedAndActiveUser();
 		Couple couple = appContextService.getActiveCoupleRequired(user);
 
 		List<CoupleKeyword> coupleKeywords = coupleKeywordRepository.findAllByCoupleAndStatus(couple,
@@ -99,7 +99,7 @@ public class KeywordService {
 
 	@Transactional(readOnly = true)
 	public TodayKeywordResponse getTodayCoupleKeyword(Long coupleKeywordId) {
-		User me = appContextService.getInitializedUser();
+		User me = appContextService.getInitializedAndActiveUser();
 		Couple couple = appContextService.getActiveCoupleRequired(me);
 		User partner = couple.getPartner(me);
 		LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
@@ -130,7 +130,7 @@ public class KeywordService {
 
 	@Transactional
 	public void uploadTodayCoupleKeywordPicture(Long coupleKeywordId, TodayKeywordImageRequest request) {
-		User user = appContextService.getInitializedUser();
+		User user = appContextService.getInitializedAndActiveUser();
 		Couple couple = appContextService.getActiveCoupleRequired(user);
 		LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
 

@@ -4,6 +4,8 @@ import java.time.LocalDate;
 
 import com.herethere.withus.auth.domain.OAuthProviderType;
 import com.herethere.withus.common.baseentity.BaseEntity;
+import com.herethere.withus.common.exception.ConflictException;
+import com.herethere.withus.common.exception.ErrorCode;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -49,6 +51,10 @@ public class User extends BaseEntity {
 
 	@Column(name = "profile_image_key", length = 255)
 	private String profileImageKey;
+
+	@Enumerated(EnumType.STRING)
+	@Column(name = "user_status", nullable = false)
+	private UserStatus userStatus;
 
 	public void updateProfile(String nickname, LocalDate birthday, String profileImageKey) {
 		this.nickname = nickname;

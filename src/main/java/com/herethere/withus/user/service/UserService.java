@@ -41,7 +41,7 @@ public class UserService {
 
 	@Transactional
 	public UserUpdateResponse updateUserProfile(UserUpdateRequest userUpdateRequest) {
-		User user = appContextService.getInitializedUser();
+		User user = appContextService.getInitializedAndActiveUser();
 		String newImageKey = s3Service.processImagePublish(userUpdateRequest.imageKey(), user.getId(),
 			ImageType.PROFILE);
 		user.updateProfile(userUpdateRequest.nickname(), userUpdateRequest.birthday(), newImageKey);
@@ -51,14 +51,14 @@ public class UserService {
 
 	@Transactional(readOnly = true)
 	public UserUpdateResponse getUserProfile() {
-		User user = appContextService.getInitializedUser();
+		User user = appContextService.getInitializedAndActiveUser();
 		return new UserUpdateResponse(user.getId(), user.getNickname(), user.getBirthday(),
 			s3Service.createOriginImageUrl(user.getProfileImageKey()));
 	}
 
 	@Transactional
 	public InvitationCodeResponse generateInvitationCode() {
-		User user = appContextService.getInitializedUser();
+		User user = appContextService.getInitializedAndActiveUser();
 
 		if (appContextService.findActiveCouple(user).isPresent()) {
 			throw new ConflictException(COUPLE_ALREADY_EXISTS);
@@ -76,13 +76,13 @@ public class UserService {
 
 	@Transactional(readOnly = true)
 	public OnboardingStatusResponse getOnboardingStatus() {
-		User user = appContextService.getCurrentUser();
+		User user = appContextService.getActiveUser();
 		return new OnboardingStatusResponse(onboardingManager.getStatus(user));
 	}
 
 	@Transactional(readOnly = true)
 	public void pokeUser(Long userId) {
-		User user = appContextService.getInitializedUser();
+		User user = appContextService.getInitializedAndActiveUser();
 		User partner = appContextService.getActiveCoupleRequired(user).getPartner(user);
 
 		if (!partner.getId().equals(userId)) {
@@ -96,7 +96,7 @@ public class UserService {
 
 	@Transactional
 	public UserOnboardingResponse onboardUser(UserOnboardingRequest request) {
-		User user = appContextService.getCurrentUser();
+		User user = appContextService.getActiveUser();
 		if (user.isInitialized()) {
 			throw new ConflictException(USER_ALREADY_INITIALIZED); // TODO: 추후 기획에 따라 빠질 수 있음
 		}
