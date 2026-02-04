@@ -68,4 +68,11 @@ public class User extends BaseEntity {
 		this.profileImageKey = profileImageKey;
 		isInitialized = true;
 	}
+
+	public void withdraw() {
+		if (userStatus == UserStatus.DELETED) {
+			throw new ConflictException(ErrorCode.USER_ALREADY_DELETED);
+		}
+		userStatus = UserStatus.DELETED;
+	}
 }

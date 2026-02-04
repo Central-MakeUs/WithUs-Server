@@ -18,6 +18,7 @@ import com.herethere.withus.auth.dto.response.AppleTokenResponse;
 import com.herethere.withus.auth.externalapi.AppleApiClient;
 import com.herethere.withus.auth.repository.AppleRefreshTokenRepository;
 import com.herethere.withus.common.exception.AuthException;
+import com.herethere.withus.user.domain.User;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -44,6 +45,11 @@ public class AppleClient implements OAuthClient {
 		String appleUserId = claims.getSubject();
 		String refreshToken = getAppleRefreshToken(authorizationCode);
 		return new OAuthUserInfo(appleUserId, refreshToken);
+	}
+
+	@Override
+	public void withdrawUser(User user) {
+
 	}
 
 	private String getAppleRefreshToken(String authorizationCode) {

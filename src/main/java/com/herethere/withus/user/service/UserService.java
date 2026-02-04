@@ -8,6 +8,8 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.herethere.withus.auth.oauthclient.OAuthClient;
+import com.herethere.withus.auth.oauthclient.OAuthClientFactory;
 import com.herethere.withus.common.exception.BadRequestException;
 import com.herethere.withus.common.exception.ConflictException;
 import com.herethere.withus.common.exception.NotFoundException;
@@ -38,6 +40,7 @@ public class UserService {
 	private final S3Service s3Service;
 	private final InviteCodeRepository inviteCodeRepository;
 	private final ApplicationEventPublisher eventPublisher;
+	private final OAuthClientFactory oauthClientFactory;
 
 	@Transactional
 	public UserUpdateResponse updateUserProfile(UserUpdateRequest userUpdateRequest) {
@@ -107,6 +110,16 @@ public class UserService {
 
 		return new UserOnboardingResponse(user.getId(), user.getNickname(),
 			s3Service.createOriginImageUrl(user.getProfileImageKey()));
+	}
+
+	@Transactional
+	public void withdrawUser() {
+		User user = appContextService.getActiveUser();
+
+		OAuthClient oauthClient = oauthClientFactory.getOAuthClient(user.getProvider());
+		oauthClient.withdrawUser(user);
+
+		user.withdraw();
 	}
 
 	private InviteCode createNewInviteCode(User user) {
