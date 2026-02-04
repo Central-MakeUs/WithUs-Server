@@ -19,8 +19,6 @@ public record AppleTokenResponse(
 	String refreshToken,
 
 	@JsonProperty(value = "token_type")
-	String tokenType,
-
-	String error
+	String tokenType
 ) {
 }
