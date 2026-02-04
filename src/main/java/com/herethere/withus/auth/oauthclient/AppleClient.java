@@ -12,20 +12,24 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.herethere.withus.auth.dto.internal.OAuthUserInfo;
+import com.herethere.withus.auth.dto.request.AppleRevokeRequest;
 import com.herethere.withus.auth.dto.request.AppleTokenRequest;
 import com.herethere.withus.auth.dto.response.ApplePublicKeyResponse;
 import com.herethere.withus.auth.dto.response.AppleTokenResponse;
 import com.herethere.withus.auth.externalapi.AppleApiClient;
 import com.herethere.withus.auth.repository.AppleRefreshTokenRepository;
 import com.herethere.withus.common.exception.AuthException;
+import com.herethere.withus.user.domain.User;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service("apple")
 @RequiredArgsConstructor
+@Slf4j
 public class AppleClient implements OAuthClient {
 
 	private static final String APPLE_ISSUER = "https://appleid.apple.com";
@@ -44,6 +48,19 @@ public class AppleClient implements OAuthClient {
 		String appleUserId = claims.getSubject();
 		String refreshToken = getAppleRefreshToken(authorizationCode);
 		return new OAuthUserInfo(appleUserId, refreshToken);
+	}
+
+	@Override
+	public void withdrawUser(User user) {
+		appleRefreshTokenRepository.findByUser(user).ifPresent(t -> {
+			try {
+				String clientSecret = appleKeyGenerator.getClientSecret();
+				appleApiClient.revoke(
+					new AppleRevokeRequest(clientId, clientSecret, t.getRefreshToken(), "refresh_token"));
+			} catch (Exception e) {
+				log.error("Apple 회원 탈퇴 실패 {}: {}", user.getId(), e.getMessage());
+			}
+		});
 	}
 
 	private String getAppleRefreshToken(String authorizationCode) {

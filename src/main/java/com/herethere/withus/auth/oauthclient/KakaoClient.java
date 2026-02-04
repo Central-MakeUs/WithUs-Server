@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import com.herethere.withus.auth.dto.internal.KakaoUserInfo;
 import com.herethere.withus.auth.dto.internal.OAuthUserInfo;
 import com.herethere.withus.auth.externalapi.KakaoApiClient;
+import com.herethere.withus.user.domain.User;
 
 import lombok.RequiredArgsConstructor;
 
@@ -18,5 +19,10 @@ public class KakaoClient implements OAuthClient {
 		oauthToken = "Bearer " + oauthToken;
 		KakaoUserInfo userInfo = kakaoApiClient.getUser(oauthToken);
 		return new OAuthUserInfo(userInfo.id(), null);
+	}
+
+	@Override
+	public void withdrawUser(User user) {
+
 	}
 }

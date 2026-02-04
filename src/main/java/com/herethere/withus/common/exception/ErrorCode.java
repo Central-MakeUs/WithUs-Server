@@ -26,6 +26,8 @@ public enum ErrorCode {
 	NOT_YOUR_PARTNER(400, "같은 커플인 사용자가 아닙니다."),
 	USER_ALREADY_INITIALIZED(409, "이미 초기 설정이 완료된 사용자입니다."),
 	USER_NOT_INITIALIZED(409, "초기 설정이 완료되지 않은 사용자입니다."),
+	USER_ALREADY_DELETED(409, "이미 탈퇴한 사용자입니다."),
+	USER_DELETED(403, "탈퇴한 사용자입니다."),
 
 	// COUPLE
 	COUPLE_ALREADY_EXISTS(409, "사용자가 이미 커플이 존재합니다."),

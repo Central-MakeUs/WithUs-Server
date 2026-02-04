@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import com.herethere.withus.auth.dto.request.AppleRevokeRequest;
 import com.herethere.withus.auth.dto.request.AppleTokenRequest;
 import com.herethere.withus.auth.dto.response.ApplePublicKeyResponse;
 import com.herethere.withus.auth.dto.response.AppleTokenResponse;
@@ -19,6 +20,6 @@ public interface AppleApiClient {
 	@PostMapping(value = "/token", consumes = APPLICATION_FORM_URLENCODED_VALUE)
 	AppleTokenResponse findAppleToken(@RequestBody AppleTokenRequest request);
 
-	// @PostMapping(value = "/revoke", consumes = "application/x-www-form-urlencoded")
-	// void revoke(AppleRevokeRequest request);
+	@PostMapping(value = "/revoke", consumes = APPLICATION_FORM_URLENCODED_VALUE)
+	void revoke(@RequestBody AppleRevokeRequest request);
 }

@@ -5,9 +5,9 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public class AppleTokenRequest {
+public class AppleRevokeRequest {
 	String client_id;
 	String client_secret;
-	String code;
-	String grant_type;
+	String token;
+	String token_type_hint;
 }

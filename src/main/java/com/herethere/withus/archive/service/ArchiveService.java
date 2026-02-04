@@ -62,7 +62,7 @@ public class ArchiveService {
 		DateCursor dateCursor = cursorCodec.decode(cursor, DateCursor.class);
 		LocalDate lastDate = dateCursor == null ? null : dateCursor.date();
 
-		User user = appContextService.getInitializedUser();
+		User user = appContextService.getInitializedAndActiveUser();
 		Couple couple = appContextService.getActiveCoupleRequired(user);
 		User partner = couple.getPartner(user);
 
@@ -108,7 +108,7 @@ public class ArchiveService {
 
 	@Transactional(readOnly = true)
 	public ArchiveDateResponse getArchiveByDate(LocalDate date, Long targetId, ArchiveType targetType) {
-		User user = appContextService.getInitializedUser();
+		User user = appContextService.getInitializedAndActiveUser();
 		Couple couple = appContextService.getActiveCoupleRequired(user);
 		User partner = couple.getPartner(user);
 		String myProfileUrl =
@@ -140,7 +140,7 @@ public class ArchiveService {
 		NumberCursor numberCursor = cursorCodec.decode(cursor, NumberCursor.class);
 		Long number = numberCursor == null ? null : numberCursor.number();
 
-		User user = appContextService.getInitializedUser();
+		User user = appContextService.getInitializedAndActiveUser();
 		Couple couple = appContextService.getActiveCoupleRequired(user);
 
 		LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
@@ -168,7 +168,7 @@ public class ArchiveService {
 
 	@Transactional(readOnly = true)
 	public ArchiveQuestionDetailResponse getDetailArchiveQuestion(Long coupleQuestionId) {
-		User user = appContextService.getInitializedUser();
+		User user = appContextService.getInitializedAndActiveUser();
 		Couple couple = appContextService.getActiveCoupleRequired(user);
 		User partner = couple.getPartner(user);
 
@@ -203,7 +203,7 @@ public class ArchiveService {
 
 	@Transactional(readOnly = true)
 	public ArchiveCalendarResponse getArchiveCalendar(int year, int month) {
-		User user = appContextService.getInitializedUser();
+		User user = appContextService.getInitializedAndActiveUser();
 		Couple couple = appContextService.getActiveCoupleRequired(user);
 		User partner = couple.getPartner(user);
 
