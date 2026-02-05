@@ -8,6 +8,7 @@ import com.herethere.withus.memory.domain.MemoryStatus;
 import com.herethere.withus.memory.domain.MemoryType;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
 
 @Schema(description = "월별 추억 목록 조회 응답")
 public record MonthMemoryResponse(
@@ -17,6 +18,7 @@ public record MonthMemoryResponse(
 	@Schema(description = "해당 월의 주차별 요약 정보 리스트")
 	List<MemorySummary> weekMemorySummaries
 ) {
+	@Builder
 	@Schema(description = "주차별 추억 요약 정보")
 	public record MemorySummary(
 		@Schema(description = "추억 종류 (주차별 자동 생성 or 유저 커스텀 생성)", example = "WEEK_MEMORY")
