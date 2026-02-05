@@ -12,7 +12,6 @@ import com.herethere.withus.memory.dto.response.MonthMemoryResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.constraints.NotNull;
 
 @Validated
 @RequestMapping("/api")
@@ -46,8 +45,7 @@ public interface MemoryApi {
 			required = true
 		)
 		@RequestParam
-		@NotNull
-		Integer monthKey
+		int monthKey
 	);
 
 	// @Operation(
