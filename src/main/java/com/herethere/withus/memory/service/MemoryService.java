@@ -84,7 +84,7 @@ public class MemoryService {
 		List<String> partnerImageKeys = getUserUploadedImageKeysInRange(partner, questionPictures, keywordRecords,
 			start, end);
 
-		if (myImageKeys.size() < 6 && partnerImageKeys.size() < 6) {
+		if (myImageKeys.size() < 6 || partnerImageKeys.size() < 6) {
 			// 개수가 6보다 적으면 UNAVAILABLE
 			return memoryMapper.toUnavailableMemorySummary(end);
 		}
