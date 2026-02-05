@@ -54,4 +54,11 @@ public class KeywordRecord extends BaseEntity {
 
 	@Column(name = "image_key", nullable = false, length = 255)
 	private String imageKey;
+
+	public boolean isDateInRange(LocalDate startDate, LocalDate endDate) {
+		if (startDate == null || endDate == null) {
+			return false;
+		}
+		return !date.isBefore(startDate) && !date.isAfter(endDate);
+	}
 }

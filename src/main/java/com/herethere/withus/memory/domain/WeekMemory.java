@@ -33,7 +33,7 @@ public class WeekMemory extends BaseEntity {
 	@Column(name = "id", nullable = false)
 	private Long id;
 
-	@ManyToOne(fetch =  FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
 
@@ -52,4 +52,11 @@ public class WeekMemory extends BaseEntity {
 
 	@Column(name = "month_key", nullable = false)
 	private Integer monthKey; // YYYYMM
+
+	public boolean checkWeekRange(LocalDate startDate, LocalDate endDate) {
+		if (startDate == null || endDate == null) {
+			return false;
+		}
+		return weekStartDate.equals(startDate) && weekEndDate.equals(endDate);
+	}
 }
