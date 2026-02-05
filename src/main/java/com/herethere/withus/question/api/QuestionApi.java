@@ -1,6 +1,7 @@
 package com.herethere.withus.question.api;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +17,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
+@Validated
 @RequestMapping("/api/me")
 @Tag(name = "오늘의 질문 API", description = "매일 정해진 시간에 배달되는 커플 공통 질문 관리")
 public interface QuestionApi {

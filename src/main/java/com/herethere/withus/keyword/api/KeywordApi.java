@@ -1,6 +1,7 @@
 package com.herethere.withus.keyword.api;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,6 +20,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
+@Validated
 @RequestMapping("/api")
 @Tag(name = "키워드 API", description = "시스템 공통 키워드 및 커플별 오늘의 미션 관리")
 public interface KeywordApi {
