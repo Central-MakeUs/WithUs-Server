@@ -1,6 +1,7 @@
 package com.herethere.withus.memory.dto.response;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import com.herethere.withus.memory.domain.MemoryStatus;
@@ -39,7 +40,10 @@ public record MonthMemoryResponse(
 
 		@Schema(description = "CREATED 상태일 때 사용자가 업로드한 이미지 URL. 그 외 상태에서는 null",
 			example = "https://s3.withus.com/memories/couple123_4w1.jpg")
-		String createdImageUrl
+		String createdImageUrl,
+
+		@Schema(description = "생성된 시간(UTC)")
+		LocalDateTime createdAt
 	) {
 	}
 }
