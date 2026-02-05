@@ -1,0 +1,93 @@
+package com.herethere.withus.memory.api;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.herethere.withus.common.apiresponse.ApiResponse;
+import com.herethere.withus.memory.dto.response.MonthMemoryResponse;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.NotNull;
+
+@Validated
+@RequestMapping("/api")
+@Tag(name = "Memory API", description = "주별 메모리(대표 이미지) 관리")
+public interface MemoryApi {
+
+	@Operation(
+		summary = "월별 주 메모리 조회",
+		description = """
+			선택한 월에 해당하는 주별 메모리를 전체 조회합니다. - 추억 메인 페이지에서 사용
+			- 한 주는 일요일 ~ 토요일 기준입니다.
+			- weekEndDate(토요일)가 해당 월에 속하면 해당 월의 주로 판단합니다.
+			- WeekMemorySummary의 status로 보여줄 화면을 선택합니다. status는 UNAVAILABLE, NEED_CREATE, CREATED입니다.
+			if memoryType == CUSTOM:
+			  - customMemoryId != null
+			  - status == CREATED
+			  - createdImageUrl 사용
+			if memoryType == WEEK:
+			  - weekEndDate != null
+			  - status에 따라 분기
+			- status 가 UNAVAILABLE일 경우, 두 명 모두 6장 이상(...) 이라는 문구를 띄웁니다. (사진 부족 시)
+			- status 가 NEED_CREATE일 경우, needCreateImageUrls를 통해 화면을 만들고, 해당 이미지를 업로드하는 api를 바로 사용합니다. (아직 사진 생성하지 않았을 시)
+			- status 가 CREATE일 경우, 이미 만들어진 사진이기 때문에 createImageUrl을 사용하여 사진을 띄웁니다. (이미 사진 생성 했을 시)
+			"""
+	)
+	@GetMapping("/me/couple/memories")
+	ResponseEntity<ApiResponse<MonthMemoryResponse>> getMonthMemories(
+		@Parameter(
+			description = "조회할 월 (YYYYMM 형식)",
+			example = "202602",
+			required = true
+		)
+		@RequestParam
+		@NotNull
+		Integer monthKey
+	);
+
+	// @Operation(
+	// 	summary = "주 메모리 생성",
+	// 	description = """
+	// 		프론트에서 합성한 주 대표 이미지를 서버에 저장합니다.
+	// 		- 이미 메모리가 존재하는 주에 대해 요청하면 실패합니다.
+	// 		- imageKey는 presigned-url 업로드 후 받은 최종 imageKey여야 합니다.
+	// 		"""
+	// )
+	// @PostMapping("/me/couple/memories/{weekEndDate}")
+	// ResponseEntity<ApiResponse<Void>> createMemory(
+	// 	@Parameter(
+	// 		description = "주 종료일 (토요일, ISO-8601)",
+	// 		example = "2026-02-14"
+	// 	)
+	// 	@PathVariable
+	// 	String weekEndDate,
+	//
+	// 	@Valid @RequestBody
+	// 	MemoryCreateRequest request
+	// );
+	//
+	// @Operation(
+	// 	summary = "주 메모리 재생성",
+	// 	description = """
+	// 		이미 생성된 주 메모리를 새로운 이미지로 교체합니다.
+	// 		- 명시적으로 호출된 경우에만 재생성됩니다.
+	// 		"""
+	// )
+	// @PostMapping("/me/couple/memories/{weekEndDate}/regenerate")
+	// ResponseEntity<ApiResponse<Void>> regenerateMemory(
+	// 	@Parameter(
+	// 		description = "주 종료일 (토요일, ISO-8601)",
+	// 		example = "2026-02-14"
+	// 	)
+	// 	@PathVariable
+	// 	String weekEndDate,
+	//
+	// 	@Valid @RequestBody
+	// 	MemoryCreateRequest request
+	// );
+}
