@@ -39,6 +39,9 @@ public class CustomMemory extends BaseEntity {
 	@JoinColumn(name = "couple_id", nullable = false)
 	private Couple couple;
 
+	@Column(name = "title", length = 20, nullable = false)
+	private String title;
+
 	@Column(name = "image_key", length = 255, nullable = false)
 	private String imageKey;
 
