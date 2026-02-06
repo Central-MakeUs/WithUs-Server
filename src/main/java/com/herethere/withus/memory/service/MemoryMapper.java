@@ -55,7 +55,7 @@ public class MemoryMapper {
 			.memoryType(MemoryType.WEEK_MEMORY)
 			.title(generateTitle(endDate))
 			.weekEndDate(endDate)
-			.status(MemoryStatus.CREATED)
+			.status(MemoryStatus.UNAVAILABLE)
 			.createdAt(endDate.atTime(LocalTime.MAX))
 			.build();
 	}
