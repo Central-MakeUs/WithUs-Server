@@ -13,13 +13,16 @@ import com.herethere.withus.auth.oauthclient.OAuthClientFactory;
 import com.herethere.withus.common.exception.BadRequestException;
 import com.herethere.withus.common.exception.ConflictException;
 import com.herethere.withus.common.exception.NotFoundException;
+import com.herethere.withus.couple.domain.Couple;
 import com.herethere.withus.couple.service.OnboardingManager;
 import com.herethere.withus.keyword.service.KeywordService;
-import com.herethere.withus.notification.dto.internal.FcmNotificationEvent;
+import com.herethere.withus.notification.domain.NotificationType;
+import com.herethere.withus.notification.dto.internal.CoupleNotificationEvent;
 import com.herethere.withus.s3.domain.ImageType;
 import com.herethere.withus.s3.service.S3Service;
 import com.herethere.withus.user.domain.InviteCode;
 import com.herethere.withus.user.domain.User;
+import com.herethere.withus.user.domain.UserStatus;
 import com.herethere.withus.user.dto.request.UserOnboardingRequest;
 import com.herethere.withus.user.dto.request.UserUpdateRequest;
 import com.herethere.withus.user.dto.response.InvitationCodeResponse;
@@ -27,6 +30,7 @@ import com.herethere.withus.user.dto.response.OnboardingStatusResponse;
 import com.herethere.withus.user.dto.response.UserOnboardingResponse;
 import com.herethere.withus.user.dto.response.UserUpdateResponse;
 import com.herethere.withus.user.repository.InviteCodeRepository;
+import com.herethere.withus.user.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -41,6 +45,7 @@ public class UserService {
 	private final InviteCodeRepository inviteCodeRepository;
 	private final ApplicationEventPublisher eventPublisher;
 	private final OAuthClientFactory oauthClientFactory;
+	private final UserRepository userRepository;
 
 	@Transactional
 	public UserUpdateResponse updateUserProfile(UserUpdateRequest userUpdateRequest) {
@@ -86,7 +91,8 @@ public class UserService {
 	@Transactional(readOnly = true)
 	public void pokeUser(Long userId) {
 		User user = appContextService.getInitializedAndActiveUser();
-		User partner = appContextService.getActiveCoupleRequired(user).getPartner(user);
+		Couple couple = appContextService.getActiveCoupleRequired(user);
+		User partner = couple.getPartner(user);
 
 		if (!partner.getId().equals(userId)) {
 			throw new BadRequestException(NOT_YOUR_PARTNER);
@@ -94,8 +100,8 @@ public class UserService {
 
 		// TODO: 캐시를 사용한 찌르기 스팸 방지 로직 추가
 
-		eventPublisher.publishEvent(FcmNotificationEvent.createPokeEvent(user, partner));
-	}
+		eventPublisher.publishEvent(CoupleNotificationEvent.toPartner(couple.getId(), user.getId(), partner.getId(),
+			NotificationType.POKE));	}
 
 	@Transactional
 	public UserOnboardingResponse onboardUser(UserOnboardingRequest request) {

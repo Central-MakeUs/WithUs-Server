@@ -39,6 +39,11 @@ public record CoupleNotificationEvent(Long coupleId, Long senderId, Long receive
 		);
 	}
 
+	public static CoupleNotificationEvent toPartner(
+		Long coupleId, Long senderId, Long receiverId, NotificationType type) {
+		return toPartner(coupleId, senderId, receiverId, type, Map.of());
+	}
+
 	public static CoupleNotificationEvent toBoth(
 		Long coupleId, NotificationType type, Map<String, String> data
 	) {
@@ -54,4 +59,8 @@ public record CoupleNotificationEvent(Long coupleId, Long senderId, Long receive
 		);
 	}
 
+	public static CoupleNotificationEvent toBoth(
+		Long coupleId, NotificationType type) {
+		return toBoth(coupleId, type, Map.of());
+	}
 }
