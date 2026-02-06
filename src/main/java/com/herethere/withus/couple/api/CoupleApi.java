@@ -1,6 +1,7 @@
 package com.herethere.withus.couple.api;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,6 +18,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
+@Validated
 @RequestMapping("/api/me/couple")
 @Tag(name = "커플 API", description = "커플 연결 및 초기 설정 관리")
 public interface CoupleApi {

@@ -3,6 +3,7 @@ package com.herethere.withus.archive.api;
 import java.time.LocalDate;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +23,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 
+@Validated
 @RequestMapping("/api")
 @Tag(name = "보관 API", description = "보관 탭 API")
 public interface ArchiveApi {

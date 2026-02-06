@@ -1,9 +1,7 @@
-package com.herethere.withus.keyword.domain;
-
-import java.time.LocalDate;
+package com.herethere.withus.memory.domain;
 
 import com.herethere.withus.common.baseentity.BaseEntity;
-import com.herethere.withus.couple.domain.CoupleKeyword;
+import com.herethere.withus.couple.domain.Couple;
 import com.herethere.withus.user.domain.User;
 
 import jakarta.persistence.Column;
@@ -15,7 +13,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,38 +24,27 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
-@Table(name = "keyword_record",
-	uniqueConstraints = {
-		@UniqueConstraint(
-			name = "uk_keyword_record_user_date",
-			columnNames = {"user_id", "couple_keyword_id", "date"}
-		)
-	}
-)
-public class KeywordRecord extends BaseEntity {
+@Table(name = "custom_memory")
+public class CustomMemory extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id", nullable = false)
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "couple_keyword_id", nullable = false)
-	private CoupleKeyword coupleKeyword;
-
-	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
 
-	@Column(name = "date", nullable = false)
-	private LocalDate date;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "couple_id", nullable = false)
+	private Couple couple;
 
-	@Column(name = "image_key", nullable = false, length = 255)
+	@Column(name = "title", length = 20, nullable = false)
+	private String title;
+
+	@Column(name = "image_key", length = 255, nullable = false)
 	private String imageKey;
 
-	public boolean isDateInRange(LocalDate startDate, LocalDate endDate) {
-		if (startDate == null || endDate == null) {
-			return false;
-		}
-		return !date.isBefore(startDate) && !date.isAfter(endDate);
-	}
+	@Column(name = "month_key", nullable = false)
+	private Integer monthKey; // YYYYMM
 }

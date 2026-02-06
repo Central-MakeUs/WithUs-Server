@@ -57,6 +57,11 @@ public enum ErrorCode {
 	INVALID_ARCHIVE_TYPE(500, "아카이브 타입이 올바르지 않습니다."),
 	ARCHIVE_TYPE_NULL(500, "아카이브 타입이 null 입니다."),
 
+	//MEMORY
+	WRONG_DATE(400, "해당 날짜는 불가능합니다."),
+	FUTURE_DATE_NOT_ALLOWED(400, "미래 날짜는 불가능합니다."),
+	MEMORY_ALREADY_UPLOADED(409, "이미 추억 사진을 업로드 했습니다."),
+
 	// INVITATION_CODE
 	CODE_GENERATE_FAILED(503, "중복으로 인해 초대 코드 생성을 실패했습니다."),
 	CODE_NOT_FOUND(404, "초대 코드를 찾을 수 없습니다."),

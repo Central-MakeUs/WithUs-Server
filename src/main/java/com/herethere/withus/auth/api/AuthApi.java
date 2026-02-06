@@ -1,6 +1,7 @@
 package com.herethere.withus.auth.api;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,6 +18,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
+@Validated
 @RequestMapping("/api/auth")
 @Tag(name = "인증 API", description = "로그인 및 회원가입")
 public interface AuthApi {

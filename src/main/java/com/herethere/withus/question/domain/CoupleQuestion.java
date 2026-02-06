@@ -47,4 +47,11 @@ public class CoupleQuestion extends BaseEntity {
 
 	@Column(name = "date", nullable = false)
 	private LocalDate date;
+
+	public boolean isDateInRange(LocalDate startDate, LocalDate endDate) {
+		if (startDate == null || endDate == null) {
+			return false;
+		}
+		return !date.isBefore(startDate) && !date.isAfter(endDate);
+	}
 }

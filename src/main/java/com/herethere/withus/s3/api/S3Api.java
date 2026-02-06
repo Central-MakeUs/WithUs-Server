@@ -1,6 +1,7 @@
 package com.herethere.withus.s3.api;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,6 +14,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
+@Validated
 @RequestMapping("/api/images")
 @Tag(name = "이미지 업로드 API", description = "S3 업로드를 위한 URL 생성 (Presigned URL)")
 public interface S3Api {
