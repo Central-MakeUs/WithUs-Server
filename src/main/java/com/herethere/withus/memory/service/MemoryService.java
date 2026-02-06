@@ -123,7 +123,7 @@ public class MemoryService {
 			return memoryMapper.toUnavailableMemorySummary(end);
 		}
 		List<String> result = combineRandomImages(myImageKeys, partnerImageKeys, 6);
-		return memoryMapper.toNeedCreateMemorySummary(result, start, end);
+		return memoryMapper.toNeedCreateMemorySummary(result, end);
 	}
 
 	private List<String> getUserUploadedImageKeysInRange(User user, List<QuestionPicture> questionPictures,

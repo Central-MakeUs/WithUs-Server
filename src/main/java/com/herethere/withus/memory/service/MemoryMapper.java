@@ -36,14 +36,13 @@ public class MemoryMapper {
 			.build();
 	}
 
-	public MonthMemoryResponse.MemorySummary toNeedCreateMemorySummary(List<String> imageKeys, LocalDate startDate,
-		LocalDate endDate) {
+	public MonthMemoryResponse.MemorySummary toNeedCreateMemorySummary(List<String> imageKeys, LocalDate endDate) {
 		List<String> imageUrls = imageKeys.stream()
 			.map(s3Service::createThumbnailImageUrl)
 			.toList();
 		return MonthMemoryResponse.MemorySummary.builder()
 			.memoryType(MemoryType.WEEK_MEMORY)
-			.title(generateTitle(startDate, endDate))
+			.title(generateTitle(endDate))
 			.weekEndDate(endDate)
 			.status(MemoryStatus.NEED_CREATE)
 			.needCreateImageUrls(imageUrls)
@@ -54,7 +53,7 @@ public class MemoryMapper {
 	public MonthMemoryResponse.MemorySummary toUnavailableMemorySummary(LocalDate endDate) {
 		return MonthMemoryResponse.MemorySummary.builder()
 			.memoryType(MemoryType.WEEK_MEMORY)
-			.title("두명 모두 6장 이상 사진을 보내면 추억이 자동 생성돼요.")
+			.title(generateTitle(endDate))
 			.weekEndDate(endDate)
 			.status(MemoryStatus.CREATED)
 			.createdAt(endDate.atTime(LocalTime.MAX))
@@ -87,7 +86,8 @@ public class MemoryMapper {
 		);
 	}
 
-	private String generateTitle(LocalDate startDate, LocalDate endDate) {
+	private String generateTitle(LocalDate endDate) {
+		LocalDate startDate = endDate.minusDays(6);
 		// 1. 종료일 기준 해당 월의 몇 번째 주인지 계산
 		int weekOfMonth = endDate.get(WEEK_FIELDS.weekOfMonth());
 
