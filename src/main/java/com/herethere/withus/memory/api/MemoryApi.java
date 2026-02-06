@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.herethere.withus.common.apiresponse.ApiResponse;
+import com.herethere.withus.memory.dto.request.CustomMemoryCreateRequest;
 import com.herethere.withus.memory.dto.request.MemoryCreateRequest;
 import com.herethere.withus.memory.dto.response.MonthMemoryResponse;
 
@@ -88,9 +89,9 @@ public interface MemoryApi {
 			- /api/images/presigned-url에서 response로 받은 ImageKey를 보내야 합니다.
 			"""
 	)
-	@PostMapping("/me/couple/four-cuts")
+	@PostMapping("/me/couple/memories")
 	ResponseEntity<ApiResponse<Void>> createCustomMemory(
-		@Valid @RequestBody MemoryCreateRequest request
+		@Valid @RequestBody CustomMemoryCreateRequest request
 	);
 	//
 	// @Operation(

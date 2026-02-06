@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.herethere.withus.common.apiresponse.ApiResponse;
 import com.herethere.withus.memory.api.MemoryApi;
+import com.herethere.withus.memory.dto.request.CustomMemoryCreateRequest;
 import com.herethere.withus.memory.dto.request.MemoryCreateRequest;
 import com.herethere.withus.memory.dto.response.MonthMemoryResponse;
 import com.herethere.withus.memory.service.MemoryService;
@@ -32,7 +33,8 @@ public class MemoryController implements MemoryApi {
 	}
 
 	@Override
-	public ResponseEntity<ApiResponse<Void>> createCustomMemory(MemoryCreateRequest request) {
+	public ResponseEntity<ApiResponse<Void>> createCustomMemory(CustomMemoryCreateRequest request) {
+		memoryService.createCustomMemory(request);
 		return null;
 	}
 }
