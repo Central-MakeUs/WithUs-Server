@@ -2,6 +2,7 @@ package com.herethere.withus.memory.service;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,8 +20,10 @@ import com.herethere.withus.common.exception.ErrorCode;
 import com.herethere.withus.couple.domain.Couple;
 import com.herethere.withus.keyword.domain.KeywordRecord;
 import com.herethere.withus.keyword.repository.KeywordRecordRepository;
+import com.herethere.withus.memory.domain.CustomMemory;
 import com.herethere.withus.memory.domain.WeekMemory;
 import com.herethere.withus.memory.dto.internal.WeekRange;
+import com.herethere.withus.memory.dto.request.CustomMemoryCreateRequest;
 import com.herethere.withus.memory.dto.request.MemoryCreateRequest;
 import com.herethere.withus.memory.dto.response.MonthMemoryResponse;
 import com.herethere.withus.memory.repository.CustomMemoryRepository;
@@ -100,6 +103,26 @@ public class MemoryService {
 
 		WeekMemory weekMemory = WeekMemory.create(user, couple, imageKey, weekEndDate);
 		weekMemoryRepository.save(weekMemory);
+	}
+
+	@Transactional
+	public void createCustomMemory(CustomMemoryCreateRequest request) {
+		User user = appContextService.getInitializedAndActiveUser();
+		Couple couple = appContextService.getActiveCoupleRequired(user);
+
+		String imageKey = s3Service.processImagePublish(request.imageKey(), user.getId(), ImageType.MEMORY);
+		LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
+		Integer monthKey = today.getYear() * 100 + today.getMonthValue();
+
+		CustomMemory customMemory = CustomMemory.builder()
+			.user(user)
+			.couple(couple)
+			.title(request.title())
+			.imageKey(imageKey)
+			.monthKey(monthKey)
+			.build();
+
+		customMemoryRepository.save(customMemory);
 	}
 
 	private MonthMemoryResponse.MemorySummary createMemorySummary(WeekRange range, User user, User partner,
