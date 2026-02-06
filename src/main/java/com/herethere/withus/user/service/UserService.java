@@ -122,6 +122,20 @@ public class UserService {
 		user.withdraw();
 	}
 
+	@Transactional(readOnly = true)
+	public String getNickname(Long userId) {
+		return userRepository.findById(userId)
+			.map(User::getNickname)
+			.orElse("상대방");
+	}
+
+	@Transactional(readOnly = true)
+	public boolean isActive(Long userId) {
+		return userRepository.findById(userId)
+			.map(u -> u.getUserStatus().equals(UserStatus.ACTIVE))
+			.orElse(false);
+	}
+
 	private InviteCode createNewInviteCode(User user) {
 		for (int i = 0; i < 20; i++) {
 			String code = generate8DigitCode();
