@@ -57,10 +57,10 @@ public interface MemoryApi {
 	);
 
 	@Operation(
-		summary = "주 메모리 생성",
+		summary = "주 메모리 생성 (자동 생성)",
 		description = """
-			프론트에서 합성한 추억 이미지를 서버에 저장합니다.
-			- `GET /api/me/couple/memories/` 응답의 status가 NEED_CREATE 인 사진 클릭 시 이 API를 호출합니다.
+			프론트에서 합성한 추억 이미지를 서버에 저장합니다. - 커스텀 생성이 아닌, 자동 생성 API
+			- `GET /api/me/couple/memories/` 응답의 status가 `NEED_CREATE` 인 사진 클릭 시 이 API를 호출합니다.
 			- 응답의 weekEndDate를 통해 해당 사진을 식별합니다.
 			- weekEndDate는 토요일이어야만 합니다.
 			- 이미 추억이 존재하는 주(weekEndDate)에 대해 요청하면 실패합니다.
