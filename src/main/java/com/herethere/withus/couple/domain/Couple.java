@@ -103,16 +103,26 @@ public class Couple extends BaseEntity {
 
 	public void deleteUser(User user) {
 		if (userA.getId().equals(user.getId())) {
-			if (this.userADeletedAt != null) throw new ConflictException(COUPLE_ALREADY_TERMINATED);
+			if (this.userADeletedAt != null)
+				throw new ConflictException(COUPLE_ALREADY_TERMINATED);
 			this.userADeletedAt = LocalDateTime.now();
 			return;
 		}
 
 		if (userB.getId().equals(user.getId())) {
-			if (this.userBDeletedAt != null) throw new ConflictException(COUPLE_ALREADY_TERMINATED);
+			if (this.userBDeletedAt != null)
+				throw new ConflictException(COUPLE_ALREADY_TERMINATED);
 			this.userBDeletedAt = LocalDateTime.now();
 			return;
 		}
 		throw new NotFoundException(ErrorCode.USER_NOT_FOUND);
+	}
+
+	public boolean isBothActive() {
+		return userADeletedAt == null && userBDeletedAt == null;
+	}
+
+	public boolean isMember(Long userId) {
+		return userA.getId().equals(userId) || userB.getId().equals(userId);
 	}
 }
