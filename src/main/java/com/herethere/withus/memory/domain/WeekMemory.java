@@ -53,6 +53,19 @@ public class WeekMemory extends BaseEntity {
 	@Column(name = "month_key", nullable = false)
 	private Integer monthKey; // YYYYMM
 
+	public static WeekMemory create(User user, Couple couple, String imageKey, LocalDate weekEndDate) {
+		LocalDate weekStartDate = weekEndDate.minusDays(6);
+		Integer monthKey = weekEndDate.getYear() * 100 + weekEndDate.getMonthValue();
+		return WeekMemory.builder()
+			.user(user)
+			.couple(couple)
+			.imageKey(imageKey)
+			.weekStartDate(weekStartDate)
+			.weekEndDate(weekEndDate)
+			.monthKey(monthKey)
+			.build();
+	}
+
 	public boolean checkWeekRange(LocalDate startDate, LocalDate endDate) {
 		if (startDate == null || endDate == null) {
 			return false;

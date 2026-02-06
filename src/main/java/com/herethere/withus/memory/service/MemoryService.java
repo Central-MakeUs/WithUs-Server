@@ -13,16 +13,22 @@ import java.util.stream.Stream;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.herethere.withus.common.exception.BadRequestException;
+import com.herethere.withus.common.exception.ConflictException;
+import com.herethere.withus.common.exception.ErrorCode;
 import com.herethere.withus.couple.domain.Couple;
 import com.herethere.withus.keyword.domain.KeywordRecord;
 import com.herethere.withus.keyword.repository.KeywordRecordRepository;
 import com.herethere.withus.memory.domain.WeekMemory;
 import com.herethere.withus.memory.dto.internal.WeekRange;
+import com.herethere.withus.memory.dto.request.MemoryCreateRequest;
 import com.herethere.withus.memory.dto.response.MonthMemoryResponse;
 import com.herethere.withus.memory.repository.CustomMemoryRepository;
 import com.herethere.withus.memory.repository.WeekMemoryRepository;
 import com.herethere.withus.question.domain.QuestionPicture;
 import com.herethere.withus.question.repository.QuestionPictureRepository;
+import com.herethere.withus.s3.domain.ImageType;
+import com.herethere.withus.s3.service.S3Service;
 import com.herethere.withus.user.domain.User;
 import com.herethere.withus.user.service.AppContextService;
 
@@ -37,6 +43,7 @@ public class MemoryService {
 	private final KeywordRecordRepository keywordRecordRepository;
 	private final MemoryMapper memoryMapper;
 	private final AppContextService appContextService;
+	private final S3Service s3Service;
 
 	@Transactional(readOnly = true)
 	public MonthMemoryResponse getMonthMemories(int monthKey) {
@@ -66,6 +73,33 @@ public class MemoryService {
 			.toList();
 
 		return new MonthMemoryResponse(monthKey, summaries);
+	}
+
+	@Transactional
+	public void createMemory(MemoryCreateRequest request, LocalDate weekEndDate) {
+		User user = appContextService.getInitializedAndActiveUser();
+		Couple couple = appContextService.getActiveCoupleRequired(user);
+
+		// 1. 토요일인지 확인
+		if (weekEndDate.getDayOfWeek() != DayOfWeek.SATURDAY) {
+			throw new BadRequestException(ErrorCode.WRONG_DATE);
+		}
+
+		// 2. 오늘 이전(과거 또는 오늘)인지 확인
+		if (weekEndDate.isAfter(LocalDate.now())) {
+			throw new BadRequestException(ErrorCode.FUTURE_DATE_NOT_ALLOWED);
+		}
+
+		// 3. 해당 주차(weekEndDate)에 이미 만들어진 메모리가 있는지 확인
+		boolean exists = weekMemoryRepository.existsByCoupleAndWeekEndDate(couple, weekEndDate);
+		if (exists) {
+			throw new ConflictException(ErrorCode.MEMORY_ALREADY_UPLOADED);
+		}
+
+		String imageKey = s3Service.processImagePublish(request.imageKey(), user.getId(), ImageType.MEMORY);
+
+		WeekMemory weekMemory = WeekMemory.create(user, couple, imageKey, weekEndDate);
+		weekMemoryRepository.save(weekMemory);
 	}
 
 	private MonthMemoryResponse.MemorySummary createMemorySummary(WeekRange range, User user, User partner,
