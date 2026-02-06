@@ -66,5 +66,6 @@ jobs:
           
           docker compose pull
           docker compose up -d
+          docker exec nginx nginx -s reload
           docker image prune -f
           EOF
