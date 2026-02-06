@@ -1,21 +1,29 @@
 package com.herethere.withus.memory.api;
 
+import java.time.LocalDate;
+
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.herethere.withus.common.apiresponse.ApiResponse;
+import com.herethere.withus.memory.dto.request.MemoryCreateRequest;
 import com.herethere.withus.memory.dto.response.MonthMemoryResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 
 @Validated
 @RequestMapping("/api")
-@Tag(name = "Memory API", description = "주별 메모리(대표 이미지) 관리")
+@Tag(name = "추억 API")
 public interface MemoryApi {
 
 	@Operation(
@@ -48,26 +56,30 @@ public interface MemoryApi {
 		int monthKey
 	);
 
-	// @Operation(
-	// 	summary = "주 메모리 생성",
-	// 	description = """
-	// 		프론트에서 합성한 주 대표 이미지를 서버에 저장합니다.
-	// 		- 이미 메모리가 존재하는 주에 대해 요청하면 실패합니다.
-	// 		- imageKey는 presigned-url 업로드 후 받은 최종 imageKey여야 합니다.
-	// 		"""
-	// )
-	// @PostMapping("/me/couple/memories/{weekEndDate}")
-	// ResponseEntity<ApiResponse<Void>> createMemory(
-	// 	@Parameter(
-	// 		description = "주 종료일 (토요일, ISO-8601)",
-	// 		example = "2026-02-14"
-	// 	)
-	// 	@PathVariable
-	// 	String weekEndDate,
-	//
-	// 	@Valid @RequestBody
-	// 	MemoryCreateRequest request
-	// );
+	@Operation(
+		summary = "주 메모리 생성",
+		description = """
+			프론트에서 합성한 추억 이미지를 서버에 저장합니다.
+			- `GET /api/me/couple/memories/` 응답의 status가 NEED_CREATE 인 사진 클릭 시 이 API를 호출합니다.
+			- 응답의 weekEndDate를 통해 해당 사진을 식별합니다.
+			- weekEndDate는 토요일이어야만 합니다.
+			- 이미 추억이 존재하는 주(weekEndDate)에 대해 요청하면 실패합니다.
+			- imageKey는 presigned-url 업로드 후 받은 최종 imageKey여야 합니다.
+			"""
+	)
+	@PostMapping("/me/couple/memories/{weekEndDate}")
+	ResponseEntity<ApiResponse<Void>> createMemory(
+		@Parameter(
+			description = "주 종료일 (토요일, ISO-8601 형식: YYYY-MM-DD)",
+			example = "2026-02-14"
+		)
+		@PathVariable
+		@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+		LocalDate weekEndDate,
+
+		@Valid @RequestBody
+		MemoryCreateRequest request
+	);
 	//
 	// @Operation(
 	// 	summary = "주 메모리 재생성",
