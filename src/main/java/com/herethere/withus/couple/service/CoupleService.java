@@ -2,6 +2,7 @@ package com.herethere.withus.couple.service;
 
 import static com.herethere.withus.common.exception.ErrorCode.*;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -121,6 +122,30 @@ public class CoupleService {
 		User user = appContextService.getInitializedAndActiveUser();
 		Couple couple = appContextService.getActiveCoupleRequired(user);
 		couple.deleteUser(user);
+	}
+
+	@Transactional(readOnly = true)
+	public boolean canSendNotification(Long coupleId, Long senderId, Long receiverId) {
+		if (receiverId == null) {
+			return false;
+		}
+
+		// 1. 본인이 본인에게 보내는 경우 차단
+		if (senderId != null && senderId.equals(receiverId)) {
+			return false;
+		}
+
+		return coupleRepository.findById(coupleId)
+			.map(couple ->
+				couple.isBothActive() && couple.isMember(receiverId) && (senderId == null || couple.isMember(senderId))
+			).orElse(false);
+	}
+
+	@Transactional(readOnly = true)
+	public List<Long> getMemberIds(Long coupleId) {
+		return coupleRepository.findById(coupleId)
+			.map(couple -> List.of(couple.getUserA().getId(), couple.getUserB().getId()))
+			.orElse(Collections.emptyList());
 	}
 
 	private InviteCode getInviteCode(String code) {

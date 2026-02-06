@@ -21,7 +21,8 @@ import com.herethere.withus.common.exception.ConflictException;
 import com.herethere.withus.common.exception.NotFoundException;
 import com.herethere.withus.couple.domain.Couple;
 import com.herethere.withus.couple.repository.CoupleRepository;
-import com.herethere.withus.notification.dto.internal.FcmNotificationEvent;
+import com.herethere.withus.notification.domain.NotificationType;
+import com.herethere.withus.notification.dto.internal.CoupleNotificationEvent;
 import com.herethere.withus.question.domain.CoupleQuestion;
 import com.herethere.withus.question.domain.Question;
 import com.herethere.withus.question.domain.QuestionPicture;
@@ -69,6 +70,7 @@ public class QuestionService {
 	public void uploadTodayQuestionImage(Long coupleQuestionId, TodayQuestionImageRequest request) {
 		User user = appContextService.getInitializedAndActiveUser();
 		Couple couple = appContextService.getActiveCoupleRequired(user);
+		User partner = couple.getPartner(user);
 		CoupleQuestion coupleQuestion = coupleQuestionRepository.findById(coupleQuestionId)
 			.orElseThrow(() -> new NotFoundException(COUPLE_QUESTION_NOT_FOUND));
 
@@ -97,7 +99,8 @@ public class QuestionService {
 
 		questionPictureRepository.save(questionPicture);
 
-		eventPublisher.publishEvent(FcmNotificationEvent.createUploadEvent(user, couple.getPartner(user)));
+		eventPublisher.publishEvent(CoupleNotificationEvent.toPartner(couple.getId(), user.getId(), partner.getId(),
+			NotificationType.PHOTO_UPLOADED));
 	}
 
 	@Transactional(readOnly = true)
@@ -144,8 +147,8 @@ public class QuestionService {
 
 		coupleQuestionRepository.save(coupleQuestion);
 
-		eventPublisher.publishEvent(FcmNotificationEvent.createNewQuestionEvent(couple.getUserA()));
-		eventPublisher.publishEvent(FcmNotificationEvent.createNewQuestionEvent(couple.getUserB()));
+		eventPublisher.publishEvent(
+			CoupleNotificationEvent.toBoth(couple.getId(), NotificationType.QUESTION_GENERATED));
 	}
 
 	private TodayQuestionResponse.ImageInfo getImageInfo(User user, QuestionPicture questionPicture) {

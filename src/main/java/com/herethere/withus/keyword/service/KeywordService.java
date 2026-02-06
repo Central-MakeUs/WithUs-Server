@@ -31,7 +31,8 @@ import com.herethere.withus.keyword.dto.response.DefaultKeywordsResponse;
 import com.herethere.withus.keyword.dto.response.TodayKeywordResponse;
 import com.herethere.withus.keyword.repository.KeywordRecordRepository;
 import com.herethere.withus.keyword.repository.KeywordRepository;
-import com.herethere.withus.notification.dto.internal.FcmNotificationEvent;
+import com.herethere.withus.notification.domain.NotificationType;
+import com.herethere.withus.notification.dto.internal.CoupleNotificationEvent;
 import com.herethere.withus.s3.domain.ImageType;
 import com.herethere.withus.s3.service.S3Service;
 import com.herethere.withus.user.domain.User;
@@ -132,6 +133,7 @@ public class KeywordService {
 	public void uploadTodayCoupleKeywordPicture(Long coupleKeywordId, TodayKeywordImageRequest request) {
 		User user = appContextService.getInitializedAndActiveUser();
 		Couple couple = appContextService.getActiveCoupleRequired(user);
+		User partner = couple.getPartner(user);
 		LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
 
 		CoupleKeyword coupleKeyword = coupleKeywordRepository.findById((coupleKeywordId))
@@ -159,7 +161,8 @@ public class KeywordService {
 			.build();
 		keywordRecordRepository.save(keywordRecord);
 
-		eventPublisher.publishEvent(FcmNotificationEvent.createUploadEvent(user, couple.getPartner(user)));
+		eventPublisher.publishEvent(CoupleNotificationEvent.toPartner(couple.getId(), user.getId(), partner.getId(),
+			NotificationType.PHOTO_UPLOADED));
 	}
 
 	@Transactional
