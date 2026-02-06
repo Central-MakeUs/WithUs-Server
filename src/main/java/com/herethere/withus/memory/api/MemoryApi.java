@@ -57,7 +57,7 @@ public interface MemoryApi {
 	);
 
 	@Operation(
-		summary = "주 메모리 생성 (자동 생성)",
+		summary = "week 추억 생성 (자동 생성)",
 		description = """
 			프론트에서 합성한 추억 이미지를 서버에 저장합니다. - 커스텀 생성이 아닌, 자동 생성 API
 			- `GET /api/me/couple/memories/` 응답의 status가 `NEED_CREATE` 인 사진 클릭 시 이 API를 호출합니다.
@@ -79,6 +79,18 @@ public interface MemoryApi {
 
 		@Valid @RequestBody
 		MemoryCreateRequest request
+	);
+
+	@Operation(
+		summary = "커스텀 추억 생성",
+		description = """
+			커스텀 추억 사진을 업로드 합니다.
+			- /api/images/presigned-url에서 response로 받은 ImageKey를 보내야 합니다.
+			"""
+	)
+	@PostMapping("/me/couple/four-cuts")
+	ResponseEntity<ApiResponse<Void>> createCustomMemory(
+		@Valid @RequestBody MemoryCreateRequest request
 	);
 	//
 	// @Operation(

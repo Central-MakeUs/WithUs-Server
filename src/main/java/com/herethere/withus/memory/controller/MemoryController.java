@@ -30,4 +30,9 @@ public class MemoryController implements MemoryApi {
 		memoryService.createMemory(request, weekEndDate);
 		return ResponseEntity.ok(ApiResponse.success());
 	}
+
+	@Override
+	public ResponseEntity<ApiResponse<Void>> createCustomMemory(MemoryCreateRequest request) {
+		return null;
+	}
 }
