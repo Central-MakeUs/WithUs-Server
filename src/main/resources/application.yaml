@@ -44,6 +44,9 @@ server:
   forward-headers-strategy: framework
 
 oauth:
+  kakako:
+    app:
+      adminKey: ${OAUTH_KAKAO_APP_ADMINKEY}
   apple:
     app:
       keyId: ${OAUTH_APPLE_APP_KEYID}
