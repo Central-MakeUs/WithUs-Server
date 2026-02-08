@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.herethere.withus.auth.dto.request.LoginRequest;
+import com.herethere.withus.auth.dto.request.LogoutRequest;
 import com.herethere.withus.auth.dto.response.LoginResponse;
 import com.herethere.withus.common.apiresponse.ApiResponse;
 
@@ -37,6 +38,14 @@ public interface AuthApi {
 		)
 		@PathVariable String provider,
 		@Valid @RequestBody LoginRequest request);
+
+	@Operation(summary = "로그아웃 API",
+		description = """
+			로그아웃 할 때 사용합니다.
+			- fcmToken을 받아, 해당 토큰을 무효화합니다.
+			""")
+	@PostMapping("/logout")
+	ResponseEntity<ApiResponse<Void>> logout(@Valid @RequestBody LogoutRequest request);
 
 	@Operation(summary = "임시 토큰 발급", description = "temp 유저에 대한 임시 토큰을 발급합니다.")
 	@PostMapping("/temp/token/{id}")

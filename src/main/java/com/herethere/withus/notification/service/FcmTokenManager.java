@@ -50,4 +50,9 @@ public class FcmTokenManager {
 	public void deleteFcmTokenByTokenValue(String tokenValue) {
 		fcmTokenRepository.deleteByToken(tokenValue);
 	}
+
+	@Transactional
+	public void deleteByUserAndToken(User user, String fcmToken) {
+		fcmTokenRepository.deleteByUserAndToken(user, fcmToken);
+	}
 }

@@ -6,6 +6,7 @@ import com.herethere.withus.auth.domain.AppleRefreshToken;
 import com.herethere.withus.auth.domain.OAuthProviderType;
 import com.herethere.withus.auth.dto.internal.OAuthUserInfo;
 import com.herethere.withus.auth.dto.request.LoginRequest;
+import com.herethere.withus.auth.dto.request.LogoutRequest;
 import com.herethere.withus.auth.dto.response.LoginResponse;
 import com.herethere.withus.auth.oauthclient.OAuthClient;
 import com.herethere.withus.auth.oauthclient.OAuthClientFactory;
@@ -17,6 +18,7 @@ import com.herethere.withus.notification.service.FcmTokenManager;
 import com.herethere.withus.user.domain.User;
 import com.herethere.withus.user.domain.UserStatus;
 import com.herethere.withus.user.repository.UserRepository;
+import com.herethere.withus.user.service.AppContextService;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +32,7 @@ public class AuthService {
 	private final OnboardingManager onboardingManager;
 	private final UserRepository userRepository;
 	private final AppleRefreshTokenRepository appleRefreshTokenRepository;
+	private final AppContextService appContextService;
 	private final JwtUtil jwtUtil;
 
 	@Transactional
@@ -76,5 +79,11 @@ public class AuthService {
 		JwtPayload jwtPayload = new JwtPayload(user.getId(), user.getNickname());
 		String jwt = jwtUtil.createToken(jwtPayload);
 		return new LoginResponse(jwt, onboardingManager.getStatus(user));
+	}
+
+	@Transactional
+	public void logout(LogoutRequest request) {
+		User user = appContextService.getCurrentUser();
+		fcmTokenManager.deleteByUserAndToken(user, request.fcmToken());
 	}
 }
