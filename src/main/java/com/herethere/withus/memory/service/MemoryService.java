@@ -1,5 +1,7 @@
 package com.herethere.withus.memory.service;
 
+import static com.herethere.withus.common.exception.ErrorCode.*;
+
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -18,14 +20,17 @@ import org.springframework.transaction.annotation.Transactional;
 import com.herethere.withus.common.exception.BadRequestException;
 import com.herethere.withus.common.exception.ConflictException;
 import com.herethere.withus.common.exception.ErrorCode;
+import com.herethere.withus.common.exception.NotFoundException;
 import com.herethere.withus.couple.domain.Couple;
 import com.herethere.withus.keyword.domain.KeywordRecord;
 import com.herethere.withus.keyword.repository.KeywordRecordRepository;
 import com.herethere.withus.memory.domain.CustomMemory;
+import com.herethere.withus.memory.domain.MemoryType;
 import com.herethere.withus.memory.domain.WeekMemory;
 import com.herethere.withus.memory.dto.internal.WeekRange;
 import com.herethere.withus.memory.dto.request.CustomMemoryCreateRequest;
 import com.herethere.withus.memory.dto.request.MemoryCreateRequest;
+import com.herethere.withus.memory.dto.response.MemoryDetailResponse;
 import com.herethere.withus.memory.dto.response.MonthMemoryResponse;
 import com.herethere.withus.memory.repository.CustomMemoryRepository;
 import com.herethere.withus.memory.repository.WeekMemoryRepository;
@@ -125,6 +130,28 @@ public class MemoryService {
 			.build();
 
 		customMemoryRepository.save(customMemory);
+	}
+
+	@Transactional(readOnly = true)
+	public MemoryDetailResponse getMemoryDetail(MemoryType memoryType, LocalDate weekEndDate, Long targetId) {
+		User user = appContextService.getInitializedAndActiveUser();
+		Couple couple = appContextService.getActiveCoupleRequired(user);
+
+		Optional<MemoryDetailResponse> response = Optional.empty();
+
+		if (memoryType == MemoryType.WEEK_MEMORY) {
+			response = weekMemoryRepository.findByCoupleAndWeekEndDate(couple, weekEndDate)
+				.map(m -> new MemoryDetailResponse(memoryMapper.generateTitle(m),
+					s3Service.createOriginImageUrl(m.getImageKey())
+				));
+		} else if (memoryType == MemoryType.CUSTOM_MEMORY) {
+			response = customMemoryRepository.findById(targetId)
+				.map(m -> new MemoryDetailResponse(m.getTitle(),
+					s3Service.createOriginImageUrl(m.getImageKey())
+				));
+		}
+
+		return response.orElseThrow(() -> new NotFoundException(MEMORY_NOT_FOUND));
 	}
 
 	private MonthMemoryResponse.MemorySummary createMemorySummary(WeekRange range, User user, User partner,

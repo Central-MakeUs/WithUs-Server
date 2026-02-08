@@ -71,19 +71,9 @@ public class MemoryMapper {
 			.build();
 	}
 
-	private String generateTitle(WeekMemory memory) {
+	public String generateTitle(WeekMemory memory) {
 		LocalDate endDate = memory.getWeekEndDate();
-
-		// 1. 종료일 기준 해당 월의 몇 번째 주인지 계산
-		int weekOfMonth = endDate.get(WEEK_FIELDS.weekOfMonth());
-
-		// 2. 제목 생성: "4월 2주 (03.29~04.04)"
-		return String.format("%d월 %d주 (%s~%s)",
-			endDate.getMonthValue(),
-			weekOfMonth,
-			memory.getWeekStartDate().format(DATE_FORMATTER),
-			endDate.format(DATE_FORMATTER)
-		);
+		return generateTitle(endDate);
 	}
 
 	private String generateTitle(LocalDate endDate) {

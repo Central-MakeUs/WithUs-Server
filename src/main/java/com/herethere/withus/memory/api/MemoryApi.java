@@ -100,7 +100,7 @@ public interface MemoryApi {
 		summary = "추억 상세 조회",
 		description = """
 				커플의 추억 상세 정보를 조회합니다.
-				- memoryType의 종류에 따라 사용하는 식별자가 다릅니다.
+				- memoryType의 종류에 따라 사용하는 식별자가 다릅니다. (memoryType은 필수입니다.)
 				- memoryType이 WEEK_MEMORY일 경우, weekEndDate가 식별자가 됩니다.
 				- memoryType이 CUSTOM_MEMORY일 경우, customMemoryId가 식별자가 됩니다.
 			"""
@@ -108,7 +108,7 @@ public interface MemoryApi {
 	@GetMapping("/me/couple/memories/detail")
 	ResponseEntity<ApiResponse<MemoryDetailResponse>> getMemoryDetail(
 		@Parameter(description = "클릭한 사진의 타입 (WEEK_MEMORY, CUSTOM_MEMORY)", example = "WEEK_MEMORY")
-		@RequestParam(required = false)
+		@RequestParam
 		MemoryType memoryType,
 
 		@Parameter(
