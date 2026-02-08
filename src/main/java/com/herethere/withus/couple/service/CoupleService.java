@@ -20,11 +20,13 @@ import com.herethere.withus.couple.dto.request.CoupleJoinRequest;
 import com.herethere.withus.couple.dto.request.SetCoupleKeywordRequest;
 import com.herethere.withus.couple.dto.response.CoupleJoinPreviewResponse;
 import com.herethere.withus.couple.dto.response.CoupleJoinResponse;
+import com.herethere.withus.couple.dto.response.CoupleProfileResponse;
 import com.herethere.withus.couple.repository.CoupleKeywordRepository;
 import com.herethere.withus.couple.repository.CoupleRepository;
 import com.herethere.withus.keyword.domain.Keyword;
 import com.herethere.withus.keyword.repository.KeywordRepository;
 import com.herethere.withus.keyword.service.KeywordService;
+import com.herethere.withus.s3.service.S3Service;
 import com.herethere.withus.user.domain.InviteCode;
 import com.herethere.withus.user.domain.User;
 import com.herethere.withus.user.repository.InviteCodeRepository;
@@ -43,6 +45,7 @@ public class CoupleService {
 	private final UserRepository userRepository;
 	private final KeywordRepository keywordRepository;
 	private final CoupleKeywordRepository coupleKeywordRepository;
+	private final S3Service s3Service;
 
 	@Transactional(readOnly = true)
 	public CoupleJoinPreviewResponse checkCoupleJoinPreview(CoupleJoinPreviewRequest request) {
@@ -146,6 +149,21 @@ public class CoupleService {
 		return coupleRepository.findById(coupleId)
 			.map(couple -> List.of(couple.getUserA().getId(), couple.getUserB().getId()))
 			.orElse(Collections.emptyList());
+	}
+
+	@Transactional(readOnly = true)
+	public CoupleProfileResponse getCoupleProfile() {
+		User user = appContextService.getInitializedAndActiveUser();
+		Couple couple = appContextService.getActiveCoupleRequired(user);
+		User partner = couple.getPartner(user);
+
+		CoupleProfileResponse.UserProfile meProfile = new CoupleProfileResponse.UserProfile(user.getNickname(),
+			user.getBirthday(), s3Service.createThumbnailImageUrl(user.getProfileImageKey()));
+
+		CoupleProfileResponse.UserProfile partnerProfile = new CoupleProfileResponse.UserProfile(partner.getNickname(),
+			partner.getBirthday(), s3Service.createThumbnailImageUrl(partner.getProfileImageKey()));
+
+		return new CoupleProfileResponse(meProfile, partnerProfile);
 	}
 
 	private InviteCode getInviteCode(String code) {

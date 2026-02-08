@@ -2,6 +2,7 @@ package com.herethere.withus.couple.api;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,6 +14,7 @@ import com.herethere.withus.couple.dto.request.CoupleJoinRequest;
 import com.herethere.withus.couple.dto.request.SetCoupleKeywordRequest;
 import com.herethere.withus.couple.dto.response.CoupleJoinPreviewResponse;
 import com.herethere.withus.couple.dto.response.CoupleJoinResponse;
+import com.herethere.withus.couple.dto.response.CoupleProfileResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -65,12 +67,22 @@ public interface CoupleApi {
 	@Operation(
 		summary = "커플 연결 해제",
 		description = """
-          현재 연결된 상대방과의 커플 관계를 해제합니다.
-          - 소프트 딜리트 방식으로 처리되어, 요청한 유저의 연결 상태만 우선적으로 해제됩니다.
-          - 해제 시 해당 유저는 커플 관련 모든 기능을 이용할 수 없게 되고, 상태는 NEED_COUPLE_CONNECT가 됩니다.
-          - 상대방 본인이 해제하기 전까지 기존 데이터를 조회할 수 있고, 기능을 정상적으로 사용할 수 있습니다.
-          """
+			현재 연결된 상대방과의 커플 관계를 해제합니다.
+			- 소프트 딜리트 방식으로 처리되어, 요청한 유저의 연결 상태만 우선적으로 해제됩니다.
+			- 해제 시 해당 유저는 커플 관련 모든 기능을 이용할 수 없게 되고, 상태는 NEED_COUPLE_CONNECT가 됩니다.
+			- 상대방 본인이 해제하기 전까지 기존 데이터를 조회할 수 있고, 기능을 정상적으로 사용할 수 있습니다.
+			"""
 	)
 	@PostMapping("/terminate")
 	ResponseEntity<ApiResponse<Void>> terminateCouple();
+
+	@Operation(
+		summary = "커플 구성원 정보 조회",
+		description = """
+			자신, 그리고 현재 연결된 상대방의 프로필을 조회합니다.
+			- 프로필은 이름, 생년월일, 프로필 이미지 url이 있습니다.
+			"""
+	)
+	@GetMapping("/profile")
+	ResponseEntity<ApiResponse<CoupleProfileResponse>> getCoupleProfile();
 }
