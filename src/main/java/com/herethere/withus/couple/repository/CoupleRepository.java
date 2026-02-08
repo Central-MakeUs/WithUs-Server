@@ -16,9 +16,30 @@ import jakarta.persistence.LockModeType;
 
 public interface CoupleRepository extends JpaRepository<Couple, Long> {
 	@Query("""
-		select c
-		from Couple c
-		where (c.lastQuestionDate < :today)
+		SELECT c
+		FROM Couple c
+		WHERE c.lastQuestionDate < :today
+		AND c.userADeletedAt IS NULL
+		AND c.userBDeletedAt IS NULL
+		AND (
+		    NOT EXISTS (
+		        SELECT 1
+		        FROM CoupleQuestion cq
+		        WHERE cq.couple = c
+		    )
+		    OR
+		    EXISTS (
+		        SELECT 1
+		        FROM CoupleQuestion cq
+		        JOIN QuestionPicture qp ON qp.coupleQuestion = cq
+		        WHERE cq.couple = c
+		          AND cq.date = (
+		              SELECT MAX(cq2.date)
+		              FROM CoupleQuestion cq2
+		              WHERE cq2.couple = c
+		          )
+		    )
+		)
 		""")
 	List<Couple> findCouplesToProcess(@Param("today") LocalDate today);
 

@@ -29,7 +29,8 @@ import lombok.NoArgsConstructor;
 @Table(
 	name = "couple_question",
 	indexes = {
-		@Index(name = "idx_couple_created_desc", columnList = "couple_id, created_at DESC")
+		@Index(name = "idx_couple_created_desc", columnList = "couple_id, created_at DESC"),
+		@Index(name = "idx_couple_date", columnList = "couple_id, date DESC")
 	}
 )
 public class CoupleQuestion extends BaseEntity {
