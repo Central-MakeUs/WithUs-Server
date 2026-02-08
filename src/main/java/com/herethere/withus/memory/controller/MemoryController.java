@@ -35,6 +35,6 @@ public class MemoryController implements MemoryApi {
 	@Override
 	public ResponseEntity<ApiResponse<Void>> createCustomMemory(CustomMemoryCreateRequest request) {
 		memoryService.createCustomMemory(request);
-		return null;
+		return ResponseEntity.ok(ApiResponse.success());
 	}
 }
