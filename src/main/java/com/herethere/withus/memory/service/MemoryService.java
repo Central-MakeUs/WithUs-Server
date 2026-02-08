@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -65,7 +66,8 @@ public class MemoryService {
 			endDate);
 
 		Stream<MonthMemoryResponse.MemorySummary> weekSummaries = weeks.stream()
-			.map(range -> createMemorySummary(range, user, partner, weekMemories, questionPictures, keywordRecords));
+			.map(range -> createMemorySummary(range, user, partner, weekMemories, questionPictures, keywordRecords))
+			.filter(Objects::nonNull);
 
 		Stream<MonthMemoryResponse.MemorySummary> customSummaries = customMemoryRepository.findAllByCoupleAndMonthKey(
 				couple, monthKey).stream()
@@ -142,7 +144,12 @@ public class MemoryService {
 			start, end);
 
 		if (myImageKeys.size() < 6 || partnerImageKeys.size() < 6) {
-			// 개수가 6보다 적으면 UNAVAILABLE
+			// 개수가 6보다 적고, 아직 지나지 않았으면 UNAVAILABLE
+			// 개수가 6보다 적고, 이미 지났으면, 안보여준다.
+			LocalDate now = LocalDate.now(ZoneId.of("Asia/Seoul"));
+			if (now.isBefore(start) || now.isAfter(end)) {
+				return null;
+			}
 			return memoryMapper.toUnavailableMemorySummary(end);
 		}
 		List<String> result = combineRandomImages(myImageKeys, partnerImageKeys, 6);
