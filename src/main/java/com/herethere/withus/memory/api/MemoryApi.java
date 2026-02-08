@@ -18,6 +18,7 @@ import com.herethere.withus.memory.dto.request.CustomMemoryCreateRequest;
 import com.herethere.withus.memory.dto.request.MemoryCreateRequest;
 import com.herethere.withus.memory.dto.response.MemoryDetailResponse;
 import com.herethere.withus.memory.dto.response.MonthMemoryResponse;
+import com.herethere.withus.memory.dto.response.WeekMemoryCreateResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -68,10 +69,11 @@ public interface MemoryApi {
 			- weekEndDate는 토요일이어야만 합니다.
 			- 이미 추억이 존재하는 주(weekEndDate)에 대해 요청하면 실패합니다.
 			- imageKey는 presigned-url 업로드 후 받은 최종 imageKey여야 합니다.
+			- 반환된 값으로 `GET /me/couple/memories/detail`을 호출할 수 있습니다. 
 			"""
 	)
 	@PostMapping("/me/couple/memories/{weekEndDate}")
-	ResponseEntity<ApiResponse<Void>> createMemory(
+	ResponseEntity<ApiResponse<WeekMemoryCreateResponse>> createMemory(
 		@Parameter(
 			description = "주 종료일 (토요일, ISO-8601 형식: YYYY-MM-DD)",
 			example = "2026-02-14"

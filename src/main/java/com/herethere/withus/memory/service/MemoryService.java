@@ -32,6 +32,7 @@ import com.herethere.withus.memory.dto.request.CustomMemoryCreateRequest;
 import com.herethere.withus.memory.dto.request.MemoryCreateRequest;
 import com.herethere.withus.memory.dto.response.MemoryDetailResponse;
 import com.herethere.withus.memory.dto.response.MonthMemoryResponse;
+import com.herethere.withus.memory.dto.response.WeekMemoryCreateResponse;
 import com.herethere.withus.memory.repository.CustomMemoryRepository;
 import com.herethere.withus.memory.repository.WeekMemoryRepository;
 import com.herethere.withus.question.domain.QuestionPicture;
@@ -86,7 +87,7 @@ public class MemoryService {
 	}
 
 	@Transactional
-	public void createMemory(MemoryCreateRequest request, LocalDate weekEndDate) {
+	public WeekMemoryCreateResponse createMemory(MemoryCreateRequest request, LocalDate weekEndDate) {
 		User user = appContextService.getInitializedAndActiveUser();
 		Couple couple = appContextService.getActiveCoupleRequired(user);
 
@@ -110,6 +111,8 @@ public class MemoryService {
 
 		WeekMemory weekMemory = WeekMemory.create(user, couple, imageKey, weekEndDate);
 		weekMemoryRepository.save(weekMemory);
+
+		return new WeekMemoryCreateResponse(MemoryType.WEEK_MEMORY, weekEndDate);
 	}
 
 	@Transactional

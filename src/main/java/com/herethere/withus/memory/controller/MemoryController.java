@@ -12,6 +12,7 @@ import com.herethere.withus.memory.dto.request.CustomMemoryCreateRequest;
 import com.herethere.withus.memory.dto.request.MemoryCreateRequest;
 import com.herethere.withus.memory.dto.response.MemoryDetailResponse;
 import com.herethere.withus.memory.dto.response.MonthMemoryResponse;
+import com.herethere.withus.memory.dto.response.WeekMemoryCreateResponse;
 import com.herethere.withus.memory.service.MemoryService;
 
 import lombok.RequiredArgsConstructor;
@@ -29,9 +30,9 @@ public class MemoryController implements MemoryApi {
 	}
 
 	@Override
-	public ResponseEntity<ApiResponse<Void>> createMemory(LocalDate weekEndDate, MemoryCreateRequest request) {
-		memoryService.createMemory(request, weekEndDate);
-		return ResponseEntity.ok(ApiResponse.success());
+	public ResponseEntity<ApiResponse<WeekMemoryCreateResponse>> createMemory(LocalDate weekEndDate, MemoryCreateRequest request) {
+		WeekMemoryCreateResponse response = memoryService.createMemory(request, weekEndDate);
+		return ResponseEntity.ok(ApiResponse.success(response));
 	}
 
 	@Override
