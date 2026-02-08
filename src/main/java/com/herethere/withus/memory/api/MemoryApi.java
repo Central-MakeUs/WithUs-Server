@@ -13,9 +13,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.herethere.withus.common.apiresponse.ApiResponse;
+import com.herethere.withus.memory.domain.MemoryType;
 import com.herethere.withus.memory.dto.request.CustomMemoryCreateRequest;
 import com.herethere.withus.memory.dto.request.MemoryCreateRequest;
+import com.herethere.withus.memory.dto.response.MemoryDetailResponse;
 import com.herethere.withus.memory.dto.response.MonthMemoryResponse;
+import com.herethere.withus.memory.dto.response.WeekMemoryCreateResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -66,10 +69,11 @@ public interface MemoryApi {
 			- weekEndDate는 토요일이어야만 합니다.
 			- 이미 추억이 존재하는 주(weekEndDate)에 대해 요청하면 실패합니다.
 			- imageKey는 presigned-url 업로드 후 받은 최종 imageKey여야 합니다.
+			- 반환된 값으로 `GET /me/couple/memories/detail`을 호출할 수 있습니다. 
 			"""
 	)
 	@PostMapping("/me/couple/memories/{weekEndDate}")
-	ResponseEntity<ApiResponse<Void>> createMemory(
+	ResponseEntity<ApiResponse<WeekMemoryCreateResponse>> createMemory(
 		@Parameter(
 			description = "주 종료일 (토요일, ISO-8601 형식: YYYY-MM-DD)",
 			example = "2026-02-14"
@@ -93,24 +97,31 @@ public interface MemoryApi {
 	ResponseEntity<ApiResponse<Void>> createCustomMemory(
 		@Valid @RequestBody CustomMemoryCreateRequest request
 	);
-	//
-	// @Operation(
-	// 	summary = "주 메모리 재생성",
-	// 	description = """
-	// 		이미 생성된 주 메모리를 새로운 이미지로 교체합니다.
-	// 		- 명시적으로 호출된 경우에만 재생성됩니다.
-	// 		"""
-	// )
-	// @PostMapping("/me/couple/memories/{weekEndDate}/regenerate")
-	// ResponseEntity<ApiResponse<Void>> regenerateMemory(
-	// 	@Parameter(
-	// 		description = "주 종료일 (토요일, ISO-8601)",
-	// 		example = "2026-02-14"
-	// 	)
-	// 	@PathVariable
-	// 	String weekEndDate,
-	//
-	// 	@Valid @RequestBody
-	// 	MemoryCreateRequest request
-	// );
+
+	@Operation(
+		summary = "추억 상세 조회",
+		description = """
+				커플의 추억 상세 정보를 조회합니다.
+				- memoryType의 종류에 따라 사용하는 식별자가 다릅니다. (memoryType은 필수입니다.)
+				- memoryType이 WEEK_MEMORY일 경우, weekEndDate가 식별자가 됩니다.
+				- memoryType이 CUSTOM_MEMORY일 경우, customMemoryId가 식별자가 됩니다.
+			"""
+	)
+	@GetMapping("/me/couple/memories/detail")
+	ResponseEntity<ApiResponse<MemoryDetailResponse>> getMemoryDetail(
+		@Parameter(description = "클릭한 사진의 타입 (WEEK_MEMORY, CUSTOM_MEMORY)", example = "WEEK_MEMORY")
+		@RequestParam
+		MemoryType memoryType,
+
+		@Parameter(
+			description = "WEEK_MEMORY일 때 사용하는, weekEndDate",
+			example = "2026-01-23"
+		)
+		@RequestParam(required = false)
+		LocalDate weekEndDate,
+
+		@Parameter(description = "CUSTOM_MEMORY일 때 사용하는, 사진의 고유 ID", example = "101")
+		@RequestParam(required = false)
+		Long targetId
+	);
 }

@@ -1,5 +1,7 @@
 package com.herethere.withus.memory.service;
 
+import static com.herethere.withus.common.exception.ErrorCode.*;
+
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -8,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -17,15 +20,19 @@ import org.springframework.transaction.annotation.Transactional;
 import com.herethere.withus.common.exception.BadRequestException;
 import com.herethere.withus.common.exception.ConflictException;
 import com.herethere.withus.common.exception.ErrorCode;
+import com.herethere.withus.common.exception.NotFoundException;
 import com.herethere.withus.couple.domain.Couple;
 import com.herethere.withus.keyword.domain.KeywordRecord;
 import com.herethere.withus.keyword.repository.KeywordRecordRepository;
 import com.herethere.withus.memory.domain.CustomMemory;
+import com.herethere.withus.memory.domain.MemoryType;
 import com.herethere.withus.memory.domain.WeekMemory;
 import com.herethere.withus.memory.dto.internal.WeekRange;
 import com.herethere.withus.memory.dto.request.CustomMemoryCreateRequest;
 import com.herethere.withus.memory.dto.request.MemoryCreateRequest;
+import com.herethere.withus.memory.dto.response.MemoryDetailResponse;
 import com.herethere.withus.memory.dto.response.MonthMemoryResponse;
+import com.herethere.withus.memory.dto.response.WeekMemoryCreateResponse;
 import com.herethere.withus.memory.repository.CustomMemoryRepository;
 import com.herethere.withus.memory.repository.WeekMemoryRepository;
 import com.herethere.withus.question.domain.QuestionPicture;
@@ -65,7 +72,8 @@ public class MemoryService {
 			endDate);
 
 		Stream<MonthMemoryResponse.MemorySummary> weekSummaries = weeks.stream()
-			.map(range -> createMemorySummary(range, user, partner, weekMemories, questionPictures, keywordRecords));
+			.map(range -> createMemorySummary(range, user, partner, weekMemories, questionPictures, keywordRecords))
+			.filter(Objects::nonNull);
 
 		Stream<MonthMemoryResponse.MemorySummary> customSummaries = customMemoryRepository.findAllByCoupleAndMonthKey(
 				couple, monthKey).stream()
@@ -79,7 +87,7 @@ public class MemoryService {
 	}
 
 	@Transactional
-	public void createMemory(MemoryCreateRequest request, LocalDate weekEndDate) {
+	public WeekMemoryCreateResponse createMemory(MemoryCreateRequest request, LocalDate weekEndDate) {
 		User user = appContextService.getInitializedAndActiveUser();
 		Couple couple = appContextService.getActiveCoupleRequired(user);
 
@@ -103,6 +111,8 @@ public class MemoryService {
 
 		WeekMemory weekMemory = WeekMemory.create(user, couple, imageKey, weekEndDate);
 		weekMemoryRepository.save(weekMemory);
+
+		return new WeekMemoryCreateResponse(MemoryType.WEEK_MEMORY, weekEndDate);
 	}
 
 	@Transactional
@@ -125,6 +135,28 @@ public class MemoryService {
 		customMemoryRepository.save(customMemory);
 	}
 
+	@Transactional(readOnly = true)
+	public MemoryDetailResponse getMemoryDetail(MemoryType memoryType, LocalDate weekEndDate, Long targetId) {
+		User user = appContextService.getInitializedAndActiveUser();
+		Couple couple = appContextService.getActiveCoupleRequired(user);
+
+		Optional<MemoryDetailResponse> response = Optional.empty();
+
+		if (memoryType == MemoryType.WEEK_MEMORY) {
+			response = weekMemoryRepository.findByCoupleAndWeekEndDate(couple, weekEndDate)
+				.map(m -> new MemoryDetailResponse(memoryMapper.generateTitle(m),
+					s3Service.createOriginImageUrl(m.getImageKey())
+				));
+		} else if (memoryType == MemoryType.CUSTOM_MEMORY) {
+			response = customMemoryRepository.findById(targetId)
+				.map(m -> new MemoryDetailResponse(m.getTitle(),
+					s3Service.createOriginImageUrl(m.getImageKey())
+				));
+		}
+
+		return response.orElseThrow(() -> new NotFoundException(MEMORY_NOT_FOUND));
+	}
+
 	private MonthMemoryResponse.MemorySummary createMemorySummary(WeekRange range, User user, User partner,
 		List<WeekMemory> weekMemories, List<QuestionPicture> questionPictures, List<KeywordRecord> keywordRecords) {
 		LocalDate start = range.startDate();
@@ -142,7 +174,12 @@ public class MemoryService {
 			start, end);
 
 		if (myImageKeys.size() < 6 || partnerImageKeys.size() < 6) {
-			// 개수가 6보다 적으면 UNAVAILABLE
+			// 개수가 6보다 적고, 아직 지나지 않았으면 UNAVAILABLE
+			// 개수가 6보다 적고, 이미 지났으면, 안보여준다.
+			LocalDate now = LocalDate.now(ZoneId.of("Asia/Seoul"));
+			if (now.isBefore(start) || now.isAfter(end)) {
+				return null;
+			}
 			return memoryMapper.toUnavailableMemorySummary(end);
 		}
 		List<String> result = combineRandomImages(myImageKeys, partnerImageKeys, 6);
