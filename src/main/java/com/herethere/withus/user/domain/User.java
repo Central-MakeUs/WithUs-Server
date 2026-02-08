@@ -73,6 +73,9 @@ public class User extends BaseEntity {
 		if (userStatus == UserStatus.DELETED) {
 			throw new ConflictException(ErrorCode.USER_ALREADY_DELETED);
 		}
+		nickname = "알 수 없음";
+		birthday = null;
+		profileImageKey = null;
 		userStatus = UserStatus.DELETED;
 	}
 }
