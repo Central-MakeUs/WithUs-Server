@@ -34,6 +34,7 @@ public class SecurityConfig {
 			)
 			// 2. 인증/인가 설정
 			.authorizeHttpRequests(auth -> auth
+				.requestMatchers("/api/auth/logout").authenticated()
 				.requestMatchers("/api/auth/**").permitAll()
 				.requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
 				.anyRequest().authenticated()
