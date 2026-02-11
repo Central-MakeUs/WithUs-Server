@@ -23,6 +23,10 @@ public record UserUpdateResponse(
 		example = "https://s3.com/profiles/1/uuid_image.jpg",
 		nullable = true
 	)
-	String profileImageUrl
+	String profileImageUrl,
+
+	@Schema(description = "수정된 생일", example = "2000-01-02")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+	LocalDate joinDate
 ) {
 }

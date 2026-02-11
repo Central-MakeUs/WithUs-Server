@@ -3,6 +3,8 @@ package com.herethere.withus.user.service;
 import static com.herethere.withus.common.exception.ErrorCode.*;
 
 import java.security.SecureRandom;
+import java.time.LocalDate;
+import java.time.ZoneId;
 
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -52,16 +54,24 @@ public class UserService {
 		User user = appContextService.getInitializedAndActiveUser();
 		String newImageKey = s3Service.processImagePublish(userUpdateRequest.imageKey(), user.getId(),
 			ImageType.PROFILE);
+		LocalDate joinDate = user.getCreatedAt()
+			.atZone(ZoneId.of("UTC"))
+			.withZoneSameInstant(ZoneId.of("Asia/Seoul"))
+			.toLocalDate();
 		user.updateProfile(userUpdateRequest.nickname(), userUpdateRequest.birthday(), newImageKey);
 		return new UserUpdateResponse(user.getId(), user.getNickname(), user.getBirthday(),
-			s3Service.createOriginImageUrl(newImageKey));
+			s3Service.createOriginImageUrl(newImageKey), joinDate);
 	}
 
 	@Transactional(readOnly = true)
 	public UserUpdateResponse getUserProfile() {
 		User user = appContextService.getInitializedAndActiveUser();
+		LocalDate joinDate = user.getCreatedAt()
+			.atZone(ZoneId.of("UTC"))
+			.withZoneSameInstant(ZoneId.of("Asia/Seoul"))
+			.toLocalDate();
 		return new UserUpdateResponse(user.getId(), user.getNickname(), user.getBirthday(),
-			s3Service.createOriginImageUrl(user.getProfileImageKey()));
+			s3Service.createOriginImageUrl(user.getProfileImageKey()), joinDate);
 	}
 
 	@Transactional
@@ -101,7 +111,8 @@ public class UserService {
 		// TODO: 캐시를 사용한 찌르기 스팸 방지 로직 추가
 
 		eventPublisher.publishEvent(CoupleNotificationEvent.toPartner(couple.getId(), user.getId(), partner.getId(),
-			NotificationType.POKE));	}
+			NotificationType.POKE));
+	}
 
 	@Transactional
 	public UserOnboardingResponse onboardUser(UserOnboardingRequest request) {
