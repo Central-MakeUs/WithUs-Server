@@ -26,6 +26,13 @@ public record UserUpdateRequest(
 		example = "profiles/1/uuid_filename.jpg",
 		nullable = true
 	)
-	String imageKey
+	String imageKey,
+
+	@Schema(
+		description = "프로필 이미지 갱신 여부",
+		example = "true"
+	)
+	@NotNull(message = "프로필 사진 갱신 여부는 필수 항목입니다.")
+	boolean isImageUpdated
 ) {
 }

@@ -31,8 +31,9 @@ public interface UserApi {
 		description = """
 			유저의 프로필을 수정합니다. (닉네임, 생일, 프로필사진)
 			- `GET /me/user/profile`을 통해 현재 유저의 프로필을 받고, 입력칸을 채워서 유저에게 보여줘야 합니다.
-			- 입력받은 값으로 전부 덮어씌웁니다.(PUT)
-			- 만약 유저가 프로필 사진을 선택하지 않았다면, null로 관리합니다.
+			- 기본적으로는 입력받은 값으로 전부 덮어씌웁니다.(PUT)
+			- 만약 유저가 프로필 사진을 변경하지 않았다면, isImageUpdated는 false이고, imageKey는 null입니다.
+			- 만약 유저가 프로필 사진을 없애는 것으로 변경했다면, isImageUpdated는 true이고, imageKey는 null입니다.
 			- 추후 응답에서도 profileImageUrl 이 null 이라면 앱에 존재하는 기본 이미지로 대체합니다.
 			"""
 	)

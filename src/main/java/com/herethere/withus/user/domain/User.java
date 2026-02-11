@@ -1,6 +1,7 @@
 package com.herethere.withus.user.domain;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 
 import com.herethere.withus.auth.domain.OAuthProviderType;
 import com.herethere.withus.common.baseentity.BaseEntity;
@@ -62,6 +63,11 @@ public class User extends BaseEntity {
 		this.profileImageKey = profileImageKey;
 	}
 
+	public void updateProfile(String nickname, LocalDate birthday) {
+		this.nickname = nickname;
+		this.birthday = birthday;
+	}
+
 	public void completeOnboarding(String nickname, LocalDate birthday, String profileImageKey) {
 		this.nickname = nickname;
 		this.birthday = birthday;
@@ -77,5 +83,12 @@ public class User extends BaseEntity {
 		birthday = null;
 		profileImageKey = null;
 		userStatus = UserStatus.DELETED;
+	}
+
+	public LocalDate getSeoulJoinDate() {
+		return getCreatedAt()
+			.atZone(ZoneId.of("UTC"))
+			.withZoneSameInstant(ZoneId.of("Asia/Seoul"))
+			.toLocalDate();
 	}
 }

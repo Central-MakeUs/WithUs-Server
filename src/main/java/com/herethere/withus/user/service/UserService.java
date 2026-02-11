@@ -3,8 +3,6 @@ package com.herethere.withus.user.service;
 import static com.herethere.withus.common.exception.ErrorCode.*;
 
 import java.security.SecureRandom;
-import java.time.LocalDate;
-import java.time.ZoneId;
 
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -52,26 +50,23 @@ public class UserService {
 	@Transactional
 	public UserUpdateResponse updateUserProfile(UserUpdateRequest userUpdateRequest) {
 		User user = appContextService.getInitializedAndActiveUser();
-		String newImageKey = s3Service.processImagePublish(userUpdateRequest.imageKey(), user.getId(),
-			ImageType.PROFILE);
-		LocalDate joinDate = user.getCreatedAt()
-			.atZone(ZoneId.of("UTC"))
-			.withZoneSameInstant(ZoneId.of("Asia/Seoul"))
-			.toLocalDate();
-		user.updateProfile(userUpdateRequest.nickname(), userUpdateRequest.birthday(), newImageKey);
+		if (userUpdateRequest.isImageUpdated()) {
+			String newImageKey = s3Service.processImagePublish(userUpdateRequest.imageKey(), user.getId(),
+				ImageType.PROFILE);
+
+			user.updateProfile(userUpdateRequest.nickname(), userUpdateRequest.birthday(), newImageKey);
+		} else {
+			user.updateProfile(userUpdateRequest.nickname(), userUpdateRequest.birthday());
+		}
 		return new UserUpdateResponse(user.getId(), user.getNickname(), user.getBirthday(),
-			s3Service.createOriginImageUrl(newImageKey), joinDate);
+			user.getProfileImageKey(), user.getSeoulJoinDate());
 	}
 
 	@Transactional(readOnly = true)
 	public UserUpdateResponse getUserProfile() {
 		User user = appContextService.getInitializedAndActiveUser();
-		LocalDate joinDate = user.getCreatedAt()
-			.atZone(ZoneId.of("UTC"))
-			.withZoneSameInstant(ZoneId.of("Asia/Seoul"))
-			.toLocalDate();
 		return new UserUpdateResponse(user.getId(), user.getNickname(), user.getBirthday(),
-			s3Service.createOriginImageUrl(user.getProfileImageKey()), joinDate);
+			s3Service.createOriginImageUrl(user.getProfileImageKey()), user.getSeoulJoinDate());
 	}
 
 	@Transactional
