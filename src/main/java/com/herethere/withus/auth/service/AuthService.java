@@ -1,5 +1,8 @@
 package com.herethere.withus.auth.service;
 
+import java.util.concurrent.TimeUnit;
+
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import com.herethere.withus.auth.domain.AppleRefreshToken;
@@ -33,6 +36,7 @@ public class AuthService {
 	private final UserRepository userRepository;
 	private final AppleRefreshTokenRepository appleRefreshTokenRepository;
 	private final AppContextService appContextService;
+	private final RedisTemplate<String, String> redisTemplate;
 	private final JwtUtil jwtUtil;
 
 	@Transactional
@@ -50,31 +54,27 @@ public class AuthService {
 					.isInitialized(false)
 					.userStatus(UserStatus.ACTIVE)
 					.build()));
-		// refreshToken 저장
-		if (userInfo.refreshToken() != null) {
-			// 1. 기존 토큰 존재 여부 확인 (Optional 활용)
-			AppleRefreshToken appleToken = appleRefreshTokenRepository.findByUser(user)
-				.map(existingToken -> {
-					// 2. 존재하면 리프레시 토큰 값만 업데이트
-					existingToken.updateToken(userInfo.refreshToken());
-					return existingToken;
-				})
-				.orElseGet(() -> {
-					// 3. 존재하지 않으면 새로 빌드하여 생성
-					return AppleRefreshToken.builder()
-						.user(user)
-						.refreshToken(userInfo.refreshToken())
-						.build();
-				});
 
-			appleRefreshTokenRepository.save(appleToken);
-		}
+		// appleRefreshToken 저장
+		saveAppleRefreshToken(userInfo, user);
+
 		// FCM 토큰 저장
 		fcmTokenManager.saveOrUpdateToken(user, request.fcmToken());
 
 		JwtPayload jwtPayload = new JwtPayload(user.getId(), user.getNickname());
 		String jwt = jwtUtil.createToken(jwtPayload);
-		return new LoginResponse(jwt, onboardingManager.getStatus(user));
+
+		// Refresh Token 생성 (긴 유효기간)
+		String refreshToken = jwtUtil.createRefreshToken(jwtPayload);
+
+		// Redis 저장 (Key: 유저ID, Value: 토큰)
+		redisTemplate.opsForValue().set(
+			"RT:" + user.getId(),
+			refreshToken,
+			28, TimeUnit.DAYS
+		);
+
+		return new LoginResponse(jwt, refreshToken, onboardingManager.getStatus(user));
 	}
 
 	@Transactional
@@ -94,12 +94,34 @@ public class AuthService {
 
 		JwtPayload jwtPayload = new JwtPayload(user.getId(), user.getNickname());
 		String jwt = jwtUtil.createToken(jwtPayload);
-		return new LoginResponse(jwt, onboardingManager.getStatus(user));
+		return new LoginResponse(jwt, null, onboardingManager.getStatus(user));
 	}
 
 	@Transactional
 	public void logout(LogoutRequest request) {
 		User user = appContextService.getCurrentUser();
 		fcmTokenManager.deleteByUserAndToken(user, request.fcmToken());
+	}
+
+	private void saveAppleRefreshToken(OAuthUserInfo userInfo, User user) {
+		// apple refreshToken 저장
+		if (userInfo.refreshToken() != null) {
+			// 1. 기존 토큰 존재 여부 확인 (Optional 활용)
+			AppleRefreshToken appleToken = appleRefreshTokenRepository.findByUser(user)
+				.map(existingToken -> {
+					// 2. 존재하면 리프레시 토큰 값만 업데이트
+					existingToken.updateToken(userInfo.refreshToken());
+					return existingToken;
+				})
+				.orElseGet(() -> {
+					// 3. 존재하지 않으면 새로 빌드하여 생성
+					return AppleRefreshToken.builder()
+						.user(user)
+						.refreshToken(userInfo.refreshToken())
+						.build();
+				});
+
+			appleRefreshTokenRepository.save(appleToken);
+		}
 	}
 }

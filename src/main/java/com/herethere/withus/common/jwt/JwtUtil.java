@@ -21,6 +21,7 @@ import io.jsonwebtoken.security.Keys;
 @Component
 public class JwtUtil {
 	private static final long ACCESS_TOKEN_EXPIRE = 1000L * 60 * 60 * 12; // 12시간
+	private static final long REFRESH_TOKEN_EXPIRE = 28 * 24 * 60 * 60 * 1000L; // 28일
 	private static final String CLAIM_NICKNAME = "nickname";
 	private final String secretKey;
 	private final Key key;
@@ -58,5 +59,19 @@ public class JwtUtil {
 		} catch (JwtException | IllegalArgumentException e) {
 			throw new JwtValidationException(INVALID_JWT_TOKEN);
 		}
+	}
+
+	public String createRefreshToken(JwtPayload payload) {
+		Claims claims = Jwts.claims().setSubject(payload.userId().toString());
+
+		Date now = new Date();
+		Date validity = new Date(now.getTime() + REFRESH_TOKEN_EXPIRE);
+
+		return Jwts.builder()
+			.setClaims(claims)
+			.setIssuedAt(now)
+			.setExpiration(validity)
+			.signWith(SignatureAlgorithm.HS256, secretKey)
+			.compact();
 	}
 }

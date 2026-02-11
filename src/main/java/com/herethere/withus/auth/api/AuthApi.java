@@ -29,6 +29,7 @@ public interface AuthApi {
 		description = """
 			소셜 로그인을 진행합니다.
 			응답의 onboardingStatus를 확인하여 다음 화면을 결정합니다.
+			- 1시간 유효한 AccessToken과 28일 유효한 refreshToken을 응답합니다.
 			"""
 	)
 	@PostMapping("/login/{provider}")

@@ -7,6 +7,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public record LoginResponse(
 	@Schema(description = "액세스 토큰 (만료시간 1시간)")
 	String jwt,
+	@Schema(description = "리프레시 토큰 (만료시간 28일)")
+	String refreshToken,
 	@Schema(
 		description = """
 			현재 사용자의 온보딩 상태. 이 값에 따라 진입 화면을 결정합니다.
