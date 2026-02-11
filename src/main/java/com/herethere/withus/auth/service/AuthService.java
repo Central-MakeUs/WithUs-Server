@@ -10,10 +10,14 @@ import com.herethere.withus.auth.domain.OAuthProviderType;
 import com.herethere.withus.auth.dto.internal.OAuthUserInfo;
 import com.herethere.withus.auth.dto.request.LoginRequest;
 import com.herethere.withus.auth.dto.request.LogoutRequest;
+import com.herethere.withus.auth.dto.request.RefreshTokenRequest;
 import com.herethere.withus.auth.dto.response.LoginResponse;
+import com.herethere.withus.auth.dto.response.RefreshTokenResponse;
 import com.herethere.withus.auth.oauthclient.OAuthClient;
 import com.herethere.withus.auth.oauthclient.OAuthClientFactory;
 import com.herethere.withus.auth.repository.AppleRefreshTokenRepository;
+import com.herethere.withus.common.exception.AuthException;
+import com.herethere.withus.common.exception.ErrorCode;
 import com.herethere.withus.common.jwt.JwtUtil;
 import com.herethere.withus.common.jwt.dto.JwtPayload;
 import com.herethere.withus.couple.service.OnboardingManager;
@@ -108,6 +112,36 @@ public class AuthService {
 		redisTemplate.delete(redisKey);
 
 		log.info("User {} logged out, Refresh Token deleted from Redis", user.getId());
+	}
+
+	@Transactional
+	public RefreshTokenResponse refresh(RefreshTokenRequest request) {
+		String refreshToken = request.refreshToken();
+
+		// 2. 토큰에서 유저 식별자 추출
+		JwtPayload payload = jwtUtil.validateToken(refreshToken);
+		String redisKey = "RT:" + payload.userId();
+
+		// 3. Redis에서 해당 유저의 Refresh Token 조회
+		String savedToken = redisTemplate.opsForValue().get(redisKey);
+
+		// 4. 저장된 토큰이 없거나, 클라이언트가 보낸 토큰과 일치하지 않으면 예외 발생
+		if (savedToken == null || !savedToken.equals(refreshToken)) {
+			throw new AuthException(ErrorCode.REFRESH_TOKEN_NOT_FOUND);
+		}
+
+		// 5. 새로운 Access Token 및 Refresh Token 생성 (Rotation 방식)
+		String newAccessToken = jwtUtil.createToken(payload);
+		String newRefreshToken = jwtUtil.createRefreshToken(payload);
+
+		// 6. Redis 토큰 업데이트 (기존 토큰 덮어쓰기 및 만료시간 갱신)
+		redisTemplate.opsForValue().set(
+			redisKey,
+			newRefreshToken,
+			28, TimeUnit.DAYS
+		);
+
+		return new RefreshTokenResponse(newAccessToken, newRefreshToken);
 	}
 
 	private void saveAppleRefreshToken(OAuthUserInfo userInfo, User user) {

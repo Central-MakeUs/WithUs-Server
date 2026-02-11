@@ -40,7 +40,8 @@ public class AuthController implements AuthApi {
 
 	@Override
 	public ResponseEntity<ApiResponse<RefreshTokenResponse>> refresh(RefreshTokenRequest request) {
-		return null;
+		RefreshTokenResponse response = authService.refresh(request);
+		return ResponseEntity.ok(ApiResponse.success(response));
 	}
 
 	@Override
