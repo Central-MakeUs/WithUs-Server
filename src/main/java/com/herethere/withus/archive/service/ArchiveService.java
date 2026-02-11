@@ -127,7 +127,7 @@ public class ArchiveService {
 			ArchiveDateResponse.ImageInfo partnerInfo = new ArchiveDateResponse.ImageInfo(partner.getId(),
 				partner.getNickname(), partnerProfileUrl, partnerArchiveImageUrl, v.getPartnerAnsweredAt());
 			boolean selected = Objects.equals(v.getSourceId(), targetId)
-				&& Objects.equals(ArchiveType.valueOf(v.getArchiveType()), targetType);
+				&& Objects.equals(ArchiveType.from(v.getArchiveType()), targetType);
 			return new ArchiveDateResponse.ArchiveInfo(ArchiveType.from(v.getArchiveType()), v.getSourceId(),
 				v.getContent(), myInfo, partnerInfo, selected);
 		}).toList();
