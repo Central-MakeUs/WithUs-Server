@@ -40,7 +40,8 @@ public class AuthService {
 		OAuthClient oauthClient = oauthClientFactory.getOAuthClient(provider);
 		OAuthUserInfo userInfo = oauthClient.getUserInfo(request.oauthToken(), request.authorizationCode());
 
-		User user = userRepository.findByProviderAndProviderId(provider, userInfo.oauthUserId())
+		User user = userRepository.findByProviderAndProviderIdAndUserStatus(provider, userInfo.oauthUserId(),
+				UserStatus.ACTIVE)
 			.orElseGet(() -> userRepository.save(
 				User.builder()
 					.provider(provider)
@@ -78,7 +79,8 @@ public class AuthService {
 
 	@Transactional
 	public LoginResponse generateTempToken(String id, String fcmToken) {
-		User user = userRepository.findByProviderAndProviderId(OAuthProviderType.KAKAO, id)
+		User user = userRepository.findByProviderAndProviderIdAndUserStatus(OAuthProviderType.KAKAO, id,
+				UserStatus.ACTIVE)
 			.orElseGet(() -> userRepository.save(
 				User.builder()
 					.provider(OAuthProviderType.KAKAO)
