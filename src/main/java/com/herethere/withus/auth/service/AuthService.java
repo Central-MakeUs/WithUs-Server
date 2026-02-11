@@ -85,22 +85,9 @@ public class AuthService {
 
 	@Transactional
 	public LoginResponse generateTempToken(String id, String fcmToken) {
-		User user = userRepository.findByProviderAndProviderIdAndUserStatus(OAuthProviderType.KAKAO, id,
-				UserStatus.ACTIVE)
-			.orElseGet(() -> userRepository.save(
-				User.builder()
-					.provider(OAuthProviderType.KAKAO)
-					.providerId(id)
-					.nickname("tempUser")
-					.userStatus(UserStatus.ACTIVE)
-					.isInitialized(false)
-					.build()));
-
-		fcmTokenManager.saveOrUpdateToken(user, fcmToken);
-
-		JwtPayload jwtPayload = new JwtPayload(user.getId(), user.getNickname());
+		JwtPayload jwtPayload = new JwtPayload(Long.valueOf(id), "name");
 		String jwt = jwtUtil.createToken(jwtPayload);
-		return new LoginResponse(jwt, null, onboardingManager.getStatus(user));
+		return new LoginResponse(jwt, null, null);
 	}
 
 	@Transactional
