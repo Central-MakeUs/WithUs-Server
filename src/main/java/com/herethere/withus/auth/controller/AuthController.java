@@ -8,7 +8,9 @@ import com.herethere.withus.auth.api.AuthApi;
 import com.herethere.withus.auth.domain.OAuthProviderType;
 import com.herethere.withus.auth.dto.request.LoginRequest;
 import com.herethere.withus.auth.dto.request.LogoutRequest;
+import com.herethere.withus.auth.dto.request.RefreshTokenRequest;
 import com.herethere.withus.auth.dto.response.LoginResponse;
+import com.herethere.withus.auth.dto.response.RefreshTokenResponse;
 import com.herethere.withus.auth.service.AuthService;
 import com.herethere.withus.common.apiresponse.ApiResponse;
 import com.herethere.withus.notification.service.FcmSendService;
@@ -34,6 +36,11 @@ public class AuthController implements AuthApi {
 	public ResponseEntity<ApiResponse<Void>> logout(LogoutRequest request) {
 		authService.logout(request);
 		return ResponseEntity.ok(ApiResponse.success());
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<RefreshTokenResponse>> refresh(RefreshTokenRequest request) {
+		return null;
 	}
 
 	@Override

@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.herethere.withus.auth.dto.request.LoginRequest;
 import com.herethere.withus.auth.dto.request.LogoutRequest;
+import com.herethere.withus.auth.dto.request.RefreshTokenRequest;
 import com.herethere.withus.auth.dto.response.LoginResponse;
+import com.herethere.withus.auth.dto.response.RefreshTokenResponse;
 import com.herethere.withus.common.apiresponse.ApiResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -48,6 +50,19 @@ public interface AuthApi {
 			""")
 	@PostMapping("/logout")
 	ResponseEntity<ApiResponse<Void>> logout(@Valid @RequestBody LogoutRequest request);
+
+	@Operation(
+		summary = "토큰 재발급 API",
+		description = """
+			AccessToken이 만료되었을 때, RefreshToken을 사용하여 새로운 토큰을 발급받습니다.
+			- 요청 시 Body에 refreshToken을 담아 보냅니다.
+			- Redis에 저장된 토큰과 대조하여 유효성을 확인합니다.
+			- 새로운 AccessToken과 새로운 RefreshToken을 응답합니다. (Refresh Token Rotation)
+			"""
+	)
+	@PostMapping("/refresh")
+	ResponseEntity<ApiResponse<RefreshTokenResponse>> refresh(
+		@Valid @RequestBody RefreshTokenRequest request);
 
 	@Operation(summary = "임시 토큰 발급", description = "temp 유저에 대한 임시 토큰을 발급합니다.")
 	@PostMapping("/temp/token/{id}")
