@@ -36,4 +36,8 @@ public class AppleRefreshToken extends BaseEntity {
 
 	@Column(name = "refresh_token")
 	private String refreshToken;
+
+	public void updateToken(String token) {
+		this.refreshToken = token;
+	}
 }

@@ -51,8 +51,22 @@ public class AuthService {
 					.build()));
 		// refreshToken 저장
 		if (userInfo.refreshToken() != null) {
-			appleRefreshTokenRepository.save(
-				AppleRefreshToken.builder().user(user).refreshToken(userInfo.refreshToken()).build());
+			// 1. 기존 토큰 존재 여부 확인 (Optional 활용)
+			AppleRefreshToken appleToken = appleRefreshTokenRepository.findByUser(user)
+				.map(existingToken -> {
+					// 2. 존재하면 리프레시 토큰 값만 업데이트
+					existingToken.updateToken(userInfo.refreshToken());
+					return existingToken;
+				})
+				.orElseGet(() -> {
+					// 3. 존재하지 않으면 새로 빌드하여 생성
+					return AppleRefreshToken.builder()
+						.user(user)
+						.refreshToken(userInfo.refreshToken())
+						.build();
+				});
+
+			appleRefreshTokenRepository.save(appleToken);
 		}
 		// FCM 토큰 저장
 		fcmTokenManager.saveOrUpdateToken(user, request.fcmToken());
