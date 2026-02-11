@@ -44,6 +44,7 @@ public interface AuthApi {
 		description = """
 			로그아웃 할 때 사용합니다.
 			- fcmToken을 받아, 해당 토큰을 무효화합니다.
+			- refreshToken을 무효화합니다.
 			""")
 	@PostMapping("/logout")
 	ResponseEntity<ApiResponse<Void>> logout(@Valid @RequestBody LogoutRequest request);

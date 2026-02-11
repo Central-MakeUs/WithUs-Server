@@ -25,9 +25,11 @@ import com.herethere.withus.user.service.AppContextService;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthService {
 	private static final String PREFIX_GUEST = "GUEST_";
 	private final OAuthClientFactory oauthClientFactory;
@@ -101,6 +103,11 @@ public class AuthService {
 	public void logout(LogoutRequest request) {
 		User user = appContextService.getCurrentUser();
 		fcmTokenManager.deleteByUserAndToken(user, request.fcmToken());
+
+		String redisKey = "RT:" + user.getId();
+		redisTemplate.delete(redisKey);
+
+		log.info("User {} logged out, Refresh Token deleted from Redis", user.getId());
 	}
 
 	private void saveAppleRefreshToken(OAuthUserInfo userInfo, User user) {
