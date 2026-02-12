@@ -2,6 +2,8 @@ package com.herethere.withus.couple.service;
 
 import static com.herethere.withus.common.exception.ErrorCode.*;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -26,6 +28,10 @@ import com.herethere.withus.couple.repository.CoupleRepository;
 import com.herethere.withus.keyword.domain.Keyword;
 import com.herethere.withus.keyword.repository.KeywordRepository;
 import com.herethere.withus.keyword.service.KeywordService;
+import com.herethere.withus.question.domain.CoupleQuestion;
+import com.herethere.withus.question.domain.Question;
+import com.herethere.withus.question.repository.CoupleQuestionRepository;
+import com.herethere.withus.question.service.QuestionService;
 import com.herethere.withus.s3.service.S3Service;
 import com.herethere.withus.user.domain.InviteCode;
 import com.herethere.withus.user.domain.User;
@@ -40,7 +46,9 @@ import lombok.RequiredArgsConstructor;
 public class CoupleService {
 	private final AppContextService appContextService;
 	private final KeywordService keywordService;
+	private final QuestionService questionService;
 	private final CoupleRepository coupleRepository;
+	private final CoupleQuestionRepository coupleQuestionRepository;
 	private final InviteCodeRepository inviteCodeRepository;
 	private final UserRepository userRepository;
 	private final KeywordRepository keywordRepository;
@@ -82,7 +90,13 @@ public class CoupleService {
 			throw new ConflictException(COUPLE_ALREADY_EXISTS);
 		}
 
+		LocalDate now = LocalDate.now(ZoneId.of("Asia/Seoul"));
+
 		Couple couple = coupleRepository.save(Couple.create(sender, receiver));
+		Long questionNumber = couple.updateToNextQuestion(now);
+		Question question = questionService.getQuestion(questionNumber);
+		CoupleQuestion coupleQuestion = CoupleQuestion.builder().couple(couple).question(question).date(now).build();
+		coupleQuestionRepository.save(coupleQuestion);
 
 		inviteCodeRepository.delete(inviteCode);
 		inviteCodeRepository.deleteByUser(receiver);
