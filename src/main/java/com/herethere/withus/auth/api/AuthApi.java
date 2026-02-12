@@ -55,12 +55,12 @@ public interface AuthApi {
 	@Operation(
 		summary = "토큰 재발급 API",
 		description = """
-			AccessToken이 만료되었을 때, RefreshToken을 사용하여 새로운 토큰을 발급받습니다.
+			응답이 401이고, error의 code가 EXPIRED_JWT_TOKEN일 경우, 즉 AccessToken이 만료되었을 때, RefreshToken을 사용하여 새로운 토큰을 발급받습니다.
 			- 요청 시 Body에 refreshToken을 담아 보냅니다.
 			- Redis에 저장된 토큰과 대조하여 유효성을 확인합니다.
 			- 새로운 AccessToken과 새로운 RefreshToken을 응답합니다. (Refresh Token Rotation)
 			- 한 번 사용한 RefreshToken은 더 이상 사용할 수 없으므로 새로운 RefreshToken만을 사용해야 합니다.
-			- 응답이 401이고, error의 code가 EXPIRED_JWT_TOKEN일 경우, refresh api를 통해 accessToken과 refreshToken을 다시 받아야합니다.
+			- 만약 해당 API의 응답이 401이고 error의 code가 EXPIRED_JWT_TOKEN 혹은 REFRESH_TOKEN_NOT_FOUND 인 경우, 사용할 수 없는 refreshToken이므로 소셜로그인을 다시 진행해서 새로운 토큰을 발급받아야합니다.
 			"""
 	)
 	@PostMapping("/refresh")
