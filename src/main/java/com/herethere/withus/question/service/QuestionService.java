@@ -8,7 +8,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.context.ApplicationEventPublisher;
@@ -109,15 +108,8 @@ public class QuestionService {
 		Couple couple = appContextService.getActiveCoupleRequired(me);
 		User partner = couple.getPartner(me);
 
-		Optional<CoupleQuestion> latestCoupleQuestion = coupleQuestionRepository.findTopByCoupleOrderByCreatedAtDesc(
-			couple);
-
-		// 만약 처음이라 CoupleQuestion이 없으면 대기 문구 반환
-		if (latestCoupleQuestion.isEmpty()) {
-			return new TodayQuestionResponse(null, generateWaitingResponse(), null, null);
-		}
-
-		CoupleQuestion coupleQuestion = latestCoupleQuestion.get();
+		CoupleQuestion coupleQuestion = coupleQuestionRepository.findTopByCoupleOrderByCreatedAtDesc(
+			couple).orElseThrow(() -> new NotFoundException(COUPLE_QUESTION_NOT_FOUND));
 
 		QuestionPicture myPicture = questionPictureRepository.findByUserAndCoupleQuestion(me, coupleQuestion)
 			.orElse(null);
@@ -138,10 +130,7 @@ public class QuestionService {
 			.orElseThrow(() -> new NotFoundException(COUPLE_NOT_FOUND));
 
 		long questionNumber = couple.updateToNextQuestion(date);
-		Question question = questionMap.get(questionNumber);
-		if (question == null) {
-			throw new NotFoundException(QUESTION_NOT_FOUND);
-		}
+		Question question = getQuestion(questionNumber);
 
 		CoupleQuestion coupleQuestion = CoupleQuestion.builder().couple(couple).question(question).date(date).build();
 
@@ -149,6 +138,14 @@ public class QuestionService {
 
 		eventPublisher.publishEvent(
 			CoupleNotificationEvent.toBoth(couple.getId(), NotificationType.QUESTION_GENERATED));
+	}
+
+	public Question getQuestion(Long questionNumber) {
+		Question question = cachedQuestions.get(questionNumber);
+		if (question == null) {
+			throw new NotFoundException(QUESTION_NOT_FOUND);
+		}
+		return question;
 	}
 
 	private TodayQuestionResponse.ImageInfo getImageInfo(User user, QuestionPicture questionPicture) {

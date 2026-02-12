@@ -28,7 +28,6 @@ public interface QuestionApi {
 			오늘 우리 커플에게 배정된 질문과 답변을 조회합니다.
 			- 별도의 ID 파라미터 없이, 현재 시간과 커플 정보를 기준으로 서버가 질문을 찾아 반환합니다. (가장 최신의 것을 반환)
 			- 응답의 myInfo / partnerInfo를 통해 사진을 확인할 수 있습니다.
-			- 아직 첫 질문이 생성되지 않았으면 coupleQuestionId 가 null이고, question에 몇 시간 후 질문이 생성되는지 보여줍니다. 
 			- 사진을 올리지 않으면 Info의 questionImageUrl과 answeredAt이 null입니다.
 			- Info의 profileImageUrl이 null이면 앱의 기본이미지로 대체합니다.
 			- 응답 바디에 포함된 coupleQuestionId를 사용하여 `POST /couple/questions/{coupleQuestionId}/image`로 사진을 업로드합니다.
