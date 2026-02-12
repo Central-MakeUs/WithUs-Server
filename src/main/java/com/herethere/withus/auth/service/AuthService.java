@@ -84,7 +84,7 @@ public class AuthService {
 	}
 
 	@Transactional
-	public LoginResponse generateTempToken(Long id) {
+	public LoginResponse generateTempToken2(Long id) {
 		JwtPayload jwtPayload = new JwtPayload(id, "name");
 		String jwt = jwtUtil.createToken(jwtPayload);
 		return new LoginResponse(jwt, null, null);
@@ -129,6 +129,26 @@ public class AuthService {
 		);
 
 		return new RefreshTokenResponse(newAccessToken, newRefreshToken);
+	}
+
+	@Transactional
+	public LoginResponse generateTempToken(String id, String fcmToken) {
+		User user = userRepository.findByProviderAndProviderIdAndUserStatus(OAuthProviderType.KAKAO, id,
+				UserStatus.ACTIVE)
+			.orElseGet(() -> userRepository.save(
+				User.builder()
+					.provider(OAuthProviderType.KAKAO)
+					.providerId(id)
+					.nickname("tempUser")
+					.userStatus(UserStatus.ACTIVE)
+					.isInitialized(false)
+					.build()));
+
+		fcmTokenManager.saveOrUpdateToken(user, fcmToken);
+
+		JwtPayload jwtPayload = new JwtPayload(user.getId(), user.getNickname());
+		String jwt = jwtUtil.createToken(jwtPayload);
+		return new LoginResponse(jwt, null, onboardingManager.getStatus(user));
 	}
 
 	private void saveAppleRefreshToken(OAuthUserInfo userInfo, User user) {

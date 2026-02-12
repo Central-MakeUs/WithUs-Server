@@ -67,9 +67,14 @@ public interface AuthApi {
 	ResponseEntity<ApiResponse<RefreshTokenResponse>> refresh(
 		@Valid @RequestBody RefreshTokenRequest request);
 
-	@Operation(summary = "임시 토큰 발급", description = "해당 id를 가진 유저에 대한 임시 토큰을 발급합니다.")
+	@Operation(summary = "임시 토큰 발급2", description = "해당 id를 가진 유저에 대한 임시 토큰을 발급합니다.")
+	@PostMapping("/temp/token2/{id}")
+	ResponseEntity<ApiResponse<LoginResponse>> generateTempToken2(@PathVariable Long id);
+
+	@Operation(summary = "임시 토큰 발급", description = "temp 유저에 대한 임시 토큰을 발급합니다.")
 	@PostMapping("/temp/token/{id}")
-	ResponseEntity<ApiResponse<LoginResponse>> generateTempToken(@PathVariable Long id);
+	ResponseEntity<ApiResponse<LoginResponse>> generateTempToken(@PathVariable String id,
+		@RequestParam String fcmToken);
 
 	@Operation(summary = "알림 기능 확인 api", description = "알림 기능 체크용 입니다.")
 	@PostMapping("/temp/notification")
