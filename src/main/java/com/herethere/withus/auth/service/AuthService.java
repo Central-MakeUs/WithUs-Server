@@ -84,8 +84,8 @@ public class AuthService {
 	}
 
 	@Transactional
-	public LoginResponse generateTempToken(String id, String fcmToken) {
-		JwtPayload jwtPayload = new JwtPayload(Long.valueOf(id), "name");
+	public LoginResponse generateTempToken(Long id) {
+		JwtPayload jwtPayload = new JwtPayload(id, "name");
 		String jwt = jwtUtil.createToken(jwtPayload);
 		return new LoginResponse(jwt, null, null);
 	}

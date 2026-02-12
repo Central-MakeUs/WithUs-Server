@@ -45,8 +45,8 @@ public class AuthController implements AuthApi {
 	}
 
 	@Override
-	public ResponseEntity<ApiResponse<LoginResponse>> generateTempToken(String id, String fcmToken) {
-		LoginResponse loginResponse = authService.generateTempToken(id, fcmToken);
+	public ResponseEntity<ApiResponse<LoginResponse>> generateTempToken(Long id) {
+		LoginResponse loginResponse = authService.generateTempToken(id);
 		return ResponseEntity.ok(ApiResponse.success(loginResponse));
 	}
 
