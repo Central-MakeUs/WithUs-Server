@@ -124,7 +124,7 @@ public class QuestionService {
 	}
 
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
-	public void processCoupleQuestions(Couple couple, Map<Long, Question> questionMap, LocalDate date) {
+	public void processCoupleQuestions(Couple couple, LocalDate date) {
 		// couple 영속성 컨텍스트 관리
 		couple = coupleRepository.findByIdWithLock(couple.getId())
 			.orElseThrow(() -> new NotFoundException(COUPLE_NOT_FOUND));
