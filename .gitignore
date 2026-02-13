@@ -43,3 +43,7 @@ out/
 
 ### fcm account ###
 firebase-key.json
+
+### DeepLink ###
+apple-app-site-association
+assetlinks.json
