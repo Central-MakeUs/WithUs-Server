@@ -72,7 +72,7 @@ public interface UserApi {
 			- 종류: NEED_USER_INITIAL_SETUP, NEED_COUPLE_CONNECT, COMPLETED
 			"""
 	)
-	@PostMapping("/me/status")
+	@GetMapping("/me/status")
 	ResponseEntity<ApiResponse<OnboardingStatusResponse>> getOnboardingStatus();
 
 	@Operation(
