@@ -37,6 +37,7 @@ services:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
+      - ./nginx/well-known:/var/www/html/.well-known:ro
     depends_on:
       - app
     networks:
