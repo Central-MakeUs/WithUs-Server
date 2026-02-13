@@ -54,6 +54,8 @@ dependencies {
 	implementation 'org.bouncycastle:bcpkix-jdk18on:1.79'
 	// redis
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+	// thymeleaf
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 }
 
 dependencyManagement {

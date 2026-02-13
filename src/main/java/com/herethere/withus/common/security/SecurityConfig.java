@@ -38,6 +38,7 @@ public class SecurityConfig {
 				.requestMatchers("/api/auth/refresh").authenticated()
 				.requestMatchers("/api/auth/**").permitAll()
 				.requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+				.requestMatchers("/invite/**").permitAll()
 				.anyRequest().authenticated()
 			)
 			// 3. 예외 처리 설정 (토큰이 없을 때)

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Withus - 우리만의 공간</title>
+    <meta content="Withus(위더스)" property="og:title">
+    <meta content="상대방이 커플 연결을 기다리고 있어요!" property="og:description">
+    <style>
+        :root {
+            --primary-color: #FF7B9C; /* 위더스 메인 테마 컬러 (핑크 예시) */
+            --bg-color: #FFFFFF;
+            --text-color: #333333;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+
+        .container {
+            text-align: center;
+            padding: 20px;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .logo {
+            width: 100px;
+            height: 100px;
+            background: var(--primary-color); /* 로고 이미지 없을 때 대용 */
+            border-radius: 22px;
+            margin: 0 auto 24px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            color: white;
+            font-size: 20px;
+            box-shadow: 0 8px 16px rgba(255, 123, 156, 0.2);
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        p {
+            font-size: 16px;
+            color: #777;
+            line-height: 1.6;
+            margin-bottom: 40px;
+        }
+
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .store-btn {
+            display: block;
+            padding: 16px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            transition: transform 0.2s, background-color 0.2s;
+        }
+
+        .google-play {
+            background-color: #333;
+            color: white;
+        }
+
+        .app-store {
+            background-color: #007AFF;
+            color: white;
+        }
+
+        .store-btn:active {
+            transform: scale(0.98);
+        }
+
+        .footer {
+            margin-top: 40px;
+            font-size: 12px;
+            color: #bbb;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="logo">Withus</div>
+
+    <h1>위더스</h1>
+    <h3>사진으로 쌓이는 우리의 일상</h3>
+    <p>소중한 사람과 연결될 준비가 되었나요?<br>앱을 다운로드하고 시작해보세요.</p>
+
+    <div class="btn-group">
+        <a class="store-btn google-play" href="https://play.google.com/store/games">
+            Google Play에서 다운로드
+        </a>
+        <a class="store-btn app-store" href="https://www.apple.com/app-store/">
+            App Store에서 다운로드
+        </a>
+    </div>
+
+    <div class="footer">
+        © 2026 Withus Team. All rights reserved.
+    </div>
+</div>
+
+</body>
+</html>
