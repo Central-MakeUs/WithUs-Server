@@ -22,8 +22,8 @@ public class WithusApplication {
 
 	@PostConstruct
 	public void started() {
-		// 애플리케이션의 기본 시간대를 UTC로 설정
-		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+		// 애플리케이션의 기본 시간대를 Asia/Seoul로 설정
+		TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
 	}
 
 }

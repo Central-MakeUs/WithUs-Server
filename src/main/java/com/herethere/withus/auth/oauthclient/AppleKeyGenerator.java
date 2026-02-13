@@ -36,7 +36,7 @@ public class AppleKeyGenerator {
 	private String privateKey;
 
 	public String getClientSecret() {
-		Date expirationDate = Date.from(LocalDateTime.now().plusMinutes(10).atZone(ZoneId.of("UTC")).toInstant());
+		Date expirationDate = Date.from(LocalDateTime.now().plusMinutes(10).atZone(ZoneId.of("Asia/Seoul")).toInstant());
 
 		return Jwts.builder()
 			.setHeaderParam("kid", kid)

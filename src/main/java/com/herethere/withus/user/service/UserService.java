@@ -59,14 +59,14 @@ public class UserService {
 			user.updateProfile(userUpdateRequest.nickname(), userUpdateRequest.birthday());
 		}
 		return new UserUpdateResponse(user.getId(), user.getNickname(), user.getBirthday(),
-			user.getProfileImageKey(), user.getSeoulJoinDate());
+			user.getProfileImageKey(), user.getJoinDate());
 	}
 
 	@Transactional(readOnly = true)
 	public UserUpdateResponse getUserProfile() {
 		User user = appContextService.getInitializedAndActiveUser();
 		return new UserUpdateResponse(user.getId(), user.getNickname(), user.getBirthday(),
-			s3Service.createOriginImageUrl(user.getProfileImageKey()), user.getSeoulJoinDate());
+			s3Service.createOriginImageUrl(user.getProfileImageKey()), user.getJoinDate());
 	}
 
 	@Transactional

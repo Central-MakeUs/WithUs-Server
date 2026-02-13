@@ -2,7 +2,6 @@ package com.herethere.withus.user.domain;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 
 import com.herethere.withus.auth.domain.OAuthProviderType;
 import com.herethere.withus.common.baseentity.BaseEntity;
@@ -95,10 +94,7 @@ import lombok.NoArgsConstructor;
 		userStatus = UserStatus.DELETED;
 	}
 
-	public LocalDate getSeoulJoinDate() {
-		return getCreatedAt()
-			.atZone(ZoneId.of("UTC"))
-			.withZoneSameInstant(ZoneId.of("Asia/Seoul"))
-			.toLocalDate();
+	public LocalDate getJoinDate() {
+		return getCreatedAt().toLocalDate();
 	}
 }

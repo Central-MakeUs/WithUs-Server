@@ -44,7 +44,7 @@ public record MonthMemoryResponse(
 			example = "https://s3.withus.com/memories/couple123_4w1.jpg")
 		String createdImageUrl,
 
-		@Schema(description = "생성된 시간(UTC)")
+		@Schema(description = "생성된 시간(Asia/Seoul)")
 		LocalDateTime createdAt
 	) {
 	}

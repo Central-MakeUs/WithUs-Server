@@ -36,8 +36,8 @@ public record ArchiveQuestionDetailResponse(
 		@Schema(description = "오늘 업로드한 사진 URL (미업로드 시 null)", example = "https://s3.com/question/101.jpg", nullable = true)
 		String answerImageUrl,
 
-		@Schema(type = "string", pattern = "HH:mm", example = "14:12", description = "인증 사진 업로드 시각 (UTC 기준, 미업로드 시 null)", nullable = true)
-		@JsonFormat(pattern = "HH:mm", timezone = "UTC")
+		@Schema(type = "string", pattern = "HH:mm", example = "14:12", description = "인증 사진 업로드 시각 (Asia/Seoul 기준, 미업로드 시 null)", nullable = true)
+		@JsonFormat(pattern = "HH:mm", timezone = "Asia/Seoul")
 		LocalDateTime answeredAt
 	) {
 	}
