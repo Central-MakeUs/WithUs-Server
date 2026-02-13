@@ -110,6 +110,7 @@ public class QuestionService {
 
 		CoupleQuestion coupleQuestion = coupleQuestionRepository.findTopByCoupleOrderByCreatedAtDesc(
 			couple).orElseThrow(() -> new NotFoundException(COUPLE_QUESTION_NOT_FOUND));
+		Long questionNumber = coupleQuestion.getQuestion().getQuestionNumber();
 
 		QuestionPicture myPicture = questionPictureRepository.findByUserAndCoupleQuestion(me, coupleQuestion)
 			.orElse(null);
@@ -119,7 +120,7 @@ public class QuestionService {
 		TodayQuestionResponse.ImageInfo myInfo = getImageInfo(me, myPicture);
 		TodayQuestionResponse.ImageInfo partnerInfo = getImageInfo(partner, partnerPicture);
 
-		return new TodayQuestionResponse(coupleQuestion.getId(), coupleQuestion.getQuestion().getContent(), myInfo,
+		return new TodayQuestionResponse(questionNumber, coupleQuestion.getId(), coupleQuestion.getQuestion().getContent(), myInfo,
 			partnerInfo);
 	}
 
