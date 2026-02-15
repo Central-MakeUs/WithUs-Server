@@ -115,6 +115,9 @@ public class S3Service {
 	}
 
 	public String processImagePublish(String imageKey, Long userId, ImageType imageType) {
+		if (imageKey == null || imageKey.isBlank()) {
+			return null;
+		}
 		validateUploadImageKey(imageKey, userId, imageType);
 		String finalImageKey = imageKey.replace(TEMP_ORIGIN, FINAL_ORIGIN);
 		moveObject(imageKey, finalImageKey);
