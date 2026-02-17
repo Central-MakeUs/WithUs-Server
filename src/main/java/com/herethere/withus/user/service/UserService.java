@@ -59,7 +59,7 @@ public class UserService {
 			user.updateProfile(userUpdateRequest.nickname(), userUpdateRequest.birthday());
 		}
 		return new UserUpdateResponse(user.getId(), user.getNickname(), user.getBirthday(),
-			user.getProfileImageKey(), user.getJoinDate());
+			s3Service.createOriginImageUrl(user.getProfileImageKey()), user.getJoinDate());
 	}
 
 	@Transactional(readOnly = true)
