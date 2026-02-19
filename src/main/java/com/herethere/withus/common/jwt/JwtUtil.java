@@ -71,7 +71,7 @@ public class JwtUtil {
 			.setClaims(claims)
 			.setIssuedAt(now)
 			.setExpiration(validity)
-			.signWith(SignatureAlgorithm.HS256, secretKey)
+			.signWith(key, SignatureAlgorithm.HS256)
 			.compact();
 	}
 }
