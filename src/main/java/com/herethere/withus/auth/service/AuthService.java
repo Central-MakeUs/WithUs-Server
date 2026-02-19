@@ -87,7 +87,8 @@ public class AuthService {
 	public LoginResponse generateTempToken2(Long id) {
 		JwtPayload jwtPayload = new JwtPayload(id, "name");
 		String jwt = jwtUtil.createToken(jwtPayload);
-		return new LoginResponse(jwt, null, null);
+		String refreshToken = jwtUtil.createRefreshToken(jwtPayload);
+		return new LoginResponse(jwt, refreshToken, null);
 	}
 
 	@Transactional
