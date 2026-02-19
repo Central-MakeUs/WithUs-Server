@@ -17,6 +17,8 @@ public interface KeywordRecordRepository extends JpaRepository<KeywordRecord, Lo
 
 	boolean existsByUserAndCoupleKeywordAndDate(User user, CoupleKeyword coupleKeyword, LocalDate date);
 
+	List<KeywordRecord> findByCoupleKeywordAndDate(CoupleKeyword coupleKeyword, LocalDate date);
+
 	@Query("""
 		SELECT k FROM KeywordRecord k
 		JOIN FETCH k.coupleKeyword ck

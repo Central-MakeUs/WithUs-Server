@@ -17,6 +17,8 @@ public interface QuestionPictureRepository extends JpaRepository<QuestionPicture
 
 	Optional<QuestionPicture> findByUserAndCoupleQuestion(User user, CoupleQuestion coupleQuestion);
 
+	List<QuestionPicture> findByCoupleQuestion(CoupleQuestion coupleQuestion);
+
 	@Query("""
 		SELECT q FROM QuestionPicture q
 		JOIN FETCH q.coupleQuestion qc

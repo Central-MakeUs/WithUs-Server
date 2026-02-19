@@ -31,10 +31,15 @@ import com.herethere.withus.archive.enums.ArchiveType;
 import com.herethere.withus.archive.repository.ArchiveRepository;
 import com.herethere.withus.common.dto.internal.DateCursor;
 import com.herethere.withus.common.dto.internal.NumberCursor;
+import com.herethere.withus.common.exception.BadRequestException;
 import com.herethere.withus.common.exception.ForbiddenException;
 import com.herethere.withus.common.exception.NotFoundException;
 import com.herethere.withus.common.util.CursorCodec;
 import com.herethere.withus.couple.domain.Couple;
+import com.herethere.withus.couple.domain.CoupleKeyword;
+import com.herethere.withus.couple.repository.CoupleKeywordRepository;
+import com.herethere.withus.keyword.domain.KeywordRecord;
+import com.herethere.withus.keyword.repository.KeywordRecordRepository;
 import com.herethere.withus.question.domain.CoupleQuestion;
 import com.herethere.withus.question.domain.Question;
 import com.herethere.withus.question.domain.QuestionPicture;
@@ -53,6 +58,8 @@ public class ArchiveService {
 	private final ArchiveRepository archiveRepository;
 	private final CoupleQuestionRepository coupleQuestionRepository;
 	private final QuestionPictureRepository questionPictureRepository;
+	private final CoupleKeywordRepository coupleKeywordRepository;
+	private final KeywordRecordRepository keywordRecordRepository;
 	private final S3Service s3Service;
 	private final AppContextService appContextService;
 	private final CursorCodec cursorCodec;
@@ -127,7 +134,7 @@ public class ArchiveService {
 			ArchiveDateResponse.ImageInfo partnerInfo = new ArchiveDateResponse.ImageInfo(partner.getId(),
 				partner.getNickname(), partnerProfileUrl, partnerArchiveImageUrl, v.getPartnerAnsweredAt());
 			boolean selected = Objects.equals(v.getSourceId(), targetId)
-				&& Objects.equals(ArchiveType.from(v.getArchiveType()), targetType);
+							   && Objects.equals(ArchiveType.from(v.getArchiveType()), targetType);
 			return new ArchiveDateResponse.ArchiveInfo(ArchiveType.from(v.getArchiveType()), v.getSourceId(),
 				v.getContent(), myInfo, partnerInfo, selected);
 		}).toList();
@@ -222,6 +229,57 @@ public class ArchiveService {
 					s3Service.createThumbnailImageUrl(r.getPartnerImageKey())))
 			.toList();
 		return new ArchiveCalendarResponse(year, month, archiveDays);
+	}
+
+	@Transactional
+	public void deleteArchive(ArchiveType archiveType, Long id, LocalDate date) {
+		LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
+		if (!date.isBefore(today)) {
+			throw new ForbiddenException(CANNOT_DELETE_TODAY_ARCHIVE);
+		}
+
+		User user = appContextService.getInitializedAndActiveUser();
+		Couple couple = appContextService.getActiveCoupleRequired(user);
+
+		if (archiveType == ArchiveType.QUESTION) {
+			deleteQuestionPictures(couple, id);
+		} else if (archiveType == ArchiveType.KEYWORD) {
+			deleteKeywordRecords(couple, id, date);
+		} else {
+			throw new BadRequestException(INVALID_ARCHIVE_TYPE);
+		}
+	}
+
+	private void deleteQuestionPictures(Couple couple, Long coupleQuestionId) {
+		CoupleQuestion coupleQuestion = coupleQuestionRepository.findById(coupleQuestionId)
+			.orElseThrow(() -> new NotFoundException(COUPLE_QUESTION_NOT_FOUND));
+
+		if (!coupleQuestion.getCouple().getId().equals(couple.getId())) {
+			throw new NotFoundException(COUPLE_QUESTION_NOT_FOUND);
+		}
+
+		List<QuestionPicture> pictures = questionPictureRepository.findByCoupleQuestion(coupleQuestion);
+		if (pictures.isEmpty()) {
+			throw new NotFoundException(ARCHIVE_PICTURE_NOT_FOUND);
+		}
+
+		questionPictureRepository.deleteAll(pictures);
+	}
+
+	private void deleteKeywordRecords(Couple couple, Long coupleKeywordId, LocalDate date) {
+		CoupleKeyword coupleKeyword = coupleKeywordRepository.findById(coupleKeywordId)
+			.orElseThrow(() -> new NotFoundException(COUPLE_KEYWORD_NOT_FOUND));
+
+		if (!coupleKeyword.getCouple().getId().equals(couple.getId())) {
+			throw new NotFoundException(COUPLE_KEYWORD_NOT_FOUND);
+		}
+
+		List<KeywordRecord> records = keywordRecordRepository.findByCoupleKeywordAndDate(coupleKeyword, date);
+		if (records.isEmpty()) {
+			throw new NotFoundException(ARCHIVE_PICTURE_NOT_FOUND);
+		}
+
+		keywordRecordRepository.deleteAll(records);
 	}
 
 	private ArchiveQuestionDetailResponse.ImageInfo createImageInfo(User user, QuestionPicture picture) {

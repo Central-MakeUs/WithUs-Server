@@ -4,11 +4,14 @@ import java.time.LocalDate;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.herethere.withus.archive.dto.request.ArchiveDeleteRequest;
 import com.herethere.withus.archive.dto.response.ArchiveCalendarResponse;
 import com.herethere.withus.archive.dto.response.ArchiveDateResponse;
 import com.herethere.withus.archive.dto.response.ArchiveListResponse;
@@ -136,6 +139,23 @@ public interface ArchiveApi {
 		)
 		@PathVariable
 		Long coupleQuestionId
+	);
+
+	@Operation(
+		summary = "보관 사진 단일 삭제",
+		description = """
+			보관함에서 특정 항목의 사진을 모두 삭제합니다.
+			- archiveType, id, date를 함께 전달하여 삭제할 항목을 식별합니다.
+			- archiveType은 QUESTION 또는 KEYWORD 중 하나입니다.
+			- id는 해당 archiveType 엔티티의 고유 ID입니다. (`/me/couple/archives` 응답의 ImageInfo.id)
+			- date는 해당 항목의 날짜입니다. (`/me/couple/archives` 응답의 ArchiveInfo.date)
+			- 나와 상대방 모두의 이미지가 삭제됩니다.
+			- 해당 항목에 사진이 없거나, 접근 권한이 없을 경우 에러가 반환됩니다.
+			"""
+	)
+	@DeleteMapping("/me/couple/archives")
+	ResponseEntity<ApiResponse<Void>> deleteArchive(
+		@RequestBody ArchiveDeleteRequest request
 	);
 
 	@Operation(

@@ -56,6 +56,8 @@ public enum ErrorCode {
 	// ARCHIVE
 	INVALID_ARCHIVE_TYPE(500, "아카이브 타입이 올바르지 않습니다."),
 	ARCHIVE_TYPE_NULL(500, "아카이브 타입이 null 입니다."),
+	ARCHIVE_PICTURE_NOT_FOUND(404, "삭제할 사진이 존재하지 않습니다."),
+	CANNOT_DELETE_TODAY_ARCHIVE(403, "오늘 날짜의 사진은 삭제할 수 없습니다."),
 
 	//MEMORY
 	WRONG_DATE(400, "해당 날짜는 불가능합니다."),
