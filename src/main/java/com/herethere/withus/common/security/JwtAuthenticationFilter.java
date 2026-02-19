@@ -33,7 +33,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 		if (token != null) {
 			try {
-				JwtPayload payload = jwtUtil.validateToken(token);
+				JwtPayload payload = jwtUtil.validateAccessToken(token);
 
 				Authentication authentication = new UsernamePasswordAuthenticationToken(payload.userId(), null,
 					List.of() // 권한 추가 가능

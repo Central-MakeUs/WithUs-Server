@@ -107,7 +107,7 @@ public class AuthService {
 		String refreshToken = request.refreshToken();
 
 		// 2. 토큰에서 유저 식별자 추출
-		JwtPayload payload = jwtUtil.validateToken(refreshToken);
+		JwtPayload payload = jwtUtil.validateRefreshToken(refreshToken);
 		String redisKey = "RT:" + payload.userId();
 
 		// 3. Redis에서 해당 유저의 Refresh Token 조회

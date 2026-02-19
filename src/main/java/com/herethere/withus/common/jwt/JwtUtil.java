@@ -46,7 +46,7 @@ public class JwtUtil {
 			.compact();
 	}
 
-	public JwtPayload validateToken(String token) {
+	public JwtPayload validateAccessToken(String token) {
 		try {
 			Claims claims = Jwts.parserBuilder()
 				.setSigningKey(key)
@@ -54,6 +54,21 @@ public class JwtUtil {
 				.parseClaimsJws(token)
 				.getBody();
 			return new JwtPayload(Long.valueOf(claims.getSubject()), claims.get(CLAIM_NICKNAME).toString());
+		} catch (ExpiredJwtException e) {
+			throw new JwtValidationException(EXPIRED_JWT_TOKEN);
+		} catch (JwtException | IllegalArgumentException e) {
+			throw new JwtValidationException(INVALID_JWT_TOKEN);
+		}
+	}
+
+	public JwtPayload validateRefreshToken(String token) {
+		try {
+			Claims claims = Jwts.parserBuilder()
+				.setSigningKey(key)
+				.build()
+				.parseClaimsJws(token)
+				.getBody();
+			return new JwtPayload(Long.valueOf(claims.getSubject()), null);
 		} catch (ExpiredJwtException e) {
 			throw new JwtValidationException(EXPIRED_JWT_TOKEN);
 		} catch (JwtException | IllegalArgumentException e) {
