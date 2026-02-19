@@ -1,0 +1,23 @@
+# Build output
+build/
+.gradle/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# Logs
+logs/
+*.log
+
+# Sensitive credentials
+firebase-key.json
+.env
+*.p8
+*.pem
+*.key
+
+# OS
+.DS_Store
+Thumbs.db
