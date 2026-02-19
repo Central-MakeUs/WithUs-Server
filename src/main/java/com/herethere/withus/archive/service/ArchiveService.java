@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.herethere.withus.archive.dto.internal.ArchiveDayView;
+import com.herethere.withus.archive.dto.request.ArchiveDeleteRequest;
 import com.herethere.withus.archive.dto.internal.ArchiveDetailView;
 import com.herethere.withus.archive.dto.internal.DailyArchiveView;
 import com.herethere.withus.archive.dto.response.ArchiveCalendarResponse;
@@ -229,6 +230,28 @@ public class ArchiveService {
 					s3Service.createThumbnailImageUrl(r.getPartnerImageKey())))
 			.toList();
 		return new ArchiveCalendarResponse(year, month, archiveDays);
+	}
+
+	@Transactional
+	public void bulkDeleteArchive(List<ArchiveDeleteRequest> items) {
+		LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
+		boolean hasToday = items.stream().anyMatch(item -> !item.date().isBefore(today));
+		if (hasToday) {
+			throw new ForbiddenException(CANNOT_DELETE_TODAY_ARCHIVE);
+		}
+
+		User user = appContextService.getInitializedAndActiveUser();
+		Couple couple = appContextService.getActiveCoupleRequired(user);
+
+		for (ArchiveDeleteRequest item : items) {
+			if (item.archiveType() == ArchiveType.QUESTION) {
+				deleteQuestionPictures(couple, item.id());
+			} else if (item.archiveType() == ArchiveType.KEYWORD) {
+				deleteKeywordRecords(couple, item.id(), item.date());
+			} else {
+				throw new BadRequestException(INVALID_ARCHIVE_TYPE);
+			}
+		}
 	}
 
 	@Transactional

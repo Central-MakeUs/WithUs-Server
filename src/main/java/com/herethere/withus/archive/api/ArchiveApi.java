@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.herethere.withus.archive.dto.request.ArchiveBulkDeleteRequest;
 import com.herethere.withus.archive.dto.request.ArchiveDeleteRequest;
 import com.herethere.withus.archive.dto.response.ArchiveCalendarResponse;
 import com.herethere.withus.archive.dto.response.ArchiveDateResponse;
@@ -156,6 +157,21 @@ public interface ArchiveApi {
 	@DeleteMapping("/me/couple/archives")
 	ResponseEntity<ApiResponse<Void>> deleteArchive(
 		@RequestBody ArchiveDeleteRequest request
+	);
+
+	@Operation(
+		summary = "보관 사진 복수 삭제",
+		description = """
+			보관함에서 여러 항목의 사진을 한 번에 삭제합니다.
+			- items 리스트에 삭제할 항목들을 담아 전달합니다.
+			- 각 항목은 archiveType, id, date로 식별합니다.
+			- 리스트 중 하나라도 오늘 날짜이거나 접근 권한이 없을 경우 전체 요청이 실패합니다.
+			- 나와 상대방 모두의 이미지가 삭제됩니다.
+			"""
+	)
+	@DeleteMapping("/me/couple/archives/bulk")
+	ResponseEntity<ApiResponse<Void>> bulkDeleteArchive(
+		@RequestBody ArchiveBulkDeleteRequest request
 	);
 
 	@Operation(

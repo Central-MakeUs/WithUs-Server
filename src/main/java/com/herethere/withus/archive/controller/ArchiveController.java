@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.herethere.withus.archive.api.ArchiveApi;
+import com.herethere.withus.archive.dto.request.ArchiveBulkDeleteRequest;
 import com.herethere.withus.archive.dto.request.ArchiveDeleteRequest;
 import com.herethere.withus.archive.dto.response.ArchiveCalendarResponse;
 import com.herethere.withus.archive.dto.response.ArchiveDateResponse;
@@ -47,6 +48,12 @@ public class ArchiveController implements ArchiveApi {
 	public ResponseEntity<ApiResponse<ArchiveQuestionDetailResponse>> getDetailArchiveQuestion(Long coupleQuestionId) {
 		ArchiveQuestionDetailResponse response = archiveService.getDetailArchiveQuestion(coupleQuestionId);
 		return ResponseEntity.ok(ApiResponse.success(response));
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<Void>> bulkDeleteArchive(ArchiveBulkDeleteRequest request) {
+		archiveService.bulkDeleteArchive(request.items());
+		return ResponseEntity.ok(ApiResponse.success());
 	}
 
 	@Override
