@@ -20,9 +20,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.herethere.withus.archive.dto.internal.ArchiveDayView;
-import com.herethere.withus.archive.dto.request.ArchiveDeleteRequest;
 import com.herethere.withus.archive.dto.internal.ArchiveDetailView;
 import com.herethere.withus.archive.dto.internal.DailyArchiveView;
+import com.herethere.withus.archive.dto.request.ArchiveDeleteRequest;
 import com.herethere.withus.archive.dto.response.ArchiveCalendarResponse;
 import com.herethere.withus.archive.dto.response.ArchiveDateResponse;
 import com.herethere.withus.archive.dto.response.ArchiveListResponse;
@@ -206,7 +206,7 @@ public class ArchiveService {
 		Question question = coupleQuestion.getQuestion();
 
 		return new ArchiveQuestionDetailResponse(coupleQuestionId, question.getQuestionNumber(), question.getContent(),
-			myInfo, partnerInfo);
+			coupleQuestion.getDate(), myInfo, partnerInfo);
 	}
 
 	@Transactional(readOnly = true)

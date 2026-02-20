@@ -1,5 +1,6 @@
 package com.herethere.withus.archive.dto.response;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -15,6 +16,9 @@ public record ArchiveQuestionDetailResponse(
 
 	@Schema(description = "질문 내용")
 	String questionContent,
+
+	@Schema(description = "질문 날짜")
+	LocalDate date,
 
 	@Schema(description = "내 사진 정보")
 	ImageInfo myInfo,
