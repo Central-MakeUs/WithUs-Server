@@ -93,7 +93,7 @@ public class AuthService {
 
 	@Transactional
 	public void logout(LogoutRequest request) {
-		User user = appContextService.getCurrentUser();
+		User user = appContextService.getActiveUser();
 		fcmTokenManager.deleteByUserAndToken(user, request.fcmToken());
 
 		String redisKey = "RT:" + user.getId();
