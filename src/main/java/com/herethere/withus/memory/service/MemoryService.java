@@ -205,8 +205,11 @@ public class MemoryService {
 	}
 
 	private List<String> combineRandomImages(List<String> list1, List<String> list2, int count) {
-		Collections.shuffle(list1);
-		Collections.shuffle(list2);
+		List<String> mutableList1 = new ArrayList<>(list1);
+		List<String> mutableList2 = new ArrayList<>(list2);
+
+		Collections.shuffle(mutableList1);
+		Collections.shuffle(mutableList2);
 
 		List<String> result = new ArrayList<>();
 		result.addAll(list1.subList(0, count));
