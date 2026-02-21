@@ -212,8 +212,8 @@ public class MemoryService {
 		Collections.shuffle(mutableList2);
 
 		List<String> result = new ArrayList<>();
-		result.addAll(list1.subList(0, count));
-		result.addAll(list2.subList(0, count));
+		result.addAll(mutableList1.subList(0, count));
+		result.addAll(mutableList2.subList(0, count));
 		return result;
 	}
 
