@@ -15,6 +15,7 @@ import com.herethere.withus.couple.dto.request.SetCoupleKeywordRequest;
 import com.herethere.withus.couple.dto.response.CoupleJoinPreviewResponse;
 import com.herethere.withus.couple.dto.response.CoupleJoinResponse;
 import com.herethere.withus.couple.dto.response.CoupleProfileResponse;
+import com.herethere.withus.couple.dto.response.InviteLinkResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -75,6 +76,17 @@ public interface CoupleApi {
 	)
 	@PostMapping("/terminate")
 	ResponseEntity<ApiResponse<Void>> terminateCouple();
+
+	@Operation(
+		summary = "초대 링크 조회",
+		description = """
+			초대 링크를 반환합니다.
+			- 반환되는 링크 형식: `https://withus.p-e.kr/invite?code={inviteCode}`
+			- `{inviteCode}`는 클라이언트가 보유한 실제 초대 코드로 대체하여 사용해야합니다.
+			"""
+	)
+	@GetMapping("/invite-link")
+	ResponseEntity<ApiResponse<InviteLinkResponse>> getInviteLink();
 
 	@Operation(
 		summary = "커플 구성원 정보 조회",

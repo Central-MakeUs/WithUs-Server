@@ -12,6 +12,7 @@ import com.herethere.withus.couple.dto.request.SetCoupleKeywordRequest;
 import com.herethere.withus.couple.dto.response.CoupleJoinPreviewResponse;
 import com.herethere.withus.couple.dto.response.CoupleJoinResponse;
 import com.herethere.withus.couple.dto.response.CoupleProfileResponse;
+import com.herethere.withus.couple.dto.response.InviteLinkResponse;
 import com.herethere.withus.couple.service.CoupleService;
 
 import lombok.RequiredArgsConstructor;
@@ -44,6 +45,11 @@ public class CoupleController implements CoupleApi {
 	public ResponseEntity<ApiResponse<Void>> terminateCouple() {
 		coupleService.terminateCouple();
 		return ResponseEntity.ok(ApiResponse.success());
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<InviteLinkResponse>> getInviteLink() {
+		return ResponseEntity.ok(ApiResponse.success(new InviteLinkResponse("https://withus.p-e.kr/invite?code={inviteCode}")));
 	}
 
 	@Override
