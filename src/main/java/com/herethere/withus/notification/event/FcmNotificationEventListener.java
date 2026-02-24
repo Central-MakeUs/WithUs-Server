@@ -12,6 +12,7 @@ import com.herethere.withus.couple.service.CoupleService;
 import com.herethere.withus.notification.dto.internal.CoupleNotificationEvent;
 import com.herethere.withus.notification.dto.internal.NotificationMessage;
 import com.herethere.withus.notification.service.FcmSendService;
+import com.herethere.withus.notification.service.NotificationHistoryService;
 import com.herethere.withus.notification.service.NotificationMessageFactory;
 import com.herethere.withus.user.service.UserService;
 
@@ -23,6 +24,7 @@ public class FcmNotificationEventListener {
 
 	private final FcmSendService fcmSendService;
 	private final NotificationMessageFactory notificationMessageFactory;
+	private final NotificationHistoryService notificationHistoryService;
 	private final CoupleService coupleService;
 	private final UserService userService;
 
@@ -50,7 +52,27 @@ public class FcmNotificationEventListener {
 			}
 
 			NotificationMessage message = notificationMessageFactory.create(event);
+
+			Long coupleKeywordId = parseCoupleKeywordId(event.data());
+			notificationHistoryService.save(receiverId, event.notificationType(),
+				message.title(), message.content(), coupleKeywordId);
+
 			fcmSendService.sendToUser(receiverId, message.title(), message.content(), message.data());
+		}
+	}
+
+	private Long parseCoupleKeywordId(java.util.Map<String, String> data) {
+		if (data == null) {
+			return null;
+		}
+		String value = data.get("coupleKeywordId");
+		if (value == null) {
+			return null;
+		}
+		try {
+			return Long.parseLong(value);
+		} catch (NumberFormatException e) {
+			return null;
 		}
 	}
 }
