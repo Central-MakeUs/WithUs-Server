@@ -1,5 +1,7 @@
 package com.herethere.withus.notification.service;
 
+import java.util.Map;
+
 import org.springframework.stereotype.Component;
 
 import com.herethere.withus.notification.dto.internal.CoupleNotificationEvent;
@@ -36,7 +38,7 @@ public class NotificationMessageFactory {
 		return new NotificationMessage(
 			"오늘의 랜덤 질문이 도착했어요",
 			"오늘의 질문에 답해볼까요?",
-			null
+			Map.of("push", "/today_question")
 		);
 	}
 
@@ -45,16 +47,17 @@ public class NotificationMessageFactory {
 		return new NotificationMessage(
 			senderName + "님이 오늘의 질문에 답했어요!",
 			"상대방의 답변을 확인해볼까요?",
-			null
+			Map.of("push", "/today_question")
 		);
 	}
 
 	private NotificationMessage keywordAnsweredMessage(CoupleNotificationEvent event) {
 		String senderName = userService.getNickname(event.senderId());
+		String coupleKeywordId = event.data().get("coupleKeywordId");
 		return new NotificationMessage(
 			senderName + "님이 사진을 보냈어요!",
 			"사진이 도착했어요, 확인해볼까요?",
-			null
+			coupleKeywordId != null ? Map.of("push", "/today_keyword/" + coupleKeywordId) : null
 		);
 	}
 }
