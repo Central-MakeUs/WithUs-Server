@@ -99,7 +99,7 @@ public class QuestionService {
 		questionPictureRepository.save(questionPicture);
 
 		eventPublisher.publishEvent(CoupleNotificationEvent.toPartner(couple.getId(), user.getId(), partner.getId(),
-			NotificationType.PHOTO_UPLOADED));
+			NotificationType.QUESTION_ANSWERED));
 	}
 
 	@Transactional(readOnly = true)

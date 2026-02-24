@@ -162,7 +162,7 @@ public class KeywordService {
 		keywordRecordRepository.save(keywordRecord);
 
 		eventPublisher.publishEvent(CoupleNotificationEvent.toPartner(couple.getId(), user.getId(), partner.getId(),
-			NotificationType.PHOTO_UPLOADED));
+			NotificationType.KEYWORD_ANSWERED, java.util.Map.of("coupleKeywordId", String.valueOf(coupleKeywordId))));
 	}
 
 	@Transactional
