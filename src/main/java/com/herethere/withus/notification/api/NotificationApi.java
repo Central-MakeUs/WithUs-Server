@@ -27,6 +27,15 @@ public interface NotificationApi {
 			- 커서 기반 페이지네이션을 사용합니다.
 			- 응답에서 받은 nextCursor 값을 그대로 cursor에 넣어 요청하면 됩니다.
 			- push 값이 null이면 이동할 화면이 없습니다.
+
+			**알림 타입별 push 경로**
+
+			| 알림 타입 | 설명 | push |
+			|---|---|---|
+			| POKE | 상대방이 사진을 기다리고 있을 때 | null |
+			| QUESTION_GENERATED | 오늘의 랜덤 질문이 생성됐을 때 | /today_question |
+			| QUESTION_ANSWERED | 상대방이 오늘의 질문에 답했을 때 | /today_question |
+			| KEYWORD_ANSWERED | 상대방이 키워드 사진을 보냈을 때 | /today_keyword/{coupleKeywordId} |
 			"""
 	)
 	@GetMapping("/me/notifications")
