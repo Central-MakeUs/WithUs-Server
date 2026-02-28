@@ -20,7 +20,7 @@ import io.jsonwebtoken.security.Keys;
 
 @Component
 public class JwtUtil {
-	private static final long ACCESS_TOKEN_EXPIRE = 1000L * 60 * 60 * 12; // 12시간
+	private static final long ACCESS_TOKEN_EXPIRE = 28 * 24 * 60 * 60 * 1000L; // 12시간 1000L * 60 * 60 * 12
 	private static final long REFRESH_TOKEN_EXPIRE = 28 * 24 * 60 * 60 * 1000L; // 28일
 	private static final String CLAIM_NICKNAME = "nickname";
 	private final String secretKey;
