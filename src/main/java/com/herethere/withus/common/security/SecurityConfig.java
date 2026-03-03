@@ -8,7 +8,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.herethere.withus.common.jwt.JwtUtil;
 
 import lombok.RequiredArgsConstructor;
@@ -19,7 +18,6 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfig {
 
 	private final JwtUtil jwtUtil;
-	private final ObjectMapper objectMapper;
 	private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
 	@Bean
@@ -47,7 +45,7 @@ public class SecurityConfig {
 			)
 			// 4. JWT 필터 배치
 			// UsernamePasswordAuthenticationFilter(기본 로그인 필터)보다 먼저 실행되어야 함
-			.addFilterBefore(new JwtAuthenticationFilter(jwtUtil, objectMapper),
+			.addFilterBefore(new JwtAuthenticationFilter(jwtUtil),
 				UsernamePasswordAuthenticationFilter.class);
 
 		return http.build();

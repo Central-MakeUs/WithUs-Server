@@ -8,8 +8,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.herethere.withus.common.apiresponse.ApiResponse;
 import com.herethere.withus.common.exception.JwtValidationException;
 import com.herethere.withus.common.jwt.JwtUtil;
 import com.herethere.withus.common.jwt.dto.JwtPayload;
@@ -23,7 +21,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	private final JwtUtil jwtUtil;
-	private final ObjectMapper objectMapper;
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
@@ -36,13 +33,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 				JwtPayload payload = jwtUtil.validateAccessToken(token);
 
 				Authentication authentication = new UsernamePasswordAuthenticationToken(payload.userId(), null,
-					List.of() // 권한 추가 가능
+					List.of()
 				);
 
 				SecurityContextHolder.getContext().setAuthentication(authentication);
 			} catch (JwtValidationException e) {
-				sendErrorResponse(response, e);
-				return;
+				SecurityContextHolder.clearContext();
 			}
 		}
 
@@ -57,14 +53,5 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		}
 
 		return null;
-	}
-
-	private void sendErrorResponse(HttpServletResponse response, JwtValidationException e) throws IOException {
-		response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-		response.setContentType("application/json;charset=UTF-8");
-
-		ApiResponse<Void> apiResponse = ApiResponse.failure(e.getErrorCode());
-		String result = objectMapper.writeValueAsString(apiResponse);
-		response.getWriter().write(result);
 	}
 }
