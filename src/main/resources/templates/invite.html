@@ -81,6 +81,11 @@
             color: white;
         }
 
+        .open-app {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
         .store-btn:active {
             transform: scale(0.98);
         }
@@ -102,6 +107,9 @@
     <p>소중한 사람과 연결될 준비가 되었나요?<br>앱을 다운로드하고 시작해보세요.</p>
 
     <div class="btn-group">
+        <a class="store-btn open-app" href="https://withus.p-e.kr/invite" th:href="${code != null and code != '' ? 'https://withus.p-e.kr/invite?code=' + code : 'https://withus.p-e.kr/invite'}">
+            앱에서 열기
+        </a>
         <a class="store-btn google-play" href="https://play.google.com/store/apps/details?id=com.yeogijeogi.android.withus">
             Google Play에서 다운로드
         </a>
