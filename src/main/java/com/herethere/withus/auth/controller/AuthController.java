@@ -44,21 +44,21 @@ public class AuthController implements AuthApi {
 		return ResponseEntity.ok(ApiResponse.success(response));
 	}
 
-	@Override
-	public ResponseEntity<ApiResponse<LoginResponse>> generateTempToken2(Long id) {
-		LoginResponse loginResponse = authService.generateTempToken2(id);
-		return ResponseEntity.ok(ApiResponse.success(loginResponse));
-	}
-
-	@Override
-	public ResponseEntity<ApiResponse<LoginResponse>> generateTempToken(String id, String fcmToken) {
-		LoginResponse loginResponse = authService.generateTempToken(id, fcmToken);
-		return ResponseEntity.ok(ApiResponse.success(loginResponse));
-	}
-
-	@Override
-	public ResponseEntity<ApiResponse<Void>> checkNotification(String fcmToken) {
-		fcmSendService.tempSendToToken(fcmToken, "확인용 알림 입니다.", "잘 작동 중입니다.", null);
-		return ResponseEntity.ok(ApiResponse.success());
-	}
+	// @Override
+	// public ResponseEntity<ApiResponse<LoginResponse>> generateTempToken2(Long id) {
+	// 	LoginResponse loginResponse = authService.generateTempToken2(id);
+	// 	return ResponseEntity.ok(ApiResponse.success(loginResponse));
+	// }
+	//
+	// @Override
+	// public ResponseEntity<ApiResponse<LoginResponse>> generateTempToken(String id, String fcmToken) {
+	// 	LoginResponse loginResponse = authService.generateTempToken(id, fcmToken);
+	// 	return ResponseEntity.ok(ApiResponse.success(loginResponse));
+	// }
+	//
+	// @Override
+	// public ResponseEntity<ApiResponse<Void>> checkNotification(String fcmToken) {
+	// 	fcmSendService.tempSendToToken(fcmToken, "확인용 알림 입니다.", "잘 작동 중입니다.", null);
+	// 	return ResponseEntity.ok(ApiResponse.success());
+	// }
 }
