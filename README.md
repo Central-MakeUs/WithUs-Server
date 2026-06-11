@@ -1,10 +1,15 @@
 # 💑 Withus (위더스) - 커플을 위한 데일리 질문 & 추억 기록 서비스
 
-> "매일 하나의 질문으로 더 가까워지고, 우리의 순간을 사진으로 기록하다"
+> "사진으로 이어지는, 커플의 일상"
 
-**Withus**는 커플이 매일 하나의 질문에 함께 답하고, 사진으로 추억을 남기며, 캘린더로 둘만의 기록을 되돌아볼 수 있는 커플 전용 모바일 서비스(iOS + Android)의 백엔드 API입니다.
+WITHUS는 사진으로 연인과 하루와 마음을  나누는 서비스입니다. 말을 길게 꺼내지 않아도, 부담스러운 질문을 하지 않아도, 같은 질문에 답하고 같은 순간을 공유하며
+서로의 하루를 함께한 추억으로 기록합니다.
 <img width="3579" height="5032" alt="2 _ Custom _ 297x420 mm" src="https://github.com/user-attachments/assets/55ae6211-230d-45fc-a745-79df2c4d7f08" />
 <br/>
+
+## 링크
+[PlayStore에서 보기](https://play.google.com/store/apps/details?id=com.yeogijeogi.android.withus&hl=ko)
+[AppStore에서 보기](https://apps.apple.com/kr/app/%EC%9C%84%EB%8D%94%EC%8A%A4/id6758986808)
 
 ## ✨ 핵심 기능
 
