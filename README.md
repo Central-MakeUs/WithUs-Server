@@ -7,8 +7,8 @@ WITHUS는 사진으로 연인과 하루와 마음을  나누는 서비스입니�
 <img width="3579" height="5032" alt="2 _ Custom _ 297x420 mm" src="https://github.com/user-attachments/assets/55ae6211-230d-45fc-a745-79df2c4d7f08" />
 <br/>
 
-## 링크
-[PlayStore에서 보기](https://play.google.com/store/apps/details?id=com.yeogijeogi.android.withus&hl=ko)
+## 🔗 링크
+[PlayStore에서 보기](https://play.google.com/store/apps/details?id=com.yeogijeogi.android.withus&hl=ko)  
 [AppStore에서 보기](https://apps.apple.com/kr/app/%EC%9C%84%EB%8D%94%EC%8A%A4/id6758986808)
 
 ## ✨ 핵심 기능
