@@ -64,6 +64,6 @@ WITHUS는 사진으로 연인과 하루와 마음을  나누는 서비스입니�
 
 ## 🏗 아키텍처 다이어그램
 
-<!-- 여기에 시스템 아키텍처 다이어그램 이미지를 넣기 -->
+<img width="841" height="423" alt="image" src="https://github.com/user-attachments/assets/6797cd32-38db-4bc9-b5a0-7f8629ae8ce6" />
 
 <br/>
